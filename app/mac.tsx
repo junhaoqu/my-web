@@ -57,14 +57,16 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
   return (
     <div 
       ref={containerRef} 
-      className="macbook-container relative transform-gpu [perspective:800px] cursor-pointer w-full h-full"
+      className="macbook-container relative transform-gpu [perspective:800px] cursor-pointer"
       style={{ 
+        width: '32rem',  // 固定宽度
+        height: '44rem', // 基座22rem + 屏幕22rem
         transformStyle: 'preserve-3d',
       }}
     >
       <div 
         ref={baseRef}
-        className="macbook-base absolute bottom-0 left-0 rounded-2xl bg-gray-200 dark:bg-[#272729] will-change-transform [transform-style:preserve-3d]"
+        className="macbook-base absolute bottom-0 left-1/2 -translate-x-1/2 rounded-2xl bg-gray-200 dark:bg-[#272729] will-change-transform [transform-style:preserve-3d]"
         style={{ 
           width: '32rem', // 恢复原来的32rem
           height: '22rem' // 恢复原来的22rem
@@ -85,12 +87,11 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
         {/* Lid and Screen */}
         <div
           ref={lidRef}
-          className="macbook-lid absolute rounded-t-2xl bg-transparent p-2"
+          className="macbook-lid absolute left-1/2 -translate-x-1/2 rounded-t-2xl bg-transparent p-2"
           style={{
             transformOrigin: 'bottom center',
             transformStyle: 'preserve-3d',
-            top: '-21.9rem', // 恢复原来的位置
-            left: '0',
+            top: '-22rem', // 直接精确到基座高度
             width: '32rem', // 恢复原来的32rem
             height: '22rem', // 恢复原来的22rem
             zIndex: 10
