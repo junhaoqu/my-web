@@ -83,3 +83,15 @@ body {
   transform-origin: top;
   transform: rotateX(-90deg);
 }
+
+/* iPad styles */
+.ipad-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  perspective: 1000px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+}
