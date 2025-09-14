@@ -1,6 +1,6 @@
 "use client";
-import { animate, createScope } from 'animejs';
-import React, { useEffect, useRef, useState } from "react";
+import { animate } from 'animejs';
+import React, { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import { motion } from "framer-motion";
 import {
   IconBrightnessDown,
@@ -24,192 +24,108 @@ import {
   IconCaretDownFilled,
 } from "@tabler/icons-react";
 
-export default function MacbookScroll() {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const scopeRef = useRef<any>(null);
+export interface MacbookRef {
+  updateAnimation: (progress: number) => void;
+}
+
+const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const lidRef = useRef<HTMLDivElement>(null);
   const baseRef = useRef<HTMLDivElement>(null);
-  const [progress, setProgress] = useState(0);
 
-  useEffect(() => {
-    if (!rootRef.current) return;
-
-    scopeRef.current = createScope({ root: rootRef.current }).add((self: any) => {
+  useImperativeHandle(ref, () => ({
+    updateAnimation: (progress: number) => {
+      const clampedProgress = Math.max(0, Math.min(1, progress));
       
-      // Set initial transforms
-      if (containerRef.current) {
-        containerRef.current.style.transformStyle = 'preserve-3d';
-      }
-      
-      if (lidRef.current) {
-        // We don't animate the lid itself anymore, but the screen inside it
-      }
-      
-      if (baseRef.current) {
-        baseRef.current.style.transformOrigin = 'center center';
-        baseRef.current.style.transformStyle = 'preserve-3d';
-      }
-
-      // Register animation methods
-      self.add('updateMacBookAnimation', (newProgress: number) => {
-        const clampedProgress = Math.max(0, Math.min(1, newProgress));
-        
-        // Animate the new screen panel - from closed to fully open with scroll down
-        animate('.animated-screen', {
-          rotateX: -70 + clampedProgress * 70, // From -70deg (closed) to 0deg (fully open)
-          duration: 300, // Faster animation
-          ease: 'outQuad'
-        });
-      });
-
-      // Create scroll-triggered animation using anime.js
-      // We'll handle this directly in the scroll listener for better control
-
-    });
-
-    // Initialize animation
-    if (scopeRef.current?.methods?.updateMacBookAnimation) {
-      scopeRef.current.methods.updateMacBookAnimation(0);
-    }
-
-    // Add scroll listener for automatic animation
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const windowHeight = window.innerHeight;
-      
-      // Calculate overall progress (0 to 1)
-      const overallProgress = Math.min(1, scrollTop / (windowHeight * 1.5));
-      
-      // Apply easing for smooth animation
-      const easedProgress = overallProgress < 0.5 
-        ? 2 * overallProgress * overallProgress 
-        : 1 - Math.pow(-2 * overallProgress + 2, 2) / 2;
-      
-      // Animate the screen with anime.js
-      animate('.animated-screen', {
-        rotateX: -70 + easedProgress * 70, // From -70deg (closed) to 0deg (fully open)
-        duration: 200, // Smooth animation duration
+      // 动画屏幕打开
+      animate('.mac-animated-screen', {
+        rotateX: -70 + clampedProgress * 70, // 从-70度到0度
+        duration: 200,
         easing: 'easeOutQuad'
       });
-      
-      // Also, scale and move the entire container
-      if (containerRef.current) {
-        const scale = 1 + easedProgress * 0.5; // Scale from 1 to 1.5
-        const translateY = easedProgress * 150; // Move down by 150px at full progress
-        containerRef.current.style.transform = `scale(${scale}) translateY(${translateY}px)`;
-      }
-      
-      setProgress(overallProgress);
-    };
+    }
+  }));
 
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      scopeRef.current?.revert();
-      window.removeEventListener('scroll', handleScroll);
-    };
+  useEffect(() => {
+    // 初始化屏幕状态
+    animate('.mac-animated-screen', {
+      rotateX: -70,
+      duration: 0
+    });
   }, []);
 
-  const handleClick = () => {
-    const newProgress = progress === 0 ? 1 : 0;
-    setProgress(newProgress);
-    if (scopeRef.current?.methods?.updateMacBookAnimation) {
-      scopeRef.current.methods.updateMacBookAnimation(newProgress);
-    }
-  };
-
   return (
-    <div ref={rootRef} className="relative min-h-[300vh] bg-white overflow-hidden" style={{ backgroundColor: '#ffffff' }}>
-      {/* Scroll Section 1 - Initial state */}
-      <div className="scroll-section h-screen flex items-center justify-center relative">
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 text-center z-20">
-          <h2 className="text-4xl font-bold text-black mb-4">
-            This MacBook is built with Framer Motion & Anime.js
-          </h2>
-          <p className="text-xl text-gray-600">Scroll down to open the screen</p>
+    <div 
+      ref={containerRef} 
+      className="macbook-container relative transform-gpu [perspective:800px] cursor-pointer w-full h-full"
+      style={{ 
+        transformStyle: 'preserve-3d',
+      }}
+    >
+      <div 
+        ref={baseRef}
+        className="macbook-base absolute bottom-0 left-0 rounded-2xl bg-gray-200 dark:bg-[#272729] will-change-transform [transform-style:preserve-3d]"
+        style={{ 
+          width: '32rem', // 恢复原来的32rem
+          height: '22rem' // 恢复原来的22rem
+        }}
+      >
+        {/* Keyboard layout */}
+        <div className="relative h-[12%] w-full">
+          <div className="absolute inset-x-0 mx-auto h-[60%] w-[80%] bg-[#050505]" />
         </div>
-
-        <div 
-          ref={containerRef} 
-          className="macbook-container relative transform-gpu [perspective:800px] cursor-pointer"
-          style={{ 
+        <div className="relative flex h-[60%]">
+          <div className="mx-auto h-full w-[10%] overflow-hidden"><SpeakerGrid /></div>
+          <div className="mx-auto h-full w-[80%]"><Keypad /></div>
+          <div className="mx-auto h-full w-[10%] overflow-hidden"><SpeakerGrid /></div>
+        </div>
+        <Trackpad />
+        <div className="absolute inset-x-0 bottom-0 mx-auto h-[3%] w-[25%] rounded-tl-3xl rounded-tr-3xl bg-gradient-to-t from-[#272729] to-[#050505]" />
+        
+        {/* Lid and Screen */}
+        <div
+          ref={lidRef}
+          className="macbook-lid absolute rounded-t-2xl bg-transparent p-2"
+          style={{
+            transformOrigin: 'bottom center',
             transformStyle: 'preserve-3d',
+            top: '-21.9rem', // 恢复原来的位置
+            left: '0',
+            width: '32rem', // 恢复原来的32rem
+            height: '22rem', // 恢复原来的22rem
+            zIndex: 10
           }}
-          onClick={handleClick}
         >
-          <div 
-            ref={baseRef}
-            className="macbook-base relative h-[22rem] w-[32rem] rounded-2xl bg-gray-200 dark:bg-[#272729] will-change-transform [transform-style:preserve-3d]"
+          {/* Screen that animates */}
+          <motion.div
+            className="mac-animated-screen absolute inset-0 h-full w-full rounded-2xl bg-[#010101] p-[2%]"
+            style={{
+              transformStyle: "preserve-3d",
+              transformOrigin: "bottom",
+            }}
           >
-            {/* Keyboard layout */}
-            <div className="relative h-10 w-full">
-              <div className="absolute inset-x-0 mx-auto h-4 w-[80%] bg-[#050505]" />
-            </div>
-            <div className="relative flex">
-              <div className="mx-auto h-full w-[10%] overflow-hidden"><SpeakerGrid /></div>
-              <div className="mx-auto h-full w-[80%]"><Keypad /></div>
-              <div className="mx-auto h-full w-[10%] overflow-hidden"><SpeakerGrid /></div>
-            </div>
-            <Trackpad />
-            <div className="absolute inset-x-0 bottom-0 mx-auto h-2 w-20 rounded-tl-3xl rounded-tr-3xl bg-gradient-to-t from-[#272729] to-[#050505]" />
-            
-            {/* Lid and Screen */}
-            <div
-              ref={lidRef}
-              className="macbook-lid absolute h-[22rem] w-[32rem] rounded-t-2xl bg-transparent p-2"
-              style={{
-                transformOrigin: 'bottom center',
-                transformStyle: 'preserve-3d',
-                top: '-21.9rem',
-                left: '0',
-                zIndex: 10
-              }}
-            >
-              {/* This is the screen part that animates */}
-              <motion.div
-                className="animated-screen absolute inset-0 h-full w-full rounded-2xl bg-[#010101] p-2"
-                style={{
-                  transformStyle: "preserve-3d",
-                  transformOrigin: "bottom",
-                }}
-              >
-                <div className="absolute inset-0 rounded-lg bg-[#272729]" />
-                <img
-                  src="/images/github.png"
-                  alt="GitHub Profile"
-                  className="absolute inset-0 h-full w-full rounded-lg object-cover object-left-top"
-                />
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Scroll Section 2 - Animation trigger area */}
-      <div className="scroll-section h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50">
-        <div className="text-center">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Keep scrolling...</h3>
-          <p className="text-gray-600">The screen will open as you scroll</p>
-        </div>
-      </div>
-
-      {/* Scroll Section 3 - Final state */}
-      <div className="scroll-section h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Screen Fully Open!</h3>
-          <p className="text-gray-600">Scroll back up to close it</p>
+            <div className="absolute inset-0 rounded-lg bg-[#272729]" />
+            <img
+              src="/images/github.png"
+              alt="GitHub Profile"
+              className="absolute inset-0 h-full w-full rounded-lg object-cover object-left-top"
+            />
+          </motion.div>
         </div>
       </div>
     </div>
   );
-}
+});
+
+MacbookScroll.displayName = 'MacbookScroll';
+
+export default MacbookScroll;
 
 // ... Keep the rest of the components (Trackpad, Keypad, KBtn, etc.) as they are
 const Trackpad = () => {
   return (
     <div
-      className="mx-auto my-1 h-32 w-[40%] rounded-xl"
+      className="mx-auto my-[2%] h-[25%] w-[40%] rounded-xl"
       style={{
         boxShadow: "0px 0px 1px 1px #00000020 inset",
       }}
