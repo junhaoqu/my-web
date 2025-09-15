@@ -18,29 +18,36 @@ export default function Home() {
       // 计算总体进度 (0 to 1)
       const overallProgress = Math.min(1, scrollTop / totalScrollHeight);
       
-      // 阶段1: Mac打开并变大 (0-25%)
+      // 阶段1: Mac成为焦点，iPad缩小推远 (0-25%)
       if (overallProgress <= 0.25) {
         const stage1Progress = overallProgress / 0.25;
         const easedProgress = stage1Progress < 0.5 
           ? 2 * stage1Progress * stage1Progress 
           : 1 - Math.pow(-2 * stage1Progress + 2, 2) / 2;
         
-        // Mac动画
+        // Mac动画 - 成为焦点
         macbookRef.current?.updateAnimation(easedProgress);
         
-        // Mac缩放和移动
+        // Mac放大并前进
         if (macContainerRef.current) {
-          const scale = 0.8 + easedProgress * 0.4; // 0.8 to 1.2
-          const translateY = easedProgress * 50;
+          const scale = 0.8 + easedProgress * 0.6; // 0.8 to 1.4，更大的放大
+          const translateY = easedProgress * 30;
           macContainerRef.current.style.transform = `scale(${scale}) translateY(${translateY}px)`;
+          // Mac成为焦点时，移除模糊
+          macContainerRef.current.style.filter = 'blur(0px)';
         }
         
-        // iPad保持初始状态
+        // iPad失去焦点 - 缩小并后退
         if (ipadContainerRef.current) {
-          ipadContainerRef.current.style.transform = 'scale(0.5) translateX(0px)';
+          const scale = 0.7 * (1 - easedProgress * 0.4); // 0.7 to 0.42，缩小
+          const translateX = easedProgress * 100; // 向右推远
+          // 当Mac完全打开时(easedProgress接近1)，iPad变模糊
+          const blurIntensity = easedProgress > 0.8 ? (easedProgress - 0.8) * 25 : 0;
+          ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
+          ipadContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
       }
-      // 阶段2: Mac回到初始状态 (25-50%)
+      // 阶段2: 回到平衡状态 (25-50%)
       else if (overallProgress <= 0.5) {
         const stage2Progress = (overallProgress - 0.25) / 0.25;
         const reverseProgress = 1 - stage2Progress;
@@ -48,61 +55,81 @@ export default function Home() {
           ? 2 * reverseProgress * reverseProgress 
           : 1 - Math.pow(-2 * reverseProgress + 2, 2) / 2;
         
-        // Mac逆向动画
+        // Mac逆向动画 - 回到初始状态
         macbookRef.current?.updateAnimation(easedProgress);
         
-        // Mac缩放回初始
+        // Mac回到初始大小
         if (macContainerRef.current) {
-          const scale = 0.8 + easedProgress * 0.4;
-          const translateY = easedProgress * 50;
+          const scale = 0.8 + easedProgress * 0.6;
+          const translateY = easedProgress * 30;
           macContainerRef.current.style.transform = `scale(${scale}) translateY(${translateY}px)`;
+          // 模糊效果逐渐消失
+          const blurIntensity = easedProgress > 0.8 ? (easedProgress - 0.8) * 25 : 0;
+          macContainerRef.current.style.filter = 'blur(0px)';
         }
         
-        // iPad保持初始状态
+        // iPad回到初始大小
         if (ipadContainerRef.current) {
-          ipadContainerRef.current.style.transform = 'scale(0.5) translateX(0px)';
+          const scale = 0.7 * (1 - easedProgress * 0.4);
+          const translateX = easedProgress * 100;
+          const blurIntensity = easedProgress > 0.8 ? (easedProgress - 0.8) * 25 : 0;
+          ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
+          ipadContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
       }
-      // 阶段3: 摄像机向右移动到iPad (50-75%)
+      // 阶段3: 焦点转移，iPad开始成为焦点 (50-75%)
       else if (overallProgress <= 0.75) {
         const stage3Progress = (overallProgress - 0.5) / 0.25;
         const easedProgress = stage3Progress < 0.5 
           ? 2 * stage3Progress * stage3Progress 
           : 1 - Math.pow(-2 * stage3Progress + 2, 2) / 2;
         
-        // Mac完全回到初始状态并移出视野
+        // Mac失去焦点 - 缩小并后退
         macbookRef.current?.updateAnimation(0);
+        
         if (macContainerRef.current) {
-          const translateX = -easedProgress * 200; // 向左移动
-          const scale = 0.8 * (1 - easedProgress * 0.3); // 逐渐缩小
+          const scale = 0.8 * (1 - easedProgress * 0.5); // 0.8 to 0.4，缩小
+          const translateX = -easedProgress * 150; // 向左推远
           macContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
+          // Mac失去焦点，开始模糊
+          macContainerRef.current.style.filter = 'blur(0px)';
         }
         
-        // iPad移动到中央
+        // iPad开始获得焦点 - 放大并前进
         if (ipadContainerRef.current) {
-          const translateX = -easedProgress * 300; // 向左移动到中央
-          const scale = 0.5 + easedProgress * 0.3; // 开始放大
+          const scale = 0.7 + easedProgress * 0.4; // 0.7 to 1.1，放大
+          const translateX = -easedProgress * 50; // 向中心移动
           ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
+          // iPad获得焦点，移除模糊
+          ipadContainerRef.current.style.filter = 'blur(0px)';
         }
       }
-      // 阶段4: iPad变大并打开屏幕 (75-100%)
+      // 阶段4: iPad完全成为焦点 (75-100%)
       else {
         const stage4Progress = (overallProgress - 0.75) / 0.25;
         const easedProgress = stage4Progress < 0.5 
           ? 2 * stage4Progress * stage4Progress 
           : 1 - Math.pow(-2 * stage4Progress + 2, 2) / 2;
         
-        // Mac完全移出视野
+        // Mac完全失去焦点 - 极度缩小
         if (macContainerRef.current) {
-          macContainerRef.current.style.transform = 'scale(0.5) translateX(-200px)';
+          const scale = 0.4 * (1 - easedProgress * 0.5); // 0.4 to 0.2，非常小
+          const translateX = -150 - easedProgress * 100; // 继续远离
+          // Mac完全失去焦点，增加模糊
+          const blurIntensity = easedProgress > 0.2 ? (easedProgress - 0.2) * 6.25 : 0; // 0.2后开始模糊，最大5px
+          macContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
+          macContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
         
-        // iPad动画和最终缩放
+        // iPad完全成为焦点 - 最大化并打开
         ipadRef.current?.updateAnimation(easedProgress);
         if (ipadContainerRef.current) {
-          const scale = 0.8 + easedProgress * 0.4; // 0.8 to 1.2
-          const translateY = easedProgress * 30;
-          ipadContainerRef.current.style.transform = `scale(${scale}) translateX(-300px) translateY(${translateY}px)`;
+          const scale = 1.1 + easedProgress * 0.3; // 1.1 to 1.4，很大
+          const translateX = -50 - easedProgress * 30; // 微调到最佳位置
+          const translateY = easedProgress * 20; // 轻微上移
+          ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px) translateY(${translateY}px)`;
+          // iPad成为完全焦点，保持清晰
+          ipadContainerRef.current.style.filter = 'blur(0px)';
         }
       }
     };
@@ -128,23 +155,24 @@ export default function Home() {
       {/* Mac设备容器 - 使用固定定位以便精确控制 */}
       <div 
         ref={macContainerRef}
-        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 transition-all duration-200"
         style={{ 
-          width: '32rem', // 匹配MacBook宽度
-          height: '44rem' // 容纳基座22rem + 屏幕22rem
+          width: '32rem', 
+          height: '44rem'
         }}
       >
         <Macbook ref={macbookRef} />
       </div>
       
-      {/* iPad设备容器 - 初始位置在右边 */}
+      {/* iPad设备容器 - 初始位置在Mac右侧，较小尺寸 */}
       <div 
         ref={ipadContainerRef}
-        className="fixed top-1/2 -translate-y-1/2 z-5"
+        className="fixed top-1/2 -translate-y-1/2 z-25 transition-all duration-200"
         style={{ 
-          right: '5vw',
-          width: '20rem', // 匹配iPad宽度
-          height: '28rem' // 匹配iPad高度
+          left: 'calc(50% + 20rem)', 
+          width: '20rem', 
+          height: '28rem',
+          transform: 'scale(0.7)'
         }}
       >
         <Ipad ref={ipadRef} />
