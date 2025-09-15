@@ -138,139 +138,152 @@ export default function Home() {
           cameraContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
       }
-      // 阶段3: 焦点转移到iPad (33.33-50%)
+      // 阶段3: iPad成为焦点 (33.33-50%)
       else if (overallProgress <= 3/6) {
         const stage3Progress = (overallProgress - 2/6) / (1/6);
         const easedProgress = stage3Progress < 0.5 
           ? 2 * stage3Progress * stage3Progress 
           : 1 - Math.pow(-2 * stage3Progress + 2, 2) / 2;
         
-        // Mac失去焦点
-        macbookRef.current?.updateAnimation(0);
+        // iPad获得焦点并打开
+        ipadRef.current?.updateAnimation(easedProgress);
         
+        // Mac失去焦点 - 变小
         if (macContainerRef.current) {
           const scale = 0.8 * (1 - easedProgress * 0.5); // 0.8 to 0.4
           const translateX = -easedProgress * 150;
-          macContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
-          macContainerRef.current.style.filter = 'blur(0px)';
-        }
-        
-        // iPad获得焦点
-        if (ipadContainerRef.current) {
-          const scale = 0.7 + easedProgress * 0.4; // 0.7 to 1.1
-          const translateX = -easedProgress * 50;
-          ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
-          ipadContainerRef.current.style.filter = 'blur(0px)';
-        }
-
-        // Camera继续失去焦点
-        if (cameraContainerRef.current) {
-          const scale = 0.6 * (1 - easedProgress * 0.3); // 0.6 to 0.42
-          const translateX = -120 - easedProgress * 80;
-          const blurIntensity = easedProgress > 0.5 ? (easedProgress - 0.5) * 10 : 0;
-          cameraContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
-          cameraContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
-        }
-      }
-      // 阶段4: iPad完全成为焦点 (50-66.67%)
-      else if (overallProgress <= 4/6) {
-        const stage4Progress = (overallProgress - 3/6) / (1/6);
-        const easedProgress = stage4Progress < 0.5 
-          ? 2 * stage4Progress * stage4Progress 
-          : 1 - Math.pow(-2 * stage4Progress + 2, 2) / 2;
-        
-        // iPad完全成为焦点
-        ipadRef.current?.updateAnimation(easedProgress);
-        
-        if (macContainerRef.current) {
-          const scale = 0.4 * (1 - easedProgress * 0.5); // 0.4 to 0.2
-          const translateX = -150 - easedProgress * 100;
-          const blurIntensity = easedProgress > 0.2 ? (easedProgress - 0.2) * 6.25 : 0;
+          const blurIntensity = easedProgress > 0.6 ? (easedProgress - 0.6) * 12.5 : 0;
           macContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           macContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
         
+        // iPad获得焦点
         if (ipadContainerRef.current) {
-          const scale = 1.1 + easedProgress * 0.5; // 1.1 to 1.6
-          const translateX = -50 - easedProgress * 30;
+          const scale = 0.7 + easedProgress * 0.7; // 0.7 to 1.4
+          const translateX = -easedProgress * 50;
           const translateY = easedProgress * 20;
           ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px) translateY(${translateY}px)`;
           ipadContainerRef.current.style.filter = 'blur(0px)';
         }
 
+        // Camera也失去焦点 - 和Mac一样变小
         if (cameraContainerRef.current) {
-          const scale = 0.42 * (1 - easedProgress * 0.3); // 0.42 to 0.29
-          const translateX = -200 - easedProgress * 50;
-          const blurIntensity = 5 + easedProgress * 5; // 增加模糊
+          const scale = 0.6 * (1 - easedProgress * 0.5); // 0.6 to 0.3，和Mac一样变小
+          const translateX = -120 - easedProgress * 80; // 向左推远
+          const blurIntensity = easedProgress > 0.6 ? (easedProgress - 0.6) * 12.5 : 0;
           cameraContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           cameraContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
       }
-      // 阶段5: 焦点转移到Camera (66.67-83.33%)
+      // 阶段4: 回到平衡状态 (50-66.67%)
+      else if (overallProgress <= 4/6) {
+        const stage4Progress = (overallProgress - 3/6) / (1/6);
+        const reverseProgress = 1 - stage4Progress;
+        const easedProgress = reverseProgress < 0.5 
+          ? 2 * reverseProgress * reverseProgress 
+          : 1 - Math.pow(-2 * reverseProgress + 2, 2) / 2;
+        
+        // iPad逆向动画 - 回到初始状态
+        ipadRef.current?.updateAnimation(easedProgress);
+        
+        // Mac回到初始大小
+        if (macContainerRef.current) {
+          const scale = 0.4 + (1 - easedProgress) * 0.4; // 从0.4逐渐回到0.8（初始大小）
+          const translateX = 0; // 不移动，保持在中心位置
+          const blurIntensity = 0; // 清晰显示
+          macContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
+          macContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
+        }
+        
+        // iPad回到初始大小
+        if (ipadContainerRef.current) {
+          const scale = 1.4 - (1 - easedProgress) * 0.7; // 从1.4逐渐回到0.7（初始大小）
+          const translateX = 0; // 回到初始位置，不偏移
+          const translateY = 0; // 回到初始位置，不偏移
+          ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px) translateY(${translateY}px)`;
+          ipadContainerRef.current.style.filter = 'blur(0px)';
+        }
+
+        // Camera回到初始大小
+        if (cameraContainerRef.current) {
+          const scale = 0.3 + (1 - easedProgress) * 0.3; // 从0.3逐渐回到0.6（初始大小）
+          const translateX = 0; // 回到初始位置，不偏移
+          const blurIntensity = 0; // 清晰显示
+          cameraContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
+          cameraContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
+        }
+      }
+      // 阶段5: Camera成为焦点 (66.67-83.33%)
       else if (overallProgress <= 5/6) {
         const stage5Progress = (overallProgress - 4/6) / (1/6);
         const easedProgress = stage5Progress < 0.5 
           ? 2 * stage5Progress * stage5Progress 
           : 1 - Math.pow(-2 * stage5Progress + 2, 2) / 2;
         
-        // iPad失去焦点
-        ipadRef.current?.updateAnimation(1 - easedProgress);
-        
-        if (macContainerRef.current) {
-          const scale = 0.2 * (1 - easedProgress * 0.25); // 继续缩小
-          const translateX = -250 - easedProgress * 50;
-          const blurIntensity = 5 + easedProgress * 5;
-          macContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
-          macContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
-        }
-        
-        if (ipadContainerRef.current) {
-          const scale = 1.6 * (1 - easedProgress * 0.5); // 1.6 to 0.8
-          const translateX = -80 + easedProgress * 150; // 向右推远
-          const blurIntensity = easedProgress > 0.3 ? (easedProgress - 0.3) * 7.14 : 0;
-          ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
-          ipadContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
-        }
-
-        // Camera获得焦点
-        if (cameraContainerRef.current) {
-          const scale = 0.29 + easedProgress * 0.8; // 0.29 to 1.09
-          const translateX = -250 + easedProgress * 200; // 向中心移动
-          const blurIntensity = 10 * (1 - easedProgress); // 减少模糊
-          cameraContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
-          cameraContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
-        }
-      }
-      // 阶段6: Camera完全成为焦点 (83.33-100%)
-      else {
-        const stage6Progress = (overallProgress - 5/6) / (1/6);
-        const easedProgress = stage6Progress < 0.5 
-          ? 2 * stage6Progress * stage6Progress 
-          : 1 - Math.pow(-2 * stage6Progress + 2, 2) / 2;
-        
-        // Camera完全成为焦点
+        // Camera获得焦点并激活
         cameraRef.current?.updateAnimation(easedProgress);
         
+        // Mac失去焦点 - 变小但不移动
         if (macContainerRef.current) {
-          const scale = 0.15; // 最小
-          const translateX = -300;
-          const blurIntensity = 10;
+          const scale = 0.8 * (1 - easedProgress * 0.75); // 0.8 to 0.2
+          const translateX = 0; // 不移动，保持在中心位置
+          const blurIntensity = easedProgress > 0.4 ? (easedProgress - 0.4) * 8.33 : 0;
           macContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           macContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
         
+        // iPad失去焦点 - 变小
         if (ipadContainerRef.current) {
-          const scale = 0.8 * (1 - easedProgress * 0.3); // 0.8 to 0.56
-          const translateX = 70 + easedProgress * 80; // 继续推远
-          const blurIntensity = 5 + easedProgress * 5;
+          const scale = 0.7 * (1 - easedProgress * 0.4); // 0.7 to 0.42
+          const translateX = easedProgress * 150; // 向右推远
+          const blurIntensity = easedProgress > 0.4 ? (easedProgress - 0.4) * 8.33 : 0;
           ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           ipadContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
 
+        // Camera获得焦点 - 从初始大小开始变大
         if (cameraContainerRef.current) {
-          const scale = 1.09 + easedProgress * 0.6; // 1.09 to 1.69
-          const translateX = -50 - easedProgress * 30;
-          const translateY = easedProgress * 25;
+          const scale = 0.6 + easedProgress * 0.6; // 从0.6（初始大小）开始变大到1.2
+          const translateX = -120 + easedProgress * 80; // 向中心移动
+          const translateY = easedProgress * 20; // 轻微向上
+          cameraContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px) translateY(${translateY}px)`;
+          cameraContainerRef.current.style.filter = 'blur(0px)';
+        }
+      }
+      // 阶段6: 回到平衡状态 (83.33-100%)
+      else {
+        const stage6Progress = (overallProgress - 5/6) / (1/6);
+        const reverseProgress = 1 - stage6Progress;
+        const easedProgress = reverseProgress < 0.5 
+          ? 2 * reverseProgress * reverseProgress 
+          : 1 - Math.pow(-2 * reverseProgress + 2, 2) / 2;
+        
+        // Camera逆向动画 - 回到初始状态
+        cameraRef.current?.updateAnimation(easedProgress);
+        
+        // Mac回到初始状态 - 不移动
+        if (macContainerRef.current) {
+          const scale = 0.2 + (1 - easedProgress) * 0.6; // 从0.2回到0.8
+          const translateX = 0; // 不移动，保持在中心位置
+          const blurIntensity = 0; // 清晰显示
+          macContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
+          macContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
+        }
+        
+        // iPad回到初始状态
+        if (ipadContainerRef.current) {
+          const scale = 0.42 + (1 - easedProgress) * 0.28; // 从0.42回到0.7
+          const translateX = 0; // 回到初始位置
+          const blurIntensity = 0; // 清晰显示
+          ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
+          ipadContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
+        }
+
+        // Camera回到初始状态
+        if (cameraContainerRef.current) {
+          const scale = 1.2 - (1 - easedProgress) * 0.6; // 从1.2回到0.6
+          const translateX = 0; // 回到初始位置
+          const translateY = 0; // 回到初始位置
           cameraContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px) translateY(${translateY}px)`;
           cameraContainerRef.current.style.filter = 'blur(0px)';
         }
@@ -339,32 +352,32 @@ export default function Home() {
       <div className="h-[700vh] relative">
         <div className="h-screen flex items-center justify-center">
           <div className="text-center mt-32">
-            <p className="text-lg text-gray-600">Stage 1: MacBook opens and scales up</p>
+            <p className="text-lg text-gray-600">Stage 1: MacBook becomes focus</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600">Stage 2: MacBook returns to initial state</p>
+            <p className="text-lg text-gray-600">Stage 2: Return to balance</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600">Stage 3: Camera pans to iPad</p>
+            <p className="text-lg text-gray-600">Stage 3: iPad becomes focus</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600">Stage 4: iPad opens and scales up</p>
+            <p className="text-lg text-gray-600">Stage 4: Return to balance</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600">Stage 5: Camera pans to Camera</p>
+            <p className="text-lg text-gray-600">Stage 5: Camera becomes focus</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600">Stage 6: Camera activates and scales up</p>
+            <p className="text-lg text-gray-600">Stage 6: Return to balance</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
