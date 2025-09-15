@@ -29,15 +29,17 @@
 }
 
 /* Aurora animation */
-@keyframes aurora {
-  from {
-    background-position: 50% 50%, 50% 50%;
-  }
-  to {
-    background-position: 350% 50%, 350% 50%;
+@theme inline {
+  --animate-aurora: aurora 60s linear infinite;
+  @keyframes aurora {
+    from {
+      background-position: 50% 50%, 50% 50%;
+    }
+    to {
+      background-position: 350% 50%, 350% 50%;
+    }
   }
 }
-
 /* Theme transition */
 * {
   transition: background-color 0.3s ease, color 0.3s ease;

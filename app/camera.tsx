@@ -38,10 +38,14 @@ const CameraScroll = forwardRef<CameraRef, CameraScrollProps>((props, ref) => {
     >
       {/* 发光底层 */}
        <div 
-        className="absolute inset-0 rounded-2xl opacity-45 blur-xl animate-pulse"
+        className="absolute rounded-2xl opacity-45 blur-xl animate-pulse"
         style={{
           background: 'radial-gradient(ellipse at center, rgba(34, 197, 94, 0.7), rgba(59, 130, 246, 0.5), rgba(168, 85, 247, 0.3), transparent)',
-          transform: 'translateZ(-50px) scale(1.25)',
+          width: '34rem',
+          height: '35rem',
+          top: '80%',
+          left: '50%',
+          transform: 'translate(-50%, -80%) translateZ(-50px) scale(1.2)',
           zIndex: -1
         }}
       ></div>

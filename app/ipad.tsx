@@ -42,13 +42,18 @@ const IpadScroll = forwardRef<IpadRef>((props, ref) => {
     >
       {/* 发光底层 */}
       <div 
-        className="absolute inset-0 rounded-2xl opacity-45 blur-xl animate-pulse"
+        className="absolute rounded-2xl opacity-40 blur-xl animate-pulse"
         style={{
           background: 'radial-gradient(ellipse at center, rgba(34, 197, 94, 0.7), rgba(59, 130, 246, 0.5), rgba(168, 85, 247, 0.3), transparent)',
-          transform: 'translateZ(-50px) scale(1.25)',
+          width: '32rem',
+          height: '44rem', 
+          top: '100%',
+          left: '50%',
+          transform: 'translate(-50%, -160%) translateZ(-10px) scale(1.1)',
           zIndex: -1
         }}
       ></div>
+      
       
       <div
         className="ipad-base absolute top-0 left-0 rounded-2xl will-change-transform [transform-style:preserve-3d]"

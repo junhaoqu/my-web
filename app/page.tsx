@@ -140,7 +140,7 @@ export default function Home() {
         if (ipadContainerRef.current) {
           const scale = 0.7 * (1 - easedProgress * 0.4); // 0.7 to 0.42
           const translateX = easedProgress * 100;
-          const blurIntensity = easedProgress > 0.8 ? (easedProgress - 0.8) * 25 : 0;
+          const blurIntensity = easedProgress > 0.4 ? 5 : 0; // 达到一定进度后保持5px模糊
           ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           ipadContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
@@ -149,7 +149,7 @@ export default function Home() {
         if (cameraContainerRef.current) {
           const scale = 0.6 * (1 - easedProgress * 0.4); // 0.6 to 0.36
           const translateX = -easedProgress * 120; // 向左推远
-          const blurIntensity = easedProgress > 0.8 ? (easedProgress - 0.8) * 25 : 0;
+          const blurIntensity = easedProgress > 0.4 ? 5 : 0; // 达到一定进度后保持5px模糊
           cameraContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           cameraContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
@@ -165,28 +165,50 @@ export default function Home() {
         // Mac逆向动画 - 回到初始状态
         macbookRef.current?.updateAnimation(easedProgress);
         
+        // Mac从第1阶段的状态平滑回到平衡位置
         if (macContainerRef.current) {
-          const scale = 0.8 + easedProgress * 0.6;
-          const translateY = easedProgress * 30;
+          // 第1阶段结束时Mac状态：scale=1.4, translateY=30, blur=0px
+          const startScale = 1.4;
+          const startTranslateY = 30;
+          const targetScale = 0.8; // 回到初始大小
+          const targetTranslateY = 0; // 回到初始位置
+          
+          const scale = startScale + (1 - easedProgress) * (targetScale - startScale);
+          const translateY = startTranslateY + (1 - easedProgress) * (targetTranslateY - startTranslateY);
           macContainerRef.current.style.transform = `scale(${scale}) translateY(${translateY}px)`;
           macContainerRef.current.style.filter = 'blur(0px)';
         }
         
+        // iPad和Camera在Mac逆向阶段应该保持模糊，从第1阶段的状态平滑回到平衡位置
         if (ipadContainerRef.current) {
-          const scale = 0.7 * (1 - easedProgress * 0.4);
-          const translateX = easedProgress * 100;
-          const blurIntensity = easedProgress > 0.8 ? (easedProgress - 0.8) * 25 : 0;
+          // 第1阶段结束时iPad状态：scale=0.42, translateX=100, blur=5px
+          const startScale = 0.42;
+          const startTranslateX = 100;
+          const targetScale = 0.7; // 回到初始大小
+          const targetTranslateX = 0; // 回到初始位置
+          
+          const scale = startScale + (1 - easedProgress) * (targetScale - startScale);
+          const translateX = startTranslateX + (1 - easedProgress) * (targetTranslateX - startTranslateX);
+          const blurIntensity = 5; // 保持一定的模糊效果
           ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           ipadContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
 
         if (cameraContainerRef.current) {
-          const scale = 0.6 * (1 - easedProgress * 0.4);
-          const translateX = -easedProgress * 120;
-          const blurIntensity = easedProgress > 0.8 ? (easedProgress - 0.8) * 25 : 0;
+          // 第1阶段结束时Camera状态：scale=0.36, translateX=-120, blur=5px
+          const startScale = 0.36;
+          const startTranslateX = -120;
+          const targetScale = 0.6; // 回到初始大小
+          const targetTranslateX = 0; // 回到初始位置
+          
+          const scale = startScale + (1 - easedProgress) * (targetScale - startScale);
+          const translateX = startTranslateX + (1 - easedProgress) * (targetTranslateX - startTranslateX);
+          const blurIntensity = 5; // 保持一定的模糊效果
           cameraContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           cameraContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
+
+        
       }
       // 阶段3: iPad成为焦点 (33.33-50%)
       else if (overallProgress <= 3/6) {
@@ -198,29 +220,51 @@ export default function Home() {
         // iPad获得焦点并打开
         ipadRef.current?.updateAnimation(easedProgress);
         
-        // Mac失去焦点 - 变小
+        // Mac失去焦点 - 从第2阶段结束位置平滑过渡
         if (macContainerRef.current) {
-          const scale = 0.8 * (1 - easedProgress * 0.5); // 0.8 to 0.4
-          const translateX = -easedProgress * 150;
-          const blurIntensity = easedProgress > 0.6 ? (easedProgress - 0.6) * 12.5 : 0;
+          // 第2阶段结束时Mac状态：scale=0.8, translateX=0, blur=0px
+          const startScale = 0.8;
+          const startTranslateX = 0;
+          const targetScale = 0.4;
+          const targetTranslateX = -150;
+          
+          const scale = startScale + easedProgress * (targetScale - startScale); // 从0.8平滑到0.4
+          const translateX = startTranslateX + easedProgress * (targetTranslateX - startTranslateX); // 从0平滑到-150
+          const blurIntensity = 5; // 保持模糊效果，和第5阶段一样
           macContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           macContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
         
-        // iPad获得焦点
+        // iPad获得焦点 - 从第2阶段结束位置平滑过渡
         if (ipadContainerRef.current) {
-          const scale = 0.7 + easedProgress * 0.7; // 0.7 to 1.4
-          const translateX = -easedProgress * 50;
-          const translateY = easedProgress * 20;
+          // 第2阶段结束时iPad的状态：scale=0.7, translateX=0, blur=5px
+          const startScale = 0.7;
+          const startTranslateX = 0;
+          const targetScale = 1.4;
+          const targetTranslateX = -50;
+          const targetTranslateY = 20;
+          
+          const scale = startScale + easedProgress * (targetScale - startScale); // 从0.7平滑到1.4
+          const translateX = startTranslateX + easedProgress * (targetTranslateX - startTranslateX); // 从0平滑到-50
+          const translateY = easedProgress * targetTranslateY; // 从0到20
+          const blurIntensity = Math.max(0, 5 * (1 - easedProgress * 2)); // 从5px平滑到0px
+          
           ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px) translateY(${translateY}px)`;
-          ipadContainerRef.current.style.filter = 'blur(0px)';
+          ipadContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
 
-        // Camera也失去焦点 - 和Mac一样变小
+        // Camera也失去焦点 - 从第2阶段结束位置平滑过渡
         if (cameraContainerRef.current) {
-          const scale = 0.6 * (1 - easedProgress * 0.5); // 0.6 to 0.3，和Mac一样变小
-          const translateX = -120 - easedProgress * 80; // 向左推远
-          const blurIntensity = easedProgress > 0.6 ? (easedProgress - 0.6) * 12.5 : 0;
+          // 第2阶段结束时Camera的状态：scale=0.6, translateX=0, blur=5px
+          const startScale = 0.6;
+          const startTranslateX = 0;
+          const targetScale = 0.3;
+          const targetTranslateX = -200; // 向左推远
+          
+          const scale = startScale + easedProgress * (targetScale - startScale); // 从0.6平滑到0.3
+          const translateX = startTranslateX + easedProgress * (targetTranslateX - startTranslateX); // 从0平滑到-200
+          const blurIntensity = 5; // 保持5px模糊
+          
           cameraContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           cameraContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
@@ -236,29 +280,49 @@ export default function Home() {
         // iPad逆向动画 - 回到初始状态
         ipadRef.current?.updateAnimation(easedProgress);
         
-        // Mac回到初始大小
+        // Mac在iPad逆向阶段应该保持模糊，从第3阶段的状态平滑回到平衡位置
         if (macContainerRef.current) {
-          const scale = 0.4 + (1 - easedProgress) * 0.4; // 从0.4逐渐回到0.8（初始大小）
-          const translateX = 0; // 不移动，保持在中心位置
-          const blurIntensity = 0; // 清晰显示
+          // 第3阶段结束时Mac状态：scale=0.4, translateX=-150, blur=5px
+          const startScale = 0.4;
+          const startTranslateX = -150;
+          const targetScale = 0.8; // 回到初始大小
+          const targetTranslateX = 0; // 回到中心位置
+          
+          const scale = startScale + (1 - easedProgress) * (targetScale - startScale);
+          const translateX = startTranslateX + (1 - easedProgress) * (targetTranslateX - startTranslateX);
+          const blurIntensity = 5; // 保持模糊效果
           macContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           macContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
         
-        // iPad回到初始大小
+        // iPad回到初始大小 - 从第3阶段的状态平滑回到平衡位置
         if (ipadContainerRef.current) {
-          const scale = 1.4 - (1 - easedProgress) * 0.7; // 从1.4逐渐回到0.7（初始大小）
-          const translateX = 0; // 回到初始位置，不偏移
-          const translateY = 0; // 回到初始位置，不偏移
+          // 第3阶段结束时iPad状态：scale=1.4, translateX=-50, translateY=20, blur=0px
+          const startScale = 1.4;
+          const startTranslateX = -50;
+          const startTranslateY = 20;
+          const targetScale = 0.7; // 回到初始大小
+          const targetTranslateX = 0; // 回到初始位置
+          const targetTranslateY = 0; // 回到初始位置
+          
+          const scale = startScale + (1 - easedProgress) * (targetScale - startScale);
+          const translateX = startTranslateX + (1 - easedProgress) * (targetTranslateX - startTranslateX);
+          const translateY = startTranslateY + (1 - easedProgress) * (targetTranslateY - startTranslateY);
           ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px) translateY(${translateY}px)`;
           ipadContainerRef.current.style.filter = 'blur(0px)';
         }
 
-        // Camera回到初始大小
+        // Camera在iPad逆向阶段应该保持模糊，从第3阶段的状态平滑回到平衡位置
         if (cameraContainerRef.current) {
-          const scale = 0.3 + (1 - easedProgress) * 0.3; // 从0.3逐渐回到0.6（初始大小）
-          const translateX = 0; // 回到初始位置，不偏移
-          const blurIntensity = 0; // 清晰显示
+          // 第3阶段结束时Camera状态：scale=0.3, translateX=-200, blur=5px
+          const startScale = 0.3;
+          const startTranslateX = -200;
+          const targetScale = 0.6; // 回到初始大小
+          const targetTranslateX = 0; // 回到初始位置
+          
+          const scale = startScale + (1 - easedProgress) * (targetScale - startScale);
+          const translateX = startTranslateX + (1 - easedProgress) * (targetTranslateX - startTranslateX);
+          const blurIntensity = 5; // 保持模糊效果
           cameraContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           cameraContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
@@ -273,31 +337,48 @@ export default function Home() {
         // Camera获得焦点并激活
         cameraRef.current?.updateAnimation(easedProgress);
         
-        // Mac失去焦点 - 变小但不移动
+        // Mac失去焦点 - 从第4阶段结束位置平滑过渡
         if (macContainerRef.current) {
-          const scale = 0.8 * (1 - easedProgress * 0.75); // 0.8 to 0.2
+          // 第4阶段结束时Mac的状态：scale=0.8, translateX=0, blur=5px
+          const startScale = 0.8;
+          const targetScale = 0.2;
+          
+          const scale = startScale + easedProgress * (targetScale - startScale); // 从0.8平滑到0.2
           const translateX = 0; // 不移动，保持在中心位置
-          const blurIntensity = easedProgress > 0.4 ? (easedProgress - 0.4) * 8.33 : 0;
+          const blurIntensity = Math.max(5, 5 + easedProgress * 0); // 保持5px模糊
           macContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           macContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
         
-        // iPad失去焦点 - 变小
+        // iPad失去焦点 - 从第4阶段结束位置平滑过渡
         if (ipadContainerRef.current) {
-          const scale = 0.7 * (1 - easedProgress * 0.4); // 0.7 to 0.42
-          const translateX = easedProgress * 150; // 向右推远
-          const blurIntensity = easedProgress > 0.4 ? (easedProgress - 0.4) * 8.33 : 0;
+          // 第4阶段结束时iPad的状态：scale=0.7, translateX=0, blur=5px
+          const startScale = 0.7;
+          const targetScale = 0.42;
+          const targetTranslateX = 150; // 向右推远
+          
+          const scale = startScale + easedProgress * (targetScale - startScale); // 从0.7平滑到0.42
+          const translateX = easedProgress * targetTranslateX; // 从0平滑到150
+          const blurIntensity = Math.max(5, 5 + easedProgress * 0); // 保持5px模糊
           ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           ipadContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
 
-        // Camera获得焦点 - 从初始大小开始变大
+        // Camera获得焦点 - 从第4阶段结束位置平滑过渡
         if (cameraContainerRef.current) {
-          const scale = 0.6 + easedProgress * 0.6; // 从0.6（初始大小）开始变大到1.2
-          const translateX = -120 + easedProgress * 80; // 向中心移动
-          const translateY = easedProgress * 20; // 轻微向上
+          // 第4阶段结束时Camera的状态：scale=0.6, translateX=0, blur=5px
+          const startScale = 0.6;
+          const targetScale = 1.2;
+          const targetTranslateX = -40; // 轻微向中心移动
+          const targetTranslateY = 20; // 轻微向上
+          
+          const scale = startScale + easedProgress * (targetScale - startScale); // 从0.6平滑到1.2
+          const translateX = easedProgress * targetTranslateX; // 从0平滑到-40
+          const translateY = easedProgress * targetTranslateY; // 从0平滑到20
+          const blurIntensity = Math.max(0, 5 * (1 - easedProgress * 2)); // 从5px平滑到0px
+          
           cameraContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px) translateY(${translateY}px)`;
-          cameraContainerRef.current.style.filter = 'blur(0px)';
+          cameraContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
       }
       // 阶段6: 回到平衡状态 (83.33-100%)
@@ -311,29 +392,47 @@ export default function Home() {
         // Camera逆向动画 - 回到初始状态
         cameraRef.current?.updateAnimation(easedProgress);
         
-        // Mac回到初始状态 - 不移动
+        // Mac在Camera逆向阶段应该保持模糊，从第5阶段的状态平滑回到平衡位置
         if (macContainerRef.current) {
-          const scale = 0.2 + (1 - easedProgress) * 0.6; // 从0.2回到0.8
+          // 第5阶段结束时Mac状态：scale=0.2, translateX=0, blur=5px
+          const startScale = 0.2;
+          const targetScale = 0.8; // 回到初始大小
+          
+          const scale = startScale + (1 - easedProgress) * (targetScale - startScale);
           const translateX = 0; // 不移动，保持在中心位置
-          const blurIntensity = 0; // 清晰显示
+          const blurIntensity = 5; // 保持模糊效果
           macContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           macContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
         
-        // iPad回到初始状态
+        // iPad在Camera逆向阶段应该保持模糊，从第5阶段的状态平滑回到平衡位置
         if (ipadContainerRef.current) {
-          const scale = 0.42 + (1 - easedProgress) * 0.28; // 从0.42回到0.7
-          const translateX = 0; // 回到初始位置
-          const blurIntensity = 0; // 清晰显示
+          // 第5阶段结束时iPad状态：scale=0.42, translateX=150, blur=5px
+          const startScale = 0.42;
+          const startTranslateX = 150;
+          const targetScale = 0.7; // 回到初始大小
+          const targetTranslateX = 0; // 回到初始位置
+          
+          const scale = startScale + (1 - easedProgress) * (targetScale - startScale);
+          const translateX = startTranslateX + (1 - easedProgress) * (targetTranslateX - startTranslateX);
+          const blurIntensity = 5; // 保持模糊效果
           ipadContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px)`;
           ipadContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
 
-        // Camera回到初始状态
+        // Camera回到初始状态，从第5阶段的状态平滑回到平衡位置
         if (cameraContainerRef.current) {
-          const scale = 1.2 - (1 - easedProgress) * 0.6; // 从1.2回到0.6
-          const translateX = 0; // 回到初始位置
-          const translateY = 0; // 回到初始位置
+          // 第5阶段结束时Camera状态：scale=1.2, translateX=-40, translateY=20, blur=0px
+          const startScale = 1.2;
+          const startTranslateX = -40;
+          const startTranslateY = 20;
+          const targetScale = 0.6; // 回到初始大小
+          const targetTranslateX = 0; // 回到初始位置
+          const targetTranslateY = 0; // 回到初始位置
+          
+          const scale = startScale + (1 - easedProgress) * (targetScale - startScale);
+          const translateX = startTranslateX + (1 - easedProgress) * (targetTranslateX - startTranslateX);
+          const translateY = startTranslateY + (1 - easedProgress) * (targetTranslateY - startTranslateY);
           cameraContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px) translateY(${translateY}px)`;
           cameraContainerRef.current.style.filter = 'blur(0px)';
         }
@@ -570,7 +669,7 @@ export default function Home() {
           </div>
 
           {/* 阶段标记大球 - 在进度条外部 */}
-          {[1, 3, 5].map((stage) => (
+          {[0, 1, 3, 5].map((stage) => (
             <button
               key={stage}
               onClick={() => jumpToStage(stage)}
