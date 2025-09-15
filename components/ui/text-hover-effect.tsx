@@ -20,12 +20,16 @@ export const TextHoverEffect = ({
       const svgRect = svgRef.current.getBoundingClientRect();
       const cxPercentage = ((cursor.x - svgRect.left) / svgRect.width) * 100;
       const cyPercentage = ((cursor.y - svgRect.top) / svgRect.height) * 100;
-      setMaskPosition({
-        cx: `${cxPercentage}%`,
-        cy: `${cyPercentage}%`,
+      
+      // 使用 requestAnimationFrame 来避免频繁更新
+      requestAnimationFrame(() => {
+        setMaskPosition({
+          cx: `${cxPercentage}%`,
+          cy: `${cyPercentage}%`,
+        });
       });
     }
-  }, [cursor]);
+  }, [cursor.x, cursor.y]); // 明确指定依赖项
 
   return (
     <svg

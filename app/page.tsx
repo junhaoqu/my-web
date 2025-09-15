@@ -586,27 +586,29 @@ export default function Home() {
         </div>
       </motion.button>
 
-      {/* 固定的标题 */}
-      <motion.div 
-        initial={{ opacity: 0.0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{
-          delay: 0.3,
-          duration: 0.8,
-          ease: "easeInOut",
-        }}
-        className="fixed top-10 left-1/2 -translate-x-1/2 text-center z-50 pointer-events-none"
-        style={{
-          color: 'var(--text-primary)'
-        }}
-      >
-        <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
-          Interactive Device Animation
-        </h1>
-        <p className="text-xl" style={{ color: 'var(--text-secondary)' }}>
-          Scroll to see the 7-stage animation sequence
-        </p>
-      </motion.div>
+      {/* 固定的标题 - 滚动时消失 */}
+      {scrollProgress <= 0.05 && (
+        <motion.div 
+          initial={{ opacity: 0.0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 0.3,
+            duration: 0.8,
+            ease: "easeInOut",
+          }}
+          className="fixed top-10 left-1/2 -translate-x-1/2 text-center z-50 pointer-events-none"
+          style={{
+            color: 'var(--text-primary)'
+          }}
+        >
+          <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
+            Interactive Device Animation
+          </h1>
+          <p className="text-xl" style={{ color: 'var(--text-secondary)' }}>
+            Scroll to see the 7-stage animation sequence
+          </p>
+        </motion.div>
+      )}
       
       {/* Camera设备容器 - 初始位置在Mac左侧，较小尺寸 */}
       <div 
