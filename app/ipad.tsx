@@ -43,8 +43,8 @@ const IpadScroll = forwardRef<IpadRef>((props, ref) => {
       <div
         className="ipad-base absolute top-0 left-0 rounded-2xl bg-gray-200 dark:bg-[#272729] will-change-transform [transform-style:preserve-3d]"
         style={{ 
-          width: '20rem', // 恢复原来的20rem
-          height: '28rem' // 恢复原来的28rem
+          width: '20rem', // 恢复固定尺寸
+          height: '28rem' // 恢复固定尺寸
         }}
       >
         {/* Screen */}

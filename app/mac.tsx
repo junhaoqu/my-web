@@ -2,6 +2,7 @@
 import { animate } from 'animejs';
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 import {
   IconBrightnessDown,
   IconBrightnessUp,
@@ -59,8 +60,8 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
       ref={containerRef} 
       className="macbook-container relative transform-gpu [perspective:800px] cursor-pointer"
       style={{ 
-        width: '32rem',  // 固定宽度
-        height: '44rem', // 基座22rem + 屏幕22rem
+        width: '32rem',  // 恢复固定宽度
+        height: '44rem', // 恢复固定高度
         transformStyle: 'preserve-3d',
       }}
     >
@@ -68,15 +69,15 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
         ref={baseRef}
         className="macbook-base absolute bottom-0 left-1/2 -translate-x-1/2 rounded-2xl bg-gray-200 dark:bg-[#272729] will-change-transform [transform-style:preserve-3d]"
         style={{ 
-          width: '32rem', // 恢复原来的32rem
-          height: '22rem' // 恢复原来的22rem
+          width: '32rem',  // 恢复固定宽度
+          height: '22rem'  // 恢复固定高度
         }}
       >
         {/* Keyboard layout */}
         <div className="relative h-[12%] w-full">
           <div className="absolute inset-x-0 mx-auto h-[60%] w-[80%] bg-[#050505]" />
         </div>
-        <div className="relative flex h-[60%]">
+        <div className="relative flex h-[48%]">
           <div className="mx-auto h-full w-[10%] overflow-hidden"><SpeakerGrid /></div>
           <div className="mx-auto h-full w-[80%]"><Keypad /></div>
           <div className="mx-auto h-full w-[10%] overflow-hidden"><SpeakerGrid /></div>
@@ -91,9 +92,9 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
           style={{
             transformOrigin: 'bottom center',
             transformStyle: 'preserve-3d',
-            top: '-22rem', // 直接精确到基座高度
-            width: '32rem', // 恢复原来的32rem
-            height: '22rem', // 恢复原来的22rem
+            top: '-22rem', // 恢复原来的定位
+            width: '32rem', // 恢复固定宽度
+            height: '22rem', // 恢复固定高度
             zIndex: 10
           }}
         >
@@ -139,7 +140,10 @@ const Keypad = () => {
     <div className="mx-1 h-full [transform:translateZ(0)] rounded-md bg-[#050505] p-1 [will-change:transform]">
       {/* First Row */}
       <div className="mb-[2px] flex w-full shrink-0 gap-[2px]">
-        <KBtn className="w-10 items-end justify-start pb-[2px] pl-[4px]" childrenClassName="items-start">
+        <KBtn
+          className="w-10 items-end justify-start pb-[2px] pl-[4px]"
+          childrenClassName="items-start"
+        >
           esc
         </KBtn>
         <KBtn>
@@ -244,99 +248,169 @@ const Keypad = () => {
           <span className="block">0</span>
         </KBtn>
         <KBtn>
-          <span className="block">—</span>
+          <span className="block">&mdash;</span>
           <span className="block">_</span>
         </KBtn>
         <KBtn>
           <span className="block">+</span>
           <span className="block"> = </span>
         </KBtn>
-        <KBtn className="w-10 items-end justify-end pr-[4px] pb-[2px]" childrenClassName="items-end">
+        <KBtn
+          className="w-10 items-end justify-end pr-[4px] pb-[2px]"
+          childrenClassName="items-end"
+        >
           delete
         </KBtn>
       </div>
 
       {/* Third row */}
       <div className="mb-[2px] flex w-full shrink-0 gap-[2px]">
-        <KBtn className="w-10 items-end justify-start pb-[2px] pl-[4px]" childrenClassName="items-start">
+        <KBtn
+          className="w-10 items-end justify-start pb-[2px] pl-[4px]"
+          childrenClassName="items-start"
+        >
           tab
         </KBtn>
-        <KBtn><span className="block">Q</span></KBtn>
-        <KBtn><span className="block">W</span></KBtn>
-        <KBtn><span className="block">E</span></KBtn>
-        <KBtn><span className="block">R</span></KBtn>
-        <KBtn><span className="block">T</span></KBtn>
-        <KBtn><span className="block">Y</span></KBtn>
-        <KBtn><span className="block">U</span></KBtn>
-        <KBtn><span className="block">I</span></KBtn>
-        <KBtn><span className="block">O</span></KBtn>
-        <KBtn><span className="block">P</span></KBtn>
         <KBtn>
-          <span className="block">&#123;</span>
-          <span className="block">[</span>
+          <span className="block">Q</span>
         </KBtn>
         <KBtn>
-          <span className="block">&#125;</span>
-          <span className="block">]</span>
+          <span className="block">W</span>
         </KBtn>
         <KBtn>
-          <span className="block">|</span>
-          <span className="block">\</span>
+          <span className="block">E</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">R</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">T</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">Y</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">U</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">I</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">O</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">P</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">{`{`}</span>
+          <span className="block">{`[`}</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">{`}`}</span>
+          <span className="block">{`]`}</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">{`|`}</span>
+          <span className="block">{`\\`}</span>
         </KBtn>
       </div>
 
       {/* Fourth Row */}
       <div className="mb-[2px] flex w-full shrink-0 gap-[2px]">
-        <KBtn className="w-[2.8rem] items-end justify-start pb-[2px] pl-[4px]" childrenClassName="items-start">
+        <KBtn
+          className="w-[2.8rem] items-end justify-start pb-[2px] pl-[4px]"
+          childrenClassName="items-start"
+        >
           caps lock
         </KBtn>
-        <KBtn><span className="block">A</span></KBtn>
-        <KBtn><span className="block">S</span></KBtn>
-        <KBtn><span className="block">D</span></KBtn>
-        <KBtn><span className="block">F</span></KBtn>
-        <KBtn><span className="block">G</span></KBtn>
-        <KBtn><span className="block">H</span></KBtn>
-        <KBtn><span className="block">J</span></KBtn>
-        <KBtn><span className="block">K</span></KBtn>
-        <KBtn><span className="block">L</span></KBtn>
         <KBtn>
-          <span className="block">:</span>
-          <span className="block">;</span>
+          <span className="block">A</span>
         </KBtn>
         <KBtn>
-          <span className="block">"</span>
-          <span className="block">'</span>
+          <span className="block">S</span>
         </KBtn>
-        <KBtn className="w-[2.85rem] items-end justify-end pr-[4px] pb-[2px]" childrenClassName="items-end">
+        <KBtn>
+          <span className="block">D</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">F</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">G</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">H</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">J</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">K</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">L</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">{`:`}</span>
+          <span className="block">{`;`}</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">{`"`}</span>
+          <span className="block">{`'`}</span>
+        </KBtn>
+        <KBtn
+          className="w-[2.85rem] items-end justify-end pr-[4px] pb-[2px]"
+          childrenClassName="items-end"
+        >
           return
         </KBtn>
       </div>
 
       {/* Fifth Row */}
       <div className="mb-[2px] flex w-full shrink-0 gap-[2px]">
-        <KBtn className="w-[3.65rem] items-end justify-start pb-[2px] pl-[4px]" childrenClassName="items-start">
+        <KBtn
+          className="w-[3.65rem] items-end justify-start pb-[2px] pl-[4px]"
+          childrenClassName="items-start"
+        >
           shift
         </KBtn>
-        <KBtn><span className="block">Z</span></KBtn>
-        <KBtn><span className="block">X</span></KBtn>
-        <KBtn><span className="block">C</span></KBtn>
-        <KBtn><span className="block">V</span></KBtn>
-        <KBtn><span className="block">B</span></KBtn>
-        <KBtn><span className="block">N</span></KBtn>
-        <KBtn><span className="block">M</span></KBtn>
         <KBtn>
-          <span className="block">&lt;</span>
-          <span className="block">,</span>
+          <span className="block">Z</span>
         </KBtn>
         <KBtn>
-          <span className="block">&gt;</span>
-          <span className="block">.</span>
+          <span className="block">X</span>
         </KBtn>
         <KBtn>
-          <span className="block">?</span>
-          <span className="block">/</span>
+          <span className="block">C</span>
         </KBtn>
-        <KBtn className="w-[3.65rem] items-end justify-end pr-[4px] pb-[2px]" childrenClassName="items-end">
+        <KBtn>
+          <span className="block">V</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">B</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">N</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">M</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">{`<`}</span>
+          <span className="block">{`,`}</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">{`>`}</span>
+          <span className="block">{`.`}</span>
+        </KBtn>
+        <KBtn>
+          <span className="block">{`?`}</span>
+          <span className="block">{`/`}</span>
+        </KBtn>
+        <KBtn
+          className="w-[3.65rem] items-end justify-end pr-[4px] pb-[2px]"
+          childrenClassName="items-end"
+        >
           shift
         </KBtn>
       </div>
@@ -367,7 +441,10 @@ const Keypad = () => {
             <span className="block">option</span>
           </div>
         </KBtn>
-        <KBtn className="w-8" childrenClassName="h-full justify-between py-[4px]">
+        <KBtn
+          className="w-8"
+          childrenClassName="h-full justify-between py-[4px]"
+        >
           <div className="flex w-full justify-end pr-1">
             <IconCommand className="h-[6px] w-[6px]" />
           </div>
@@ -376,7 +453,10 @@ const Keypad = () => {
           </div>
         </KBtn>
         <KBtn className="w-[8.2rem]"></KBtn>
-        <KBtn className="w-8" childrenClassName="h-full justify-between py-[4px]">
+        <KBtn
+          className="w-8"
+          childrenClassName="h-full justify-between py-[4px]"
+        >
           <div className="flex w-full justify-start pl-1">
             <IconCommand className="h-[6px] w-[6px]" />
           </div>
@@ -426,16 +506,27 @@ const KBtn = ({
 }) => {
   return (
     <div
-      className={`[transform:translateZ(0)] rounded-[4px] p-[0.5px] [will-change:transform] ${backlit ? "bg-white/[0.2] shadow-xl shadow-white" : ""}`}
+      className={cn(
+        "[transform:translateZ(0)] rounded-[4px] p-[0.5px] [will-change:transform]",
+        backlit && "bg-white/[0.2] shadow-xl shadow-white",
+      )}
     >
       <div
-        className={`flex h-6 w-6 items-center justify-center rounded-[3.5px] bg-[#0A090D] ${className || ""}`}
+        className={cn(
+          "flex h-6 w-6 items-center justify-center rounded-[3.5px] bg-[#0A090D]",
+          className,
+        )}
         style={{
-          boxShadow: "0px -0.5px 2px 0 #0D0D0F inset, -0.5px 0px 2px 0 #0D0D0F inset",
+          boxShadow:
+            "0px -0.5px 2px 0 #0D0D0F inset, -0.5px 0px 2px 0 #0D0D0F inset",
         }}
       >
         <div
-          className={`flex w-full flex-col items-center justify-center text-[5px] text-neutral-200 ${childrenClassName || ""} ${backlit ? "text-white" : ""}`}
+          className={cn(
+            "flex w-full flex-col items-center justify-center text-[5px] text-neutral-200",
+            childrenClassName,
+            backlit && "text-white",
+          )}
         >
           {children}
         </div>
@@ -477,23 +568,3 @@ const OptionKey = ({ className }: { className: string }) => {
   );
 };
 
-const AceternityLogo = () => {
-  return (
-    <svg
-      width="66"
-      height="65"
-      viewBox="0 0 66 65"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-3 w-3 text-white"
-    >
-      <path
-        d="M8 8.05571C8 8.05571 54.9009 18.1782 57.8687 30.062C60.8365 41.9458 9.05432 57.4696 9.05432 57.4696"
-        stroke="currentColor"
-        strokeWidth="15"
-        strokeMiterlimit="3.86874"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-};
