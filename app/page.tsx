@@ -16,33 +16,45 @@ export default function Home() {
 
   // 主题状态管理
   const [isDark, setIsDark] = useState(false);
+  
+  // 滚动进度状态
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [currentStage, setCurrentStage] = useState(0);
 
   // 切换主题
   const toggleTheme = () => {
     const newIsDark = !isDark;
     setIsDark(newIsDark);
-    if (newIsDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
+    console.log('Toggling theme to:', newIsDark ? 'dark' : 'light');
+    
+    // 使用 data-theme 属性而不是 class
+    document.documentElement.setAttribute('data-theme', newIsDark ? 'dark' : 'light');
+    localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
+  };
+
+  // 跳转到指定阶段
+  const jumpToStage = (stageIndex: number) => {
+    const windowHeight = window.innerHeight;
+    const targetScrollY = windowHeight * stageIndex;
+    
+    window.scrollTo({
+      top: targetScrollY,
+      behavior: 'smooth'
+    });
   };
 
   // 初始化主题
   useEffect(() => {
-    // 检查系统偏好或本地存储
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    console.log('Initializing theme...');
     const storedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
-    } else {
-      setIsDark(false);
-      document.documentElement.classList.remove('dark');
-    }
+    // 默认使用 light 主题，除非用户明确选择了 dark
+    const shouldBeDark = storedTheme === 'dark' || (!storedTheme && prefersDark);
+    
+    setIsDark(shouldBeDark);
+    document.documentElement.setAttribute('data-theme', shouldBeDark ? 'dark' : 'light');
+    console.log('Theme initialized to:', shouldBeDark ? 'dark' : 'light');
   }, []);
 
   // 计算响应式尺寸
@@ -100,6 +112,11 @@ export default function Home() {
       
       // 计算总体进度 (0 to 1)
       const overallProgress = Math.min(1, scrollTop / totalScrollHeight);
+      setScrollProgress(overallProgress);
+      
+      // 计算当前阶段 (0-6) - 包括最后的完成状态
+      const stage = Math.min(6, Math.floor(overallProgress * 7));
+      setCurrentStage(stage);
       
       // 阶段1: Mac成为焦点，其他设备缩小推远 (0-16.67%)
       if (overallProgress <= 1/6) {
@@ -339,16 +356,28 @@ export default function Home() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.5, duration: 0.5 }}
         onClick={toggleTheme}
-        className="fixed top-6 right-6 z-50 p-3 rounded-full bg-white/20 dark:bg-black/20 backdrop-blur-md border border-white/30 dark:border-white/10 hover:bg-white/30 dark:hover:bg-black/30 transition-all duration-300 group"
+        style={{
+          position: 'fixed',
+          top: '1.5rem',
+          right: '1.5rem',
+          zIndex: 50,
+          padding: '0.75rem',
+          borderRadius: '50%',
+          backgroundColor: isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.2)',
+          backdropFilter: 'blur(16px)',
+          border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(255, 255, 255, 0.3)',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease'
+        }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
       >
         <div className="relative w-6 h-6">
           {/* 太阳图标 */}
           <motion.svg
-            className="absolute inset-0 w-6 h-6 text-yellow-500"
+            className="absolute inset-0 w-6 h-6"
             fill="none"
-            stroke="currentColor"
+            stroke="#fbbf24"
             strokeWidth={2}
             viewBox="0 0 24 24"
             initial={{ rotate: isDark ? 180 : 0, opacity: isDark ? 0 : 1 }}
@@ -361,9 +390,9 @@ export default function Home() {
           
           {/* 月亮图标 */}
           <motion.svg
-            className="absolute inset-0 w-6 h-6 text-blue-300"
+            className="absolute inset-0 w-6 h-6"
             fill="none"
-            stroke="currentColor"
+            stroke="#93c5fd"
             strokeWidth={2}
             viewBox="0 0 24 24"
             initial={{ rotate: isDark ? 0 : -180, opacity: isDark ? 1 : 0 }}
@@ -385,11 +414,16 @@ export default function Home() {
           ease: "easeInOut",
         }}
         className="fixed top-10 left-1/2 -translate-x-1/2 text-center z-50 pointer-events-none"
+        style={{
+          color: 'var(--text-primary)'
+        }}
       >
-        <h1 className="text-4xl font-bold text-black dark:text-white mb-4">
+        <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
           Interactive Device Animation
         </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-300">Scroll to see the 6-stage animation sequence</p>
+        <p className="text-xl" style={{ color: 'var(--text-secondary)' }}>
+          Scroll to see the 6-stage animation sequence
+        </p>
       </motion.div>
       
       {/* Camera设备容器 - 初始位置在Mac左侧，较小尺寸 */}
@@ -436,40 +470,167 @@ export default function Home() {
       <div className="h-[700vh] relative">
         <div className="h-screen flex items-center justify-center">
           <div className="text-center mt-32">
-            <p className="text-lg text-gray-600 dark:text-gray-300">Stage 1: MacBook becomes focus</p>
+            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 1: MacBook becomes focus</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600 dark:text-gray-300">Stage 2: Return to balance</p>
+            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 2: Return to balance</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600 dark:text-gray-300">Stage 3: iPad becomes focus</p>
+            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 3: iPad becomes focus</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600 dark:text-gray-300">Stage 4: Return to balance</p>
+            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 4: Return to balance</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600 dark:text-gray-300">Stage 5: Camera becomes focus</p>
+            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 5: Camera becomes focus</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600 dark:text-gray-300">Stage 6: Return to balance</p>
+            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 6: Return to balance</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600 dark:text-gray-300">Animation Complete!</p>
+            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Animation Complete!</p>
           </div>
         </div>
       </div>
-    </AuroraBackground>
+
+      {/* 液体玻璃进度条 */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
+        <div 
+          className="relative flex items-center gap-4 px-6 py-3 rounded-full"
+          style={{
+            background: isDark 
+              ? 'rgba(255, 255, 255, 0.05)' 
+              : 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(20px) saturate(180%)',
+            border: isDark 
+              ? '1px solid rgba(255, 255, 255, 0.1)' 
+              : '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: isDark
+              ? '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+              : '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+          }}
+        >
+          {/* 进度条背景 */}
+          <div 
+            className="relative w-80 h-2 rounded-full overflow-hidden"
+            style={{
+              background: isDark 
+                ? 'rgba(255, 255, 255, 0.1)' 
+                : 'rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            {/* 进度条填充 */}
+            <div 
+              className="absolute top-0 left-0 h-full rounded-full transition-all duration-300 ease-out"
+              style={{
+                width: `${scrollProgress * 100}%`,
+                background: isDark
+                  ? 'linear-gradient(90deg, rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.8), rgba(236, 72, 153, 0.8))'
+                  : 'linear-gradient(90deg, rgba(59, 130, 246, 0.9), rgba(147, 51, 234, 0.9), rgba(236, 72, 153, 0.9))',
+                boxShadow: '0 0 20px rgba(59, 130, 246, 0.4)',
+              }}
+            >
+              {/* 液体波动效果 */}
+              <div 
+                className="absolute top-0 left-0 w-full h-full rounded-full"
+                style={{
+                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+                  animation: 'liquidFlow 2s linear infinite',
+                }}
+              />
+            </div>
+
+            {/* 竖线分隔符 */}
+            {[1, 2, 3, 4, 5, 6].map((divider) => (
+              <div
+                key={`divider-${divider}`}
+                className="absolute top-0 w-0.5 h-full"
+                style={{
+                  left: `${(divider / 6) * 100}%`,
+                  transform: 'translateX(-50%)',
+                  background: isDark 
+                    ? 'rgba(255, 255, 255, 0.2)' 
+                    : 'rgba(0, 0, 0, 0.2)',
+                  zIndex: 5,
+                }}
+              />
+            ))}
+          </div>
+
+          {/* 阶段标记大球 - 在进度条外部 */}
+          {[1, 3, 5].map((stage) => (
+            <button
+              key={stage}
+              onClick={() => jumpToStage(stage)}
+              className="absolute w-6 h-6 rounded-full cursor-pointer transition-all duration-300 hover:scale-110 flex items-center justify-center"
+              style={{
+                left: `${24 + (stage / 6) * 320}px`, // 直接计算像素位置：左边距24px + 进度条位置
+                top: '50%',
+                transform: 'translateX(-50%) translateY(-50%)',
+                background: currentStage >= stage 
+                  ? (isDark 
+                      ? 'linear-gradient(145deg, rgba(59, 130, 246, 0.9), rgba(147, 51, 234, 0.8))'
+                      : 'linear-gradient(145deg, rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.7))')
+                  : (isDark 
+                      ? 'linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08))'
+                      : 'linear-gradient(145deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05))'),
+                border: `1px solid ${currentStage >= stage 
+                  ? 'rgba(59, 130, 246, 0.4)' 
+                  : (isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)')}`,
+                backdropFilter: 'blur(8px) saturate(150%)',
+                boxShadow: currentStage >= stage
+                  ? '0 2px 8px rgba(59, 130, 246, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+                  : `0 2px 6px ${isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
+                zIndex: 20, // 高于进度条容器
+              }}
+            >
+              {/* 内部高光点 */}
+              <div 
+                className="w-2 h-2 rounded-full transition-all duration-300"
+                style={{
+                  background: currentStage >= stage 
+                    ? 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.2), transparent)'
+                    : 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1), transparent)',
+                  transform: 'translate(-1px, -1px)', // 偏移到左上角营造立体感
+                }}
+              />
+            </button>
+          ))}
+          </div>
+
+          {/* 阶段指示器 */}
+          <div 
+            className="flex items-center gap-2 text-sm font-medium"
+            style={{
+              color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)'
+            }}
+          >
+            <span>Stage</span>
+            <span 
+              className="px-2 py-1 rounded-full text-xs"
+              style={{
+                background: isDark 
+                  ? 'rgba(255, 255, 255, 0.1)' 
+                  : 'rgba(0, 0, 0, 0.1)',
+                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)'
+              }}
+            >
+              {currentStage + 1}/7
+            </span>
+          </div>
+        </div>
+      </AuroraBackground>
   );
 }

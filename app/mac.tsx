@@ -38,9 +38,9 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
     updateAnimation: (progress: number) => {
       const clampedProgress = Math.max(0, Math.min(1, progress));
       
-      // 动画屏幕打开 - 从微微关闭（-20度）到完全打开（0度）
+      // 动画屏幕打开
       animate('.mac-animated-screen', {
-        rotateX: -20 + clampedProgress * 20, // 从-20度到0度
+        rotateX: -70 + clampedProgress * 70, // 从-70度到0度
         duration: 200,
         easing: 'easeOutQuad'
       });
@@ -48,9 +48,9 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
   }));
 
   useEffect(() => {
-    // 初始化屏幕状态为微微关闭
+    // 初始化屏幕状态
     animate('.mac-animated-screen', {
-      rotateX: -70, // 改为-20度，微微关闭状态
+      rotateX: -70,
       duration: 0
     });
   }, []);
@@ -77,10 +77,13 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
       
       <div 
         ref={baseRef}
-        className="macbook-base absolute bottom-0 left-1/2 -translate-x-1/2 rounded-2xl bg-gray-200 dark:bg-[#272729] will-change-transform [transform-style:preserve-3d]"
+        className="macbook-base absolute bottom-0 left-1/2 -translate-x-1/2 rounded-2xl will-change-transform [transform-style:preserve-3d]"
         style={{ 
           width: '32rem',  // 恢复固定宽度
-          height: '22rem'  // 恢复固定高度
+          height: '22rem', // 恢复固定高度
+          backgroundColor: 'var(--device-background)',
+          color: 'var(--device-foreground)',
+          transition: 'background-color 0.3s ease, color 0.3s ease'
         }}
       >
         {/* Keyboard layout */}

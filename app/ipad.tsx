@@ -14,9 +14,9 @@ const IpadScroll = forwardRef<IpadRef>((props, ref) => {
     updateAnimation: (progress: number) => {
       const clampedProgress = Math.max(0, Math.min(1, progress));
       
-      // 动画屏幕 - 从微微关闭到完全打开
+      // 动画屏幕
       animate(".ipad-animated-screen", {
-        rotateX: -15 + clampedProgress * 15, // 从-15度到0度（iPad稍微不那么关闭）
+        rotateX: -70 + clampedProgress * 70,
         duration: 200,
         easing: "easeOutQuad",
       });
@@ -24,9 +24,9 @@ const IpadScroll = forwardRef<IpadRef>((props, ref) => {
   }));
 
   useEffect(() => {
-    // 初始化屏幕状态为微微关闭
+    // 初始化屏幕状态
     animate('.ipad-animated-screen', {
-      rotateX: -15, // 改为-15度，微微关闭状态
+      rotateX: -70,
       duration: 0
     });
   }, []);
@@ -51,10 +51,13 @@ const IpadScroll = forwardRef<IpadRef>((props, ref) => {
       ></div>
       
       <div
-        className="ipad-base absolute top-0 left-0 rounded-2xl bg-gray-200 dark:bg-[#272729] will-change-transform [transform-style:preserve-3d]"
+        className="ipad-base absolute top-0 left-0 rounded-2xl will-change-transform [transform-style:preserve-3d]"
         style={{ 
           width: '20rem', // 恢复固定尺寸
-          height: '28rem' // 恢复固定尺寸
+          height: '28rem', // 恢复固定尺寸
+          backgroundColor: 'var(--device-background)',
+          color: 'var(--device-foreground)',
+          transition: 'background-color 0.3s ease, color 0.3s ease'
         }}
       >
         {/* Screen */}

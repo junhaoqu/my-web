@@ -37,11 +37,11 @@ const CameraScroll = forwardRef<CameraRef, CameraScrollProps>((props, ref) => {
       }}
     >
       {/* 发光底层 */}
-      <div 
-        className="absolute inset-0 rounded-[35px] opacity-50 blur-xl animate-pulse"
+       <div 
+        className="absolute inset-0 rounded-2xl opacity-45 blur-xl animate-pulse"
         style={{
           background: 'radial-gradient(ellipse at center, rgba(34, 197, 94, 0.7), rgba(59, 130, 246, 0.5), rgba(168, 85, 247, 0.3), transparent)',
-          transform: 'translateZ(-50px) scale(1.2)',
+          transform: 'translateZ(-50px) scale(1.25)',
           zIndex: -1
         }}
       ></div>
@@ -59,19 +59,20 @@ const CameraScroll = forwardRef<CameraRef, CameraScrollProps>((props, ref) => {
         <div className="relative w-full h-full [transform-style:preserve-3d]">
           
           {/* 相机顶部主体 */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[540px] h-[320px] rounded-t-[35px] 
-                          bg-gray-200 dark:bg-[#272729]"
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[540px] h-[320px] rounded-t-[35px]"
                style={{
+                 backgroundColor: 'var(--device-background)',
                  boxShadow: '-1px 1px 2px 3px rgba(127, 122, 125, 0.85) inset',
                  transform: 'translateZ(20px)',
                  backgroundImage: 'radial-gradient(circle, rgba(8,8,10,0.1) 0.3px, transparent 0.3px)',
-                 backgroundSize: '4px 4px'
+                 backgroundSize: '4px 4px',
+                 transition: 'background-color 0.3s ease'
                }}>
 
             {/* 镜头周围网格区域 */}
             <div className="absolute top-[240px] left-[50px] w-[100px] h-[60px] rounded-[8px]"
                  style={{
-                   backgroundImage: 'radial-gradient(circle, #08080A 0.4px, transparent 0.4px)',
+                   backgroundImage: 'radial-gradient(circle, #505055ff 0.4px, transparent 0.4px)',
                    backgroundSize: '2.5px 2.5px',
                    transform: 'translateZ(5px)'
                  }}></div>
@@ -149,13 +150,14 @@ const CameraScroll = forwardRef<CameraRef, CameraScrollProps>((props, ref) => {
             </div>
 
             {/* 闪光灯 */}
-            <div className="absolute left-[25px] top-[25px] w-[90px] h-[160px] rounded-[15px]
-                           bg-gray-200 dark:bg-[#272729]"
+            <div className="absolute left-[25px] top-[25px] w-[90px] h-[160px] rounded-[15px]"
                  style={{
+                   backgroundColor: 'var(--device-background)',
                    boxShadow: '-1px -1px 1px rgba(189,184,181,0.8), -1.5px -2.1px 0.5px rgba(36,32,29,0.3), -4px 4px 3px 3px rgba(244,240,239,0.9), -5px 8px 8px rgba(171,166,170,0.6), 0.25px 1px 1px 5px rgba(62,58,56,0.4) inset, 0 -6px 1px 1px rgba(246,246,248,0.8) inset',
                    transform: 'translateZ(25px)',
                    backgroundImage: 'radial-gradient(circle, #08080A 0.5px, transparent 0.5px)',
-                   backgroundSize: '3px 3px'
+                   backgroundSize: '3px 3px',
+                   transition: 'background-color 0.3s ease'
                  }}></div>
 
             {/* 取景器 */}
@@ -246,18 +248,20 @@ const CameraScroll = forwardRef<CameraRef, CameraScrollProps>((props, ref) => {
               <div className="absolute w-[20px] h-[20px] rounded-full left-1/2 -translate-x-1/2 top-[1px]"
                    style={{
                      background: 'radial-gradient(#FBC00A, #FFDB09)',
-                     boxShadow: '0.5px 1px 0.75px 0.25px #FFED71 inset, 0px -0.5px 0.5px 0.5px #E6A11F inset, -1px 0.5px 4px 1px #964900',
-                     transform: 'translateZ(5px)'
+                     boxShadow: '0.5px 1px 0.75px 0.25px #FFED71 inset, 0px -0.5px 0.5px 0.5px #E6A11F inset, -1px 0.5px 4px 1px #964900, 0 0 8px rgba(251, 192, 10, 0.6), 0 0 16px rgba(255, 219, 9, 0.4), 0 0 24px rgba(255, 237, 113, 0.2)',
+                     transform: 'translateZ(5px)',
+                     animation: 'buttonGlow 2s ease-in-out infinite alternate'
                    }}></div>
             </div>
           </div>
 
           {/* 相机底部 */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[570px] h-[165px] rounded-b-[30px] rounded-t-[11px]
-                          bg-gray-200 dark:bg-[#272729]"
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[570px] h-[165px] rounded-b-[30px] rounded-t-[11px]"
                style={{
+                 backgroundColor: 'var(--device-background)',
                  boxShadow: '-1px 3px 2px 0px rgba(249,247,248, 0.65) inset',
-                 transform: 'translateZ(0px)'
+                 transform: 'translateZ(0px)',
+                 transition: 'background-color 0.3s ease'
                }}>
 
             {/* 左侧扬声器网格 */}
@@ -302,13 +306,14 @@ const CameraScroll = forwardRef<CameraRef, CameraScrollProps>((props, ref) => {
                  }}></div>
 
             {/* Polaroid标志 */}
-            <div className="absolute bottom-[25px] left-1/2 -translate-x-1/2 text-center
-                           text-gray-800 dark:text-gray-200"
+            <div className="absolute bottom-[25px] left-1/2 -translate-x-1/2 text-center"
                  style={{
+                   color: 'var(--text-primary)',
                    fontFamily: '"Helvetica Neue", "Helvetica", sans-serif',
                    fontSize: '24px',
                    fontWeight: '600',
-                   transform: 'translateZ(15px)'
+                   transform: 'translateZ(15px)',
+                   transition: 'color 0.3s ease'
                  }}>
               polaroid
             </div>
