@@ -45,6 +45,17 @@ export default function Home() {
     });
   };
 
+  // 重置滚动位置到顶部
+  useEffect(() => {
+    // 页面加载时重置滚动位置
+    window.scrollTo(0, 0);
+    
+    // 禁用浏览器的滚动恢复功能
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+  }, []);
+
   // 初始化主题
   useEffect(() => {
     console.log('Initializing theme...');
@@ -387,11 +398,11 @@ export default function Home() {
         if (cameraContainerRef.current) {
           // 第4阶段结束时Camera的状态：scale=0.6, translateX=0, blur=5px
           const startScale = 0.6;
-          const targetScale = 1.2;
+          const targetScale = 1.0;
           const targetTranslateX = -40; // 轻微向中心移动
           const targetTranslateY = 20; // 轻微向上
           
-          const scale = startScale + easedProgress * (targetScale - startScale); // 从0.6平滑到1.2
+          const scale = startScale + easedProgress * (targetScale - startScale); // 从0.6平滑到1.0
           const translateX = easedProgress * targetTranslateX; // 从0平滑到-40
           const translateY = easedProgress * targetTranslateY; // 从0平滑到20
           const blurIntensity = Math.max(0, 5 * (1 - easedProgress * 2)); // 从5px平滑到0px
@@ -441,8 +452,8 @@ export default function Home() {
 
         // Camera回到初始状态，从第5阶段的状态平滑回到平衡位置
         if (cameraContainerRef.current) {
-          // 第5阶段结束时Camera状态：scale=1.2, translateX=-40, translateY=20, blur=0px
-          const startScale = 1.2;
+          // 第5阶段结束时Camera状态：scale=1.0, translateX=-40, translateY=20, blur=0px
+          const startScale = 1.0;
           const startTranslateX = -40;
           const startTranslateY = 20;
           const targetScale = 0.6; // 回到初始大小
@@ -528,7 +539,7 @@ export default function Home() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [devicesHidden]);
+  }, []); // 移除 devicesHidden 依赖，避免无限循环
 
   return (
     <AuroraBackground className="relative min-h-[900vh]">
@@ -602,10 +613,10 @@ export default function Home() {
           }}
         >
           <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
-            Interactive Device Animation
+            哈吉米哦南北绿豆
           </h1>
           <p className="text-xl" style={{ color: 'var(--text-secondary)' }}>
-            Scroll to see the 7-stage animation sequence
+            曼波！
           </p>
         </motion.div>
       )}

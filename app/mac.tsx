@@ -3,6 +3,7 @@ import { animate } from 'animejs';
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import MacScreen from "@/components/MacScreen/MacScreen";
 import {
   IconBrightnessDown,
   IconBrightnessUp,
@@ -33,10 +34,12 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const lidRef = useRef<HTMLDivElement>(null);
   const baseRef = useRef<HTMLDivElement>(null);
+  const [animationProgress, setAnimationProgress] = React.useState(0);
 
   useImperativeHandle(ref, () => ({
     updateAnimation: (progress: number) => {
       const clampedProgress = Math.max(0, Math.min(1, progress));
+      setAnimationProgress(clampedProgress);
       
       // 动画屏幕打开
       animate('.mac-animated-screen', {
@@ -117,18 +120,16 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
         >
           {/* Screen that animates */}
           <motion.div
-            className="mac-animated-screen absolute inset-0 h-full w-full rounded-2xl bg-[#010101] p-[2%]"
+            className="mac-animated-screen absolute inset-0 h-full w-full rounded-2xl bg-[#010101] p-[2%] overflow-hidden"
             style={{
               transformStyle: "preserve-3d",
               transformOrigin: "bottom",
             }}
           >
             <div className="absolute inset-0 rounded-lg bg-[#272729]" />
-            <img
-              src="/images/github.png"
-              alt="GitHub Profile"
-              className="absolute inset-0 h-full w-full rounded-lg object-cover object-left-top"
-            />
+            <div className="absolute inset-0 rounded-lg overflow-hidden">
+              <MacScreen animationProgress={animationProgress} />
+            </div>
           </motion.div>
         </div>
       </div>

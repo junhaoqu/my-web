@@ -24,6 +24,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // 立即重置滚动位置，避免闪烁
+              if (typeof window !== 'undefined') {
+                window.scrollTo(0, 0);
+                if ('scrollRestoration' in history) {
+                  history.scrollRestoration = 'manual';
+                }
+              }
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

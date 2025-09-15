@@ -45,6 +45,16 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* 确保页面加载时滚动位置从顶部开始 */
+html, body {
+  scroll-behavior: smooth;
+}
+
+/* 防止页面加载时的滚动位置跳跃 */
+html {
+  scrollbar-gutter: stable;
+}
+
 /* Button glow animation */
 @keyframes buttonGlow {
   0% {
