@@ -5,6 +5,7 @@ import Macbook, { MacbookRef } from "./mac";
 import Ipad, { IpadRef } from "./ipad";
 import Camera, { CameraRef } from "./camera";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import { TextHoverEffect } from "@/components/ui/text-hover-effect";
 
 export default function Home() {
   const macbookRef = useRef<MacbookRef>(null);
@@ -20,6 +21,7 @@ export default function Home() {
   // 滚动进度状态
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentStage, setCurrentStage] = useState(0);
+  const [devicesHidden, setDevicesHidden] = useState(false);
 
   // 切换主题
   const toggleTheme = () => {
@@ -108,19 +110,36 @@ export default function Home() {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       const windowHeight = window.innerHeight;
-      const totalScrollHeight = windowHeight * 6; // 6个阶段的动画
+      const totalScrollHeight = windowHeight * 7; // 7个阶段的动画（增加第7阶段）
       
       // 计算总体进度 (0 to 1)
       const overallProgress = Math.min(1, scrollTop / totalScrollHeight);
       setScrollProgress(overallProgress);
       
-      // 计算当前阶段 (0-6) - 包括最后的完成状态
-      const stage = Math.min(6, Math.floor(overallProgress * 7));
+      // 计算当前阶段 (0-7) - 包括最后的完成状态
+      const stage = Math.min(7, Math.floor(overallProgress * 8));
       setCurrentStage(stage);
       
-      // 阶段1: Mac成为焦点，其他设备缩小推远 (0-16.67%)
-      if (overallProgress <= 1/6) {
-        const stage1Progress = overallProgress / (1/6);
+      // 重置设备可见性（当不在第7阶段或第7阶段进度小于0.8时）
+      if (overallProgress < 6/7 || (overallProgress >= 6/7 && (overallProgress - 6/7) / (1/7) <= 0.8)) {
+        if (devicesHidden) {
+          setDevicesHidden(false);
+        }
+        // 恢复设备的z-index
+        if (macContainerRef.current) {
+          macContainerRef.current.style.zIndex = '30';
+        }
+        if (ipadContainerRef.current) {
+          ipadContainerRef.current.style.zIndex = '25';
+        }
+        if (cameraContainerRef.current) {
+          cameraContainerRef.current.style.zIndex = '20';
+        }
+      }
+      
+      // 阶段1: Mac成为焦点，其他设备缩小推远 (0-14.29%)
+      if (overallProgress <= 1/7) {
+        const stage1Progress = overallProgress / (1/7);
         const easedProgress = stage1Progress < 0.5 
           ? 2 * stage1Progress * stage1Progress 
           : 1 - Math.pow(-2 * stage1Progress + 2, 2) / 2;
@@ -154,9 +173,9 @@ export default function Home() {
           cameraContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
       }
-      // 阶段2: 回到平衡状态 (16.67-33.33%)
-      else if (overallProgress <= 2/6) {
-        const stage2Progress = (overallProgress - 1/6) / (1/6);
+      // 阶段2: 回到平衡状态 (14.29-28.57%)
+      else if (overallProgress <= 2/7) {
+        const stage2Progress = (overallProgress - 1/7) / (1/7);
         const reverseProgress = 1 - stage2Progress;
         const easedProgress = reverseProgress < 0.5 
           ? 2 * reverseProgress * reverseProgress 
@@ -210,9 +229,9 @@ export default function Home() {
 
         
       }
-      // 阶段3: iPad成为焦点 (33.33-50%)
-      else if (overallProgress <= 3/6) {
-        const stage3Progress = (overallProgress - 2/6) / (1/6);
+      // 阶段3: iPad成为焦点 (28.57-42.86%)
+      else if (overallProgress <= 3/7) {
+        const stage3Progress = (overallProgress - 2/7) / (1/7);
         const easedProgress = stage3Progress < 0.5 
           ? 2 * stage3Progress * stage3Progress 
           : 1 - Math.pow(-2 * stage3Progress + 2, 2) / 2;
@@ -269,9 +288,9 @@ export default function Home() {
           cameraContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
       }
-      // 阶段4: 回到平衡状态 (50-66.67%)
-      else if (overallProgress <= 4/6) {
-        const stage4Progress = (overallProgress - 3/6) / (1/6);
+      // 阶段4: 回到平衡状态 (42.86-57.14%)
+      else if (overallProgress <= 4/7) {
+        const stage4Progress = (overallProgress - 3/7) / (1/7);
         const reverseProgress = 1 - stage4Progress;
         const easedProgress = reverseProgress < 0.5 
           ? 2 * reverseProgress * reverseProgress 
@@ -327,9 +346,9 @@ export default function Home() {
           cameraContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
       }
-      // 阶段5: Camera成为焦点 (66.67-83.33%)
-      else if (overallProgress <= 5/6) {
-        const stage5Progress = (overallProgress - 4/6) / (1/6);
+      // 阶段5: Camera成为焦点 (57.14-71.43%)
+      else if (overallProgress <= 5/7) {
+        const stage5Progress = (overallProgress - 4/7) / (1/7);
         const easedProgress = stage5Progress < 0.5 
           ? 2 * stage5Progress * stage5Progress 
           : 1 - Math.pow(-2 * stage5Progress + 2, 2) / 2;
@@ -381,9 +400,9 @@ export default function Home() {
           cameraContainerRef.current.style.filter = `blur(${blurIntensity}px)`;
         }
       }
-      // 阶段6: 回到平衡状态 (83.33-100%)
-      else {
-        const stage6Progress = (overallProgress - 5/6) / (1/6);
+      // 阶段6: 回到平衡状态 (71.43-85.71%)
+      else if (overallProgress <= 6/7) {
+        const stage6Progress = (overallProgress - 5/7) / (1/7);
         const reverseProgress = 1 - stage6Progress;
         const easedProgress = reverseProgress < 0.5 
           ? 2 * reverseProgress * reverseProgress 
@@ -437,6 +456,70 @@ export default function Home() {
           cameraContainerRef.current.style.filter = 'blur(0px)';
         }
       }
+      // 阶段7: 所有设备模糊并向上移动离开画面 (85.71-100%)
+      else {
+        const stage7Progress = (overallProgress - 6/7) / (1/7);
+        const easedProgress = stage7Progress < 0.5 
+          ? 2 * stage7Progress * stage7Progress 
+          : 1 - Math.pow(-2 * stage7Progress + 2, 2) / 2;
+        
+        // 所有设备逐渐模糊并开始向上移动
+        const baseBlur = 5;
+        const additionalBlur = easedProgress * 15; // 额外增加15px模糊，增强消失效果
+        const totalBlur = baseBlur + additionalBlur;
+        
+        // 垂直偏移 - 向上移动直到完全离开画面
+        const moveUpDistance = easedProgress * 2200; // 向上移动2200px，确保完全移出视口
+        const scrollOffset = -moveUpDistance; // 负值表示向上移动
+        
+        // Mac模糊并向上移动离开画面
+        if (macContainerRef.current) {
+          const scale = 0.8 * (1 - easedProgress * 0.5); // 更明显的缩小效果
+          const opacity = 1 - easedProgress * 0.3; // 轻微透明度变化
+          macContainerRef.current.style.transform = `scale(${scale}) translateY(${scrollOffset}px)`;
+          macContainerRef.current.style.filter = `blur(${totalBlur}px)`;
+          macContainerRef.current.style.opacity = `${opacity}`;
+          macContainerRef.current.style.position = 'fixed';
+          
+          // 当设备完全移出画面后隐藏
+          if (easedProgress > 0.8) {
+            macContainerRef.current.style.zIndex = '-1';
+          }
+        }
+        
+        // iPad模糊并向上移动离开画面
+        if (ipadContainerRef.current) {
+          const scale = 0.7 * (1 - easedProgress * 0.5); // 更明显的缩小效果
+          const opacity = 1 - easedProgress * 0.3; // 轻微透明度变化
+          ipadContainerRef.current.style.transform = `scale(${scale}) translateY(${scrollOffset}px)`;
+          ipadContainerRef.current.style.filter = `blur(${totalBlur}px)`;
+          ipadContainerRef.current.style.opacity = `${opacity}`;
+          ipadContainerRef.current.style.position = 'fixed';
+          
+          // 当设备完全移出画面后隐藏
+          if (easedProgress > 0.8) {
+            ipadContainerRef.current.style.zIndex = '-1';
+          }
+        }
+
+        // Camera模糊并向上移动离开画面
+        if (cameraContainerRef.current) {
+          const scale = 0.6 * (1 - easedProgress * 0.5); // 更明显的缩小效果
+          const opacity = 1 - easedProgress * 0.3; // 轻微透明度变化
+          cameraContainerRef.current.style.transform = `scale(${scale}) translateY(${scrollOffset}px)`;
+          cameraContainerRef.current.style.filter = `blur(${totalBlur}px)`;
+          cameraContainerRef.current.style.opacity = `${opacity}`;
+          cameraContainerRef.current.style.position = 'fixed';
+          
+          // 当设备完全移出画面后隐藏
+          if (easedProgress > 0.8) {
+            cameraContainerRef.current.style.zIndex = '-1';
+            if (!devicesHidden) {
+              setDevicesHidden(true);
+            }
+          }
+        }
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -445,10 +528,10 @@ export default function Home() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [devicesHidden]);
 
   return (
-    <AuroraBackground className="relative min-h-[700vh]">
+    <AuroraBackground className="relative min-h-[900vh]">
       {/* 主题切换按钮 */}
       <motion.button
         initial={{ opacity: 0, scale: 0.8 }}
@@ -521,7 +604,7 @@ export default function Home() {
           Interactive Device Animation
         </h1>
         <p className="text-xl" style={{ color: 'var(--text-secondary)' }}>
-          Scroll to see the 6-stage animation sequence
+          Scroll to see the 7-stage animation sequence
         </p>
       </motion.div>
       
@@ -566,7 +649,7 @@ export default function Home() {
       </div>
 
       {/* 滚动区域 - 提供滚动空间 */}
-      <div className="h-[700vh] relative">
+      <div className="h-[800vh] relative">
         <div className="h-screen flex items-center justify-center">
           <div className="text-center mt-32">
             <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 1: MacBook becomes focus</p>
@@ -597,6 +680,17 @@ export default function Home() {
             <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 6: Return to balance</p>
           </div>
         </div>
+        <div className="h-screen flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 7: All devices blur and move up off screen</p>
+          </div>
+        </div>
+        {/* TextHoverEffect组件 - 在设备移出后显示 */}
+        {devicesHidden && (
+          <div className="h-[40rem] flex items-center justify-center relative z-40">
+            <TextHoverEffect text="ACET" />
+          </div>
+        )}
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
             <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Animation Complete!</p>
@@ -652,12 +746,12 @@ export default function Home() {
             </div>
 
             {/* 竖线分隔符 */}
-            {[1, 2, 3, 4, 5, 6].map((divider) => (
+            {[1, 2, 3, 4, 5, 6, 7].map((divider) => (
               <div
                 key={`divider-${divider}`}
                 className="absolute top-0 w-0.5 h-full"
                 style={{
-                  left: `${(divider / 6) * 100}%`,
+                  left: `${(divider / 7) * 100}%`,
                   transform: 'translateX(-50%)',
                   background: isDark 
                     ? 'rgba(255, 255, 255, 0.2)' 
@@ -669,13 +763,13 @@ export default function Home() {
           </div>
 
           {/* 阶段标记大球 - 在进度条外部 */}
-          {[0, 1, 3, 5].map((stage) => (
+          {[0, 1, 3, 5, 6].map((stage) => (
             <button
               key={stage}
               onClick={() => jumpToStage(stage)}
               className="absolute w-6 h-6 rounded-full cursor-pointer transition-all duration-300 hover:scale-110 flex items-center justify-center"
               style={{
-                left: `${24 + (stage / 6) * 320}px`, // 直接计算像素位置：左边距24px + 进度条位置
+                left: `${24 + (stage / 7) * 320}px`, // 直接计算像素位置：左边距24px + 进度条位置
                 top: '50%',
                 transform: 'translateX(-50%) translateY(-50%)',
                 background: currentStage >= stage 
@@ -726,7 +820,7 @@ export default function Home() {
                 color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)'
               }}
             >
-              {currentStage + 1}/7
+              {currentStage + 1}/8
             </span>
           </div>
         </div>
