@@ -38,9 +38,9 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
     updateAnimation: (progress: number) => {
       const clampedProgress = Math.max(0, Math.min(1, progress));
       
-      // 动画屏幕打开
+      // 动画屏幕打开 - 从微微关闭（-20度）到完全打开（0度）
       animate('.mac-animated-screen', {
-        rotateX: -70 + clampedProgress * 70, // 从-70度到0度
+        rotateX: -20 + clampedProgress * 20, // 从-20度到0度
         duration: 200,
         easing: 'easeOutQuad'
       });
@@ -48,9 +48,9 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
   }));
 
   useEffect(() => {
-    // 初始化屏幕状态
+    // 初始化屏幕状态为微微关闭
     animate('.mac-animated-screen', {
-      rotateX: -70,
+      rotateX: -70, // 改为-20度，微微关闭状态
       duration: 0
     });
   }, []);
@@ -65,6 +65,16 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
         transformStyle: 'preserve-3d',
       }}
     >
+      {/* 发光底层 */}
+      <div 
+        className="absolute inset-0 rounded-2xl opacity-40 blur-xl animate-pulse"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(34, 197, 94, 0.7), rgba(59, 130, 246, 0.5), rgba(168, 85, 247, 0.3), transparent)',
+          transform: 'translateZ(-50px) scale(1.2)',
+          zIndex: -1
+        }}
+      ></div>
+      
       <div 
         ref={baseRef}
         className="macbook-base absolute bottom-0 left-1/2 -translate-x-1/2 rounded-2xl bg-gray-200 dark:bg-[#272729] will-change-transform [transform-style:preserve-3d]"

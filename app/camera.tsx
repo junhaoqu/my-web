@@ -36,6 +36,16 @@ const CameraScroll = forwardRef<CameraRef, CameraScrollProps>((props, ref) => {
         transformStyle: 'preserve-3d',
       }}
     >
+      {/* 发光底层 */}
+      <div 
+        className="absolute inset-0 rounded-[35px] opacity-50 blur-xl animate-pulse"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(34, 197, 94, 0.7), rgba(59, 130, 246, 0.5), rgba(168, 85, 247, 0.3), transparent)',
+          transform: 'translateZ(-50px) scale(1.2)',
+          zIndex: -1
+        }}
+      ></div>
+      
       <div 
         ref={bodyRef}
         className="camera-body absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 will-change-transform [transform-style:preserve-3d]"
@@ -52,7 +62,7 @@ const CameraScroll = forwardRef<CameraRef, CameraScrollProps>((props, ref) => {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[540px] h-[320px] rounded-t-[35px] 
                           bg-gray-200 dark:bg-[#272729]"
                style={{
-                 boxShadow: '-1px 1px 2px 3px rgba(249,247,248, 0.85) inset',
+                 boxShadow: '-1px 1px 2px 3px rgba(127, 122, 125, 0.85) inset',
                  transform: 'translateZ(20px)',
                  backgroundImage: 'radial-gradient(circle, rgba(8,8,10,0.1) 0.3px, transparent 0.3px)',
                  backgroundSize: '4px 4px'

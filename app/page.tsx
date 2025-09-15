@@ -1,8 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
 import Macbook, { MacbookRef } from "./mac";
 import Ipad, { IpadRef } from "./ipad";
 import Camera, { CameraRef } from "./camera";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 
 export default function Home() {
   const macbookRef = useRef<MacbookRef>(null);
@@ -11,6 +13,37 @@ export default function Home() {
   const macContainerRef = useRef<HTMLDivElement>(null);
   const ipadContainerRef = useRef<HTMLDivElement>(null);
   const cameraContainerRef = useRef<HTMLDivElement>(null);
+
+  // 主题状态管理
+  const [isDark, setIsDark] = useState(false);
+
+  // 切换主题
+  const toggleTheme = () => {
+    const newIsDark = !isDark;
+    setIsDark(newIsDark);
+    if (newIsDark) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
+
+  // 初始化主题
+  useEffect(() => {
+    // 检查系统偏好或本地存储
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const storedTheme = localStorage.getItem('theme');
+    
+    if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+      setIsDark(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      setIsDark(false);
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
 
   // 计算响应式尺寸
   const getResponsiveSize = () => {
@@ -299,14 +332,65 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative min-h-[700vh] bg-white">
+    <AuroraBackground className="relative min-h-[700vh]">
+      {/* 主题切换按钮 */}
+      <motion.button
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.5, duration: 0.5 }}
+        onClick={toggleTheme}
+        className="fixed top-6 right-6 z-50 p-3 rounded-full bg-white/20 dark:bg-black/20 backdrop-blur-md border border-white/30 dark:border-white/10 hover:bg-white/30 dark:hover:bg-black/30 transition-all duration-300 group"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <div className="relative w-6 h-6">
+          {/* 太阳图标 */}
+          <motion.svg
+            className="absolute inset-0 w-6 h-6 text-yellow-500"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+            initial={{ rotate: isDark ? 180 : 0, opacity: isDark ? 0 : 1 }}
+            animate={{ rotate: isDark ? 180 : 0, opacity: isDark ? 0 : 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <circle cx="12" cy="12" r="5" />
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </motion.svg>
+          
+          {/* 月亮图标 */}
+          <motion.svg
+            className="absolute inset-0 w-6 h-6 text-blue-300"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+            initial={{ rotate: isDark ? 0 : -180, opacity: isDark ? 1 : 0 }}
+            animate={{ rotate: isDark ? 0 : -180, opacity: isDark ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </motion.svg>
+        </div>
+      </motion.button>
+
       {/* 固定的标题 */}
-      <div className="fixed top-10 left-1/2 -translate-x-1/2 text-center z-50 pointer-events-none">
-        <h1 className="text-4xl font-bold text-black mb-4">
+      <motion.div 
+        initial={{ opacity: 0.0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{
+          delay: 0.3,
+          duration: 0.8,
+          ease: "easeInOut",
+        }}
+        className="fixed top-10 left-1/2 -translate-x-1/2 text-center z-50 pointer-events-none"
+      >
+        <h1 className="text-4xl font-bold text-black dark:text-white mb-4">
           Interactive Device Animation
         </h1>
-        <p className="text-xl text-gray-600">Scroll to see the 6-stage animation sequence</p>
-      </div>
+        <p className="text-xl text-gray-600 dark:text-gray-300">Scroll to see the 6-stage animation sequence</p>
+      </motion.div>
       
       {/* Camera设备容器 - 初始位置在Mac左侧，较小尺寸 */}
       <div 
@@ -352,40 +436,40 @@ export default function Home() {
       <div className="h-[700vh] relative">
         <div className="h-screen flex items-center justify-center">
           <div className="text-center mt-32">
-            <p className="text-lg text-gray-600">Stage 1: MacBook becomes focus</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300">Stage 1: MacBook becomes focus</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600">Stage 2: Return to balance</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300">Stage 2: Return to balance</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600">Stage 3: iPad becomes focus</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300">Stage 3: iPad becomes focus</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600">Stage 4: Return to balance</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300">Stage 4: Return to balance</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600">Stage 5: Camera becomes focus</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300">Stage 5: Camera becomes focus</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600">Stage 6: Return to balance</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300">Stage 6: Return to balance</p>
           </div>
         </div>
         <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <p className="text-lg text-gray-600">Animation Complete!</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300">Animation Complete!</p>
           </div>
         </div>
       </div>
-    </main>
+    </AuroraBackground>
   );
 }
