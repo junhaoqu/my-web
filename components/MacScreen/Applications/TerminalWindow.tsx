@@ -13,106 +13,194 @@ interface TerminalWindowProps {
 }
 
 const TerminalWindow: React.FC<TerminalWindowProps> = (props) => {
-  const [currentCommand, setCurrentCommand] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
+  const [currentLine, setCurrentLine] = useState(1);
 
-  const commands = [
-    { 
-      command: "npm install", 
-      output: `added 1254 packages, and audited 1255 packages in 45s
+  // Mac组件的实际代码
+  const macComponentCode = `"use client";
+import { animate } from 'animejs';
+import React, { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+import MacScreen from "@/components/MacScreen/MacScreen";
 
-195 packages are looking for funding
-  run \`npm fund\` for details
+export interface MacbookRef {
+  updateAnimation: (progress: number) => void;
+}
 
-found 0 vulnerabilities` 
-    },
-    { 
-      command: "npm run dev", 
-      output: `> my-portfolio@0.1.0 dev
-> next dev
+const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const lidRef = useRef<HTMLDivElement>(null);
+  const baseRef = useRef<HTMLDivElement>(null);
+  const [animationProgress, setAnimationProgress] = React.useState(0);
 
-   ▲ Next.js 14.0.0
-   - Local:        http://localhost:3000
-   - Network:      http://192.168.1.100:3000
-
- ✓ Ready in 2.1s` 
-    },
-    { 
-      command: "git status", 
-      output: `On branch main
-Your branch is up to date with 'origin/main'.
-
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git checkout -- <file>..." to discard changes in working directory)
-
-        modified:   src/components/Portfolio.tsx
-        modified:   src/styles/globals.css
-
-no changes added to commit (use "git add ." or "git commit -a")` 
-    },
-    { 
-      command: "git add . && git commit -m 'Update portfolio components'", 
-      output: `[main 2f8a9b1] Update portfolio components
- 2 files changed, 47 insertions(+), 12 deletions(-)` 
+  useImperativeHandle(ref, () => ({
+    updateAnimation: (progress: number) => {
+      const clampedProgress = Math.max(0, Math.min(1, progress));
+      setAnimationProgress(clampedProgress);
+      
+      // 动画屏幕打开
+      animate('.mac-animated-screen', {
+        rotateX: -70 + clampedProgress * 70, // 从-70度到0度
+        duration: 200,
+        easing: 'easeOutQuad'
+      });
     }
-  ];
+  }));
 
   useEffect(() => {
-    if (props.windowState.isOpen) {
-      const timer = setInterval(() => {
-        if (currentCommand < commands.length) {
-          const current = commands[currentCommand];
-          const fullText = `$ ${current.command}\n${current.output}\n\n`;
-          
-          if (displayedText.length < fullText.length) {
-            setDisplayedText(fullText.slice(0, displayedText.length + 1));
-          } else {
-            setTimeout(() => {
-              setCurrentCommand(prev => (prev + 1) % commands.length);
-              if (currentCommand === commands.length - 1) {
-                setDisplayedText("");
-              }
-            }, 2000);
-          }
-        }
-      }, 30);
-
-      return () => clearInterval(timer);
-    }
-  }, [props.windowState.isOpen, currentCommand, displayedText, commands]);
+    // 初始化屏幕状态
+    animate('.mac-animated-screen', {
+      rotateX: -70,
+      duration: 0
+    });
+  }, []);
 
   return (
-    <BaseWindow {...props} title="Terminal" className="font-mono">
-      <div className="h-full bg-black text-green-400 p-4 overflow-auto">
-        {/* Terminal 头部 */}
-        <div className="mb-4 text-gray-500">
-          <div>Last login: {new Date().toLocaleString()}</div>
-          <div>junhaoqu@MacBook-Pro my-portfolio % </div>
+    <div 
+      ref={containerRef} 
+      className="macbook-container relative transform-gpu [perspective:800px] cursor-pointer"
+      style={{ 
+        width: '32rem',
+        height: '44rem',
+        transformStyle: 'preserve-3d',
+      }}
+    >
+      {/* 发光底层 */}
+      <div 
+        className="absolute rounded-2xl opacity-40 blur-xl animate-pulse"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(34, 197, 94, 0.7), rgba(59, 130, 246, 0.5), rgba(168, 85, 247, 0.3), transparent)',
+          width: '32rem',
+          height: '44rem', 
+          top: '100%',
+          left: '50%',
+          transform: 'translate(-50%, -80%) translateZ(-50px) scale(1.1)',
+          zIndex: -1
+        }}
+      ></div>
+      
+      <div 
+        ref={baseRef}
+        className="macbook-base absolute bottom-0 left-1/2 -translate-x-1/2 rounded-2xl"
+        style={{ 
+          width: '32rem',
+          height: '22rem',
+          backgroundColor: 'var(--device-background)',
+          color: 'var(--device-foreground)',
+          transition: 'background-color 0.3s ease, color 0.3s ease'
+        }}
+      >
+        {/* Keyboard and components */}
+        <Trackpad />
+        
+        {/* Lid and Screen */}
+        <div
+          ref={lidRef}
+          className="macbook-lid absolute left-1/2 -translate-x-1/2 rounded-t-2xl bg-transparent p-2"
+          style={{
+            transformOrigin: 'bottom center',
+            transformStyle: 'preserve-3d',
+            top: '-22rem',
+            width: '32rem',
+            height: '22rem',
+            zIndex: 10
+          }}
+        >
+          <motion.div
+            className="mac-animated-screen absolute inset-0 h-full w-full rounded-2xl bg-[#010101] p-[2%] overflow-hidden"
+            style={{
+              transformStyle: "preserve-3d",
+              transformOrigin: "bottom",
+            }}
+          >
+            <div className="absolute inset-0 rounded-lg bg-[#272729]" />
+            <div className="absolute inset-0 rounded-lg overflow-hidden">
+              <MacScreen animationProgress={animationProgress} />
+            </div>
+          </motion.div>
         </div>
+      </div>
+    </div>
+  );
+});
 
-        {/* 命令输出 */}
-        <div className="whitespace-pre-wrap text-sm leading-relaxed">
-          {displayedText}
-          <motion.span
-            className="bg-green-400 w-2 h-5 inline-block"
-            animate={{ opacity: [1, 0] }}
-            transition={{ duration: 0.8, repeat: Infinity }}
-          />
-        </div>
+export default MacbookScroll;`;
 
-        {/* 底部提示 */}
-        <div className="mt-4 text-gray-600 text-xs">
-          <div>Common commands:</div>
-          <div className="mt-1 grid grid-cols-2 gap-2">
-            <div>• npm install - Install dependencies</div>
-            <div>• npm run dev - Start development server</div>
-            <div>• git status - Check repository status</div>
-            <div>• git commit - Commit changes</div>
+  const vimHeader = `vim ~/projects/my-web/app/mac.tsx
+
+"mac.tsx" 120L, 3247C                                          1,1           All`;
+
+  const fullText = vimHeader + "\n\n" + macComponentCode;
+
+  useEffect(() => {
+    // 立即开始动画，不需要等待窗口打开
+    const timer = setInterval(() => {
+      if (displayedText.length < fullText.length) {
+        setDisplayedText(fullText.slice(0, displayedText.length + 1));
+        
+        // 更新当前行数
+        const lines = displayedText.split('\n');
+        setCurrentLine(lines.length);
+      }
+    }, 20); // 更快的打字速度
+
+    return () => clearInterval(timer);
+  }, [displayedText, fullText]);
+
+  return (
+    <div className="absolute inset-0 w-full h-full font-mono">
+      <div className="h-full bg-black text-green-400 p-4 overflow-auto text-xs leading-relaxed">
+        {/* Vim 界面 */}
+        <div className="h-full flex flex-col">
+          {/* 代码内容区域 */}
+          <div className="flex-1 overflow-auto">
+            <div className="flex">
+              {/* 行号 */}
+              <div className="w-8 text-right pr-2 text-gray-600 select-none">
+                {displayedText.split('\n').map((_, i) => (
+                  <div key={i + 1} className="leading-relaxed">
+                    {i + 1}
+                  </div>
+                ))}
+              </div>
+              
+              {/* 代码内容 */}
+              <div className="flex-1">
+                <pre className="whitespace-pre-wrap text-green-400 leading-relaxed">
+                  <span className="text-blue-400">{vimHeader}</span>
+                  {displayedText.slice(vimHeader.length) && (
+                    <>
+                      <br /><br />
+                      <span>{displayedText.slice(vimHeader.length + 2)}</span>
+                    </>
+                  )}
+                  <motion.span
+                    className="bg-green-400 w-2 h-4 inline-block"
+                    animate={{ opacity: [1, 0] }}
+                    transition={{ duration: 0.8, repeat: Infinity }}
+                  />
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          {/* Vim 状态栏 */}
+          <div className="h-6 bg-gray-800 text-white text-xs flex items-center justify-between px-2 mt-2">
+            <div className="flex items-center space-x-4">
+              <span className="bg-gray-700 px-2 py-1 rounded">NORMAL</span>
+              <span>mac.tsx</span>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span>typescript</span>
+              <span>utf-8</span>
+              <span>{currentLine},{displayedText.length - displayedText.lastIndexOf('\n')}</span>
+              <span>{Math.round((displayedText.length / fullText.length) * 100)}%</span>
+            </div>
           </div>
         </div>
       </div>
-    </BaseWindow>
+    </div>
   );
 };
 

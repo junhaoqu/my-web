@@ -607,7 +607,7 @@ export default function Home() {
             duration: 0.8,
             ease: "easeInOut",
           }}
-          className="fixed top-10 left-1/2 -translate-x-1/2 text-center z-50 pointer-events-none"
+          className="fixed top-35 left-1/2 -translate-x-1/2 text-center z-50 pointer-events-none"
           style={{
             color: 'var(--text-primary)'
           }}
