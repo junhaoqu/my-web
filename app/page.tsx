@@ -16,7 +16,7 @@ export default function Home() {
   const cameraContainerRef = useRef<HTMLDivElement>(null);
 
   // 主题状态管理
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true);
   
   // 滚动进度状态
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -62,8 +62,8 @@ export default function Home() {
     const storedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    // 默认使用 light 主题，除非用户明确选择了 dark
-    const shouldBeDark = storedTheme === 'dark' || (!storedTheme && prefersDark);
+    // 默认使用 dark 主题，除非用户明确选择了 light
+    const shouldBeDark = storedTheme === 'light' ? false : true;
     
     setIsDark(shouldBeDark);
     document.documentElement.setAttribute('data-theme', shouldBeDark ? 'dark' : 'light');
@@ -95,9 +95,7 @@ export default function Home() {
 
   // 响应式尺寸状态
   const [responsiveSize, setResponsiveSize] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return getResponsiveSize();
-    }
+    // 服务器端和客户端都使用相同的默认值
     return {
       mac: { width: 32 * 16, height: 44 * 16 },
       ipad: { width: 20 * 16, height: 28 * 16 },

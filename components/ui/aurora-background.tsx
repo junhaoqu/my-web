@@ -13,7 +13,7 @@ export const AuroraBackground = ({
   showRadialGradient = true,
   ...props
 }: AuroraBackgroundProps) => {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true); // 默认深色模式
 
   useEffect(() => {
     // 监听主题变化

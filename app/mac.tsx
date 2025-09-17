@@ -35,6 +35,7 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
   const lidRef = useRef<HTMLDivElement>(null);
   const baseRef = useRef<HTMLDivElement>(null);
   const [animationProgress, setAnimationProgress] = React.useState(0);
+  const [pressedKeys, setPressedKeys] = React.useState<Set<string>>(new Set());
 
   useImperativeHandle(ref, () => ({
     updateAnimation: (progress: number) => {
@@ -49,6 +50,30 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
       });
     }
   }));
+
+  // 键盘事件监听
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      setPressedKeys(prev => new Set(prev).add(event.code));
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      setPressedKeys(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(event.code);
+        return newSet;
+      });
+    };
+
+    // 添加全局键盘事件监听
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
 
   useEffect(() => {
     // 初始化屏幕状态
@@ -99,7 +124,7 @@ const MacbookScroll = forwardRef<MacbookRef>((props, ref) => {
         </div>
         <div className="relative flex h-[48%]">
           <div className="mx-auto h-full w-[10%] overflow-hidden"><SpeakerGrid /></div>
-          <div className="mx-auto h-full w-[80%]"><Keypad /></div>
+          <div className="mx-auto h-full w-[80%]"><Keypad pressedKeys={pressedKeys} /></div>
           <div className="mx-auto h-full w-[10%] overflow-hidden"><SpeakerGrid /></div>
         </div>
         <Trackpad />
@@ -153,7 +178,103 @@ const Trackpad = () => {
   );
 };
 
-const Keypad = () => {
+const Keypad = ({ pressedKeys }: { pressedKeys: Set<string> }) => {
+  // 键盘映射：将键盘码映射到对应的按键标识
+  const keyMapping: Record<string, string> = {
+    // 第一行
+    'Escape': 'esc',
+    'F1': 'F1',
+    'F2': 'F2',
+    'F3': 'F3',
+    'F4': 'F4',
+    'F5': 'F5',
+    'F6': 'F6',
+    'F7': 'F7',
+    'F8': 'F8',
+    'F9': 'F9',
+    'F10': 'F10',
+    'F11': 'F11',
+    'F12': 'F12',
+    
+    // 第二行
+    'Backquote': '`',
+    'Digit1': '1',
+    'Digit2': '2',
+    'Digit3': '3',
+    'Digit4': '4',
+    'Digit5': '5',
+    'Digit6': '6',
+    'Digit7': '7',
+    'Digit8': '8',
+    'Digit9': '9',
+    'Digit0': '0',
+    'Minus': '-',
+    'Equal': '=',
+    'Backspace': 'delete',
+    
+    // 第三行
+    'Tab': 'tab',
+    'KeyQ': 'q',
+    'KeyW': 'w',
+    'KeyE': 'e',
+    'KeyR': 'r',
+    'KeyT': 't',
+    'KeyY': 'y',
+    'KeyU': 'u',
+    'KeyI': 'i',
+    'KeyO': 'o',
+    'KeyP': 'p',
+    'BracketLeft': '[',
+    'BracketRight': ']',
+    'Backslash': '\\',
+    
+    // 第四行
+    'CapsLock': 'capslock',
+    'KeyA': 'a',
+    'KeyS': 's',
+    'KeyD': 'd',
+    'KeyF': 'f',
+    'KeyG': 'g',
+    'KeyH': 'h',
+    'KeyJ': 'j',
+    'KeyK': 'k',
+    'KeyL': 'l',
+    'Semicolon': ';',
+    'Quote': "'",
+    'Enter': 'enter',
+    
+    // 第五行
+    'ShiftLeft': 'shift',
+    'ShiftRight': 'shift',
+    'KeyZ': 'z',
+    'KeyX': 'x',
+    'KeyC': 'c',
+    'KeyV': 'v',
+    'KeyB': 'b',
+    'KeyN': 'n',
+    'KeyM': 'm',
+    'Comma': ',',
+    'Period': '.',
+    'Slash': '/',
+    
+    // 第六行
+    'Fn': 'fn',
+    'ControlLeft': 'control',
+    'AltLeft': 'alt',
+    'MetaLeft': 'meta',
+    'Space': ' ',
+    'MetaRight': 'meta',
+    'AltRight': 'alt',
+    'ArrowUp': 'arrowup',
+    'ArrowDown': 'arrowdown',
+    'ArrowLeft': 'arrowleft',
+    'ArrowRight': 'arrowright'
+  };
+
+  // 检查某个按键是否被按下
+  const isKeyPressed = (keyId: string): boolean => {
+    return Array.from(pressedKeys).some(code => keyMapping[code] === keyId);
+  };
   return (
     <div className="mx-1 h-full [transform:translateZ(0)] rounded-md bg-[#050505] p-1 [will-change:transform]">
       {/* First Row */}
@@ -161,54 +282,55 @@ const Keypad = () => {
         <KBtn
           className="w-10 items-end justify-start pb-[2px] pl-[4px]"
           childrenClassName="items-start"
+          isPressed={isKeyPressed('esc')}
         >
           esc
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('F1')}>
           <IconBrightnessDown className="h-[6px] w-[6px]" />
           <span className="mt-1 inline-block">F1</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('F2')}>
           <IconBrightnessUp className="h-[6px] w-[6px]" />
           <span className="mt-1 inline-block">F2</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('F3')}>
           <IconTable className="h-[6px] w-[6px]" />
           <span className="mt-1 inline-block">F3</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('F4')}>
           <IconSearch className="h-[6px] w-[6px]" />
           <span className="mt-1 inline-block">F4</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('F5')}>
           <IconMicrophone className="h-[6px] w-[6px]" />
           <span className="mt-1 inline-block">F5</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('F6')}>
           <IconMoon className="h-[6px] w-[6px]" />
           <span className="mt-1 inline-block">F6</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('F7')}>
           <IconPlayerTrackPrev className="h-[6px] w-[6px]" />
           <span className="mt-1 inline-block">F7</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('F8')}>
           <IconPlayerSkipForward className="h-[6px] w-[6px]" />
           <span className="mt-1 inline-block">F8</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('F9')}>
           <IconPlayerTrackNext className="h-[6px] w-[6px]" />
           <span className="mt-1 inline-block">F9</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('F10')}>
           <IconVolume3 className="h-[6px] w-[6px]" />
           <span className="mt-1 inline-block">F10</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('F11')}>
           <IconVolume2 className="h-[6px] w-[6px]" />
           <span className="mt-1 inline-block">F11</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('F12')}>
           <IconVolume className="h-[6px] w-[6px]" />
           <span className="mt-1 inline-block">F12</span>
         </KBtn>
@@ -221,61 +343,62 @@ const Keypad = () => {
 
       {/* Second row */}
       <div className="mb-[2px] flex w-full shrink-0 gap-[2px]">
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('`')}>
           <span className="block">~</span>
           <span className="mt-1 block">`</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('1')}>
           <span className="block">!</span>
           <span className="block">1</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('2')}>
           <span className="block">@</span>
           <span className="block">2</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('3')}>
           <span className="block">#</span>
           <span className="block">3</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('4')}>
           <span className="block">$</span>
           <span className="block">4</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('5')}>
           <span className="block">%</span>
           <span className="block">5</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('6')}>
           <span className="block">^</span>
           <span className="block">6</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('7')}>
           <span className="block">&</span>
           <span className="block">7</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('8')}>
           <span className="block">*</span>
           <span className="block">8</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('9')}>
           <span className="block">(</span>
           <span className="block">9</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('0')}>
           <span className="block">)</span>
           <span className="block">0</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('-')}>
           <span className="block">&mdash;</span>
           <span className="block">_</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('=')}>
           <span className="block">+</span>
           <span className="block"> = </span>
         </KBtn>
         <KBtn
           className="w-10 items-end justify-end pr-[4px] pb-[2px]"
           childrenClassName="items-end"
+          isPressed={isKeyPressed('delete')}
         >
           delete
         </KBtn>
@@ -286,48 +409,49 @@ const Keypad = () => {
         <KBtn
           className="w-10 items-end justify-start pb-[2px] pl-[4px]"
           childrenClassName="items-start"
+          isPressed={isKeyPressed('tab')}
         >
           tab
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('q')}>
           <span className="block">Q</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('w')}>
           <span className="block">W</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('e')}>
           <span className="block">E</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('r')}>
           <span className="block">R</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('t')}>
           <span className="block">T</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('y')}>
           <span className="block">Y</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('u')}>
           <span className="block">U</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('i')}>
           <span className="block">I</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('o')}>
           <span className="block">O</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('p')}>
           <span className="block">P</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('[')}>
           <span className="block">{`{`}</span>
           <span className="block">{`[`}</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed(']')}>
           <span className="block">{`}`}</span>
           <span className="block">{`]`}</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('\\')}>
           <span className="block">{`|`}</span>
           <span className="block">{`\\`}</span>
         </KBtn>
@@ -338,47 +462,49 @@ const Keypad = () => {
         <KBtn
           className="w-[2.8rem] items-end justify-start pb-[2px] pl-[4px]"
           childrenClassName="items-start"
+          isPressed={isKeyPressed('capslock')}
         >
           caps lock
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('a')}>
           <span className="block">A</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('s')}>
           <span className="block">S</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('d')}>
           <span className="block">D</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('f')}>
           <span className="block">F</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('g')}>
           <span className="block">G</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('h')}>
           <span className="block">H</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('j')}>
           <span className="block">J</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('k')}>
           <span className="block">K</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('l')}>
           <span className="block">L</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed(';')}>
           <span className="block">{`:`}</span>
           <span className="block">{`;`}</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed("'")}>
           <span className="block">{`"`}</span>
           <span className="block">{`'`}</span>
         </KBtn>
         <KBtn
           className="w-[2.85rem] items-end justify-end pr-[4px] pb-[2px]"
           childrenClassName="items-end"
+          isPressed={isKeyPressed('enter')}
         >
           return
         </KBtn>
@@ -389,45 +515,47 @@ const Keypad = () => {
         <KBtn
           className="w-[3.65rem] items-end justify-start pb-[2px] pl-[4px]"
           childrenClassName="items-start"
+          isPressed={isKeyPressed('shift')}
         >
           shift
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('z')}>
           <span className="block">Z</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('x')}>
           <span className="block">X</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('c')}>
           <span className="block">C</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('v')}>
           <span className="block">V</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('b')}>
           <span className="block">B</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('n')}>
           <span className="block">N</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('m')}>
           <span className="block">M</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed(',')}>
           <span className="block">{`<`}</span>
           <span className="block">{`,`}</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('.')}>
           <span className="block">{`>`}</span>
           <span className="block">{`.`}</span>
         </KBtn>
-        <KBtn>
+        <KBtn isPressed={isKeyPressed('/')}>
           <span className="block">{`?`}</span>
           <span className="block">{`/`}</span>
         </KBtn>
         <KBtn
           className="w-[3.65rem] items-end justify-end pr-[4px] pb-[2px]"
           childrenClassName="items-end"
+          isPressed={isKeyPressed('shift')}
         >
           shift
         </KBtn>
@@ -435,7 +563,7 @@ const Keypad = () => {
 
       {/* Sixth Row */}
       <div className="mb-[2px] flex w-full shrink-0 gap-[2px]">
-        <KBtn className="" childrenClassName="h-full justify-between py-[4px]">
+        <KBtn className="" childrenClassName="h-full justify-between py-[4px]" isPressed={isKeyPressed('fn')}>
           <div className="flex w-full justify-end pr-1">
             <span className="block">fn</span>
           </div>
@@ -443,7 +571,7 @@ const Keypad = () => {
             <IconWorld className="h-[6px] w-[6px]" />
           </div>
         </KBtn>
-        <KBtn className="" childrenClassName="h-full justify-between py-[4px]">
+        <KBtn className="" childrenClassName="h-full justify-between py-[4px]" isPressed={isKeyPressed('control')}>
           <div className="flex w-full justify-end pr-1">
             <IconChevronUp className="h-[6px] w-[6px]" />
           </div>
@@ -451,7 +579,7 @@ const Keypad = () => {
             <span className="block">control</span>
           </div>
         </KBtn>
-        <KBtn className="" childrenClassName="h-full justify-between py-[4px]">
+        <KBtn className="" childrenClassName="h-full justify-between py-[4px]" isPressed={isKeyPressed('alt')}>
           <div className="flex w-full justify-end pr-1">
             <OptionKey className="h-[6px] w-[6px]" />
           </div>
@@ -462,6 +590,7 @@ const Keypad = () => {
         <KBtn
           className="w-8"
           childrenClassName="h-full justify-between py-[4px]"
+          isPressed={isKeyPressed('meta')}
         >
           <div className="flex w-full justify-end pr-1">
             <IconCommand className="h-[6px] w-[6px]" />
@@ -470,10 +599,11 @@ const Keypad = () => {
             <span className="block">command</span>
           </div>
         </KBtn>
-        <KBtn className="w-[8.2rem]"></KBtn>
+        <KBtn className="w-[8.2rem]" isPressed={isKeyPressed(' ')}></KBtn>
         <KBtn
           className="w-8"
           childrenClassName="h-full justify-between py-[4px]"
+          isPressed={isKeyPressed('meta')}
         >
           <div className="flex w-full justify-start pl-1">
             <IconCommand className="h-[6px] w-[6px]" />
@@ -482,7 +612,7 @@ const Keypad = () => {
             <span className="block">command</span>
           </div>
         </KBtn>
-        <KBtn className="" childrenClassName="h-full justify-between py-[4px]">
+        <KBtn className="" childrenClassName="h-full justify-between py-[4px]" isPressed={isKeyPressed('alt')}>
           <div className="flex w-full justify-start pl-1">
             <OptionKey className="h-[6px] w-[6px]" />
           </div>
@@ -491,17 +621,17 @@ const Keypad = () => {
           </div>
         </KBtn>
         <div className="mt-[2px] flex h-6 w-[4.9rem] flex-col items-center justify-end rounded-[4px] p-[0.5px]">
-          <KBtn className="h-3 w-6">
+          <KBtn className="h-3 w-6" isPressed={isKeyPressed('arrowup')}>
             <IconCaretUpFilled className="h-[6px] w-[6px]" />
           </KBtn>
           <div className="flex">
-            <KBtn className="h-3 w-6">
+            <KBtn className="h-3 w-6" isPressed={isKeyPressed('arrowleft')}>
               <IconCaretLeftFilled className="h-[6px] w-[6px]" />
             </KBtn>
-            <KBtn className="h-3 w-6">
+            <KBtn className="h-3 w-6" isPressed={isKeyPressed('arrowdown')}>
               <IconCaretDownFilled className="h-[6px] w-[6px]" />
             </KBtn>
-            <KBtn className="h-3 w-6">
+            <KBtn className="h-3 w-6" isPressed={isKeyPressed('arrowright')}>
               <IconCaretRightFilled className="h-[6px] w-[6px]" />
             </KBtn>
           </div>
@@ -516,34 +646,40 @@ const KBtn = ({
   children,
   childrenClassName,
   backlit = true,
+  isPressed = false,
 }: {
   className?: string;
   children?: React.ReactNode;
   childrenClassName?: string;
   backlit?: boolean;
+  isPressed?: boolean;
 }) => {
   return (
     <div
       className={cn(
-        "[transform:translateZ(0)] rounded-[4px] p-[0.5px] [will-change:transform]",
+        "[transform:translateZ(0)] rounded-[4px] p-[0.5px] [will-change:transform] transition-all duration-75",
         backlit && "bg-white/[0.2] shadow-xl shadow-white",
+        isPressed && "bg-blue-400/[0.6] shadow-2xl shadow-blue-400/50 scale-95"
       )}
     >
       <div
         className={cn(
-          "flex h-6 w-6 items-center justify-center rounded-[3.5px] bg-[#0A090D]",
+          "flex h-6 w-6 items-center justify-center rounded-[3.5px] transition-all duration-75",
+          isPressed ? "bg-blue-500" : "bg-[#0A090D]",
           className,
         )}
         style={{
-          boxShadow:
-            "0px -0.5px 2px 0 #0D0D0F inset, -0.5px 0px 2px 0 #0D0D0F inset",
+          boxShadow: isPressed 
+            ? "0px 0px 8px 2px rgba(59, 130, 246, 0.5), 0px -0.5px 2px 0 #0D0D0F inset, -0.5px 0px 2px 0 #0D0D0F inset"
+            : "0px -0.5px 2px 0 #0D0D0F inset, -0.5px 0px 2px 0 #0D0D0F inset",
         }}
       >
         <div
           className={cn(
-            "flex w-full flex-col items-center justify-center text-[5px] text-neutral-200",
+            "flex w-full flex-col items-center justify-center text-[5px] transition-all duration-75",
+            isPressed ? "text-white font-bold" : "text-neutral-200",
             childrenClassName,
-            backlit && "text-white",
+            backlit && !isPressed && "text-white",
           )}
         >
           {children}

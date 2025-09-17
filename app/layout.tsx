@@ -23,11 +23,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark">
       <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `
+              // 立即设置主题，避免闪烁
+              (function() {
+                const storedTheme = localStorage.getItem('theme');
+                const shouldBeDark = storedTheme === 'light' ? false : true;
+                document.documentElement.setAttribute('data-theme', shouldBeDark ? 'dark' : 'light');
+              })();
+              
               // 立即重置滚动位置，避免闪烁
               if (typeof window !== 'undefined') {
                 window.scrollTo(0, 0);
