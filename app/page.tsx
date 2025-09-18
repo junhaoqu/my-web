@@ -1,11 +1,16 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import Macbook, { MacbookRef } from "./mac";
 import Ipad, { IpadRef } from "./ipad";
 import Camera, { CameraRef } from "./camera";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { TextHoverEffect } from "@/components/ui/text-hover-effect";
+import ProfileImage from "@/components/MacScreen/ProfileImage";
+import PersonalIntro from "@/components/MacScreen/PersonalIntro";
+import SocialLinks from "@/components/MacScreen/SocialLinks";
+import TechStack from "@/components/MacScreen/TechStack";
+import WorkExperience from "@/components/MacScreen/WorkExperience";
 
 export default function Home() {
   const macbookRef = useRef<MacbookRef>(null);
@@ -156,6 +161,17 @@ export default function Home() {
         // Mac动画 - 成为焦点
         macbookRef.current?.updateAnimation(easedProgress);
         
+        // Mac获得焦点时，恢复默认图层顺序
+        if (macContainerRef.current) {
+          macContainerRef.current.style.zIndex = '30'; // Mac在中间
+        }
+        if (ipadContainerRef.current) {
+          ipadContainerRef.current.style.zIndex = '25'; // iPad恢复默认
+        }
+        if (cameraContainerRef.current) {
+          cameraContainerRef.current.style.zIndex = '20'; // Camera恢复默认
+        }
+        
         // Mac放大并前进
         if (macContainerRef.current) {
           const scale = 0.8 + easedProgress * 0.6; // 0.8 to 1.4
@@ -248,6 +264,17 @@ export default function Home() {
         // iPad获得焦点并打开
         ipadRef.current?.updateAnimation(easedProgress);
         
+        // iPad获得焦点时，调整图层顺序
+        if (ipadContainerRef.current) {
+          ipadContainerRef.current.style.zIndex = '45'; // iPad在最上层
+        }
+        if (macContainerRef.current) {
+          macContainerRef.current.style.zIndex = '30'; // Mac在中间
+        }
+        if (cameraContainerRef.current) {
+          cameraContainerRef.current.style.zIndex = '20'; // Camera在底层
+        }
+        
         // Mac失去焦点 - 从第2阶段结束位置平滑过渡
         if (macContainerRef.current) {
           // 第2阶段结束时Mac状态：scale=0.8, translateX=0, blur=0px
@@ -308,6 +335,17 @@ export default function Home() {
         // iPad逆向动画 - 回到初始状态
         ipadRef.current?.updateAnimation(easedProgress);
         
+        // 阶段4回到平衡状态时，恢复默认图层顺序
+        if (macContainerRef.current) {
+          macContainerRef.current.style.zIndex = '30';
+        }
+        if (ipadContainerRef.current) {
+          ipadContainerRef.current.style.zIndex = '25';
+        }
+        if (cameraContainerRef.current) {
+          cameraContainerRef.current.style.zIndex = '20';
+        }
+        
         // Mac在iPad逆向阶段应该保持模糊，从第3阶段的状态平滑回到平衡位置
         if (macContainerRef.current) {
           // 第3阶段结束时Mac状态：scale=0.4, translateX=-150, blur=5px
@@ -365,6 +403,17 @@ export default function Home() {
         // Camera获得焦点并激活
         cameraRef.current?.updateAnimation(easedProgress);
         
+        // Camera获得焦点时，调整图层顺序
+        if (cameraContainerRef.current) {
+          cameraContainerRef.current.style.zIndex = '45'; // Camera在最上层
+        }
+        if (macContainerRef.current) {
+          macContainerRef.current.style.zIndex = '30'; // Mac在中间
+        }
+        if (ipadContainerRef.current) {
+          ipadContainerRef.current.style.zIndex = '25'; // iPad在底层
+        }
+        
         // Mac失去焦点 - 从第4阶段结束位置平滑过渡
         if (macContainerRef.current) {
           // 第4阶段结束时Mac的状态：scale=0.8, translateX=0, blur=5px
@@ -419,6 +468,17 @@ export default function Home() {
         
         // Camera逆向动画 - 回到初始状态
         cameraRef.current?.updateAnimation(easedProgress);
+        
+        // 阶段6回到平衡状态时，恢复默认图层顺序
+        if (macContainerRef.current) {
+          macContainerRef.current.style.zIndex = '30';
+        }
+        if (ipadContainerRef.current) {
+          ipadContainerRef.current.style.zIndex = '25';
+        }
+        if (cameraContainerRef.current) {
+          cameraContainerRef.current.style.zIndex = '20';
+        }
         
         // Mac在Camera逆向阶段应该保持模糊，从第5阶段的状态平滑回到平衡位置
         if (macContainerRef.current) {
@@ -644,6 +704,56 @@ export default function Home() {
       >
         <Macbook ref={macbookRef} />
       </div>
+      
+      {/* 个人信息组件 - 当Mac完全打开时显示 */}
+      <AnimatePresence>
+        {currentStage === 1 && (
+          <>
+            {/* 左侧组件 */}
+            <motion.div
+              key="left-components"
+              initial={{ opacity: 0, x: -100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.4, delay: 0 }}
+              className="fixed top-1/2 -translate-y-1/2 z-40 w-80 space-y-6"
+              style={{
+                left: `calc(50% - ${responsiveSize.mac.width / 2 + 320 + 150}px)` // 参考Camera的定位方式，320是组件宽度，150是间距
+              }}
+            >
+              {/* Profile Image */}
+              <div className="flex justify-center">
+                <ProfileImage />
+              </div>
+              
+              {/* Personal Intro */}
+              <PersonalIntro />
+            </motion.div>
+
+            {/* 右侧组件 */}
+            <motion.div
+              key="right-components"
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ duration: 0.4, delay: 0 }}
+              className="fixed top-1/2 -translate-y-1/2 z-40 w-80 space-y-6"
+              style={{
+                left: `calc(50% + ${responsiveSize.mac.width / 2 + 150}px)` // 参考iPad的定位方式，150是间距
+              }}
+            >
+              {/* Social Links */}
+              <SocialLinks />
+              
+              {/* Tech Stack */}
+              <TechStack />
+              
+              {/* Work Experience */}
+              <WorkExperience />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
       
       {/* iPad设备容器 - 初始位置在Mac右侧，较小尺寸 */}
       <div 
