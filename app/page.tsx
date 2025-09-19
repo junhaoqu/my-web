@@ -11,6 +11,7 @@ import PersonalIntro from "@/components/MacScreen/PersonalIntro";
 import SocialLinks from "@/components/MacScreen/SocialLinks";
 import TechStack from "@/components/MacScreen/TechStack";
 import WorkExperience from "@/components/MacScreen/WorkExperience";
+import GlassSurface from "@/components/GlassSurface";
 
 export default function Home() {
   const macbookRef = useRef<MacbookRef>(null);
@@ -821,130 +822,132 @@ export default function Home() {
 
       {/* 液体玻璃进度条 */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
-        <div 
-          className="relative flex items-center gap-4 px-6 py-3 rounded-full"
+        <GlassSurface
+          width={450}
+          height={45}
+          borderRadius={22}
+          className="flex items-center justify-between px-5"
+          brightness={isDark ? 50 : 120}
+          opacity={isDark ? 0.95 : 0.75}
+          blur={15}
+          backgroundOpacity={isDark ? 0.05 : 0.25}
+          saturation={1.5}
           style={{
-            background: isDark 
-              ? 'rgba(255, 255, 255, 0.05)' 
-              : 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(20px) saturate(180%)',
             border: isDark 
               ? '1px solid rgba(255, 255, 255, 0.1)' 
-              : '1px solid rgba(255, 255, 255, 0.2)',
+              : '1px solid rgba(0, 0, 0, 0.15)',
             boxShadow: isDark
-              ? '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-              : '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+              ? '0 8px 32px rgba(0, 0, 0, 0.3)'
+              : '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
           }}
         >
-          {/* 进度条背景 */}
-          <div 
-            className="relative w-80 h-2 rounded-full overflow-hidden"
-            style={{
-              background: isDark 
-                ? 'rgba(255, 255, 255, 0.1)' 
-                : 'rgba(0, 0, 0, 0.1)',
-            }}
-          >
-            {/* 进度条填充 */}
+          {/* 进度条容器 */}
+          <div className="relative flex items-center gap-4">
+            {/* 进度条背景 */}
             <div 
-              className="absolute top-0 left-0 h-full rounded-full transition-all duration-300 ease-out"
+              className="relative w-80 h-2 rounded-full overflow-hidden"
               style={{
-                width: `${scrollProgress * 100}%`,
-                background: isDark
-                  ? 'linear-gradient(90deg, rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.8), rgba(236, 72, 153, 0.8))'
-                  : 'linear-gradient(90deg, rgba(59, 130, 246, 0.9), rgba(147, 51, 234, 0.9), rgba(236, 72, 153, 0.9))',
-                boxShadow: '0 0 20px rgba(59, 130, 246, 0.4)',
+                background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.15)'
               }}
             >
-              {/* 液体波动效果 */}
+              {/* 进度条填充 */}
               <div 
-                className="absolute top-0 left-0 w-full h-full rounded-full"
+                className="absolute top-0 left-0 h-full rounded-full transition-all duration-300 ease-out"
                 style={{
-                  background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-                  animation: 'liquidFlow 2s linear infinite',
+                  width: `${scrollProgress * 100}%`,
+                  background: 'linear-gradient(90deg, rgba(59, 130, 246, 0.9), rgba(147, 51, 234, 0.8), rgba(236, 72, 153, 0.9))',
+                  boxShadow: '0 0 15px rgba(59, 130, 246, 0.5)',
                 }}
-              />
+              >
+                {/* 液体波动效果 */}
+                <div 
+                  className="absolute top-0 left-0 w-full h-full rounded-full"
+                  style={{
+                    background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent)',
+                    animation: 'liquidFlow 2s linear infinite',
+                  }}
+                />
+              </div>
+
+              {/* 竖线分隔符 */}
+              {[1, 2, 3, 4, 5, 6, 7].map((divider) => (
+                <div
+                  key={`divider-${divider}`}
+                  className="absolute top-0 w-0.5 h-full"
+                  style={{
+                    left: `${(divider / 7) * 100}%`,
+                    transform: 'translateX(-50%)',
+                    background: isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.25)',
+                    zIndex: 5,
+                  }}
+                />
+              ))}
             </div>
 
-            {/* 竖线分隔符 */}
-            {[1, 2, 3, 4, 5, 6, 7].map((divider) => (
-              <div
-                key={`divider-${divider}`}
-                className="absolute top-0 w-0.5 h-full"
+            {/* 阶段标记大球 */}
+            {[0, 1, 3, 5, 6].map((stage) => (
+              <button
+                key={stage}
+                onClick={() => jumpToStage(stage)}
+                className="absolute w-5 h-5 rounded-full cursor-pointer transition-all duration-300 hover:scale-110 flex items-center justify-center backdrop-blur-sm"
                 style={{
-                  left: `${(divider / 7) * 100}%`,
-                  transform: 'translateX(-50%)',
-                  background: isDark 
-                    ? 'rgba(255, 255, 255, 0.2)' 
-                    : 'rgba(0, 0, 0, 0.2)',
-                  zIndex: 5,
-                }}
-              />
-            ))}
-          </div>
-
-          {/* 阶段标记大球 - 在进度条外部 */}
-          {[0, 1, 3, 5, 6].map((stage) => (
-            <button
-              key={stage}
-              onClick={() => jumpToStage(stage)}
-              className="absolute w-6 h-6 rounded-full cursor-pointer transition-all duration-300 hover:scale-110 flex items-center justify-center"
-              style={{
-                left: `${24 + (stage / 7) * 320}px`, // 直接计算像素位置：左边距24px + 进度条位置
-                top: '50%',
-                transform: 'translateX(-50%) translateY(-50%)',
-                background: currentStage >= stage 
-                  ? (isDark 
-                      ? 'linear-gradient(145deg, rgba(59, 130, 246, 0.9), rgba(147, 51, 234, 0.8))'
-                      : 'linear-gradient(145deg, rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.7))')
-                  : (isDark 
-                      ? 'linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08))'
-                      : 'linear-gradient(145deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05))'),
-                border: `1px solid ${currentStage >= stage 
-                  ? 'rgba(59, 130, 246, 0.4)' 
-                  : (isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)')}`,
-                backdropFilter: 'blur(8px) saturate(150%)',
-                boxShadow: currentStage >= stage
-                  ? '0 2px 8px rgba(59, 130, 246, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
-                  : `0 2px 6px ${isDark ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
-                zIndex: 20, // 高于进度条容器
-              }}
-            >
-              {/* 内部高光点 */}
-              <div 
-                className="w-2 h-2 rounded-full transition-all duration-300"
-                style={{
+                  left: `${20 + (stage / 7) * 320}px`,
+                  top: '50%',
+                  transform: 'translateX(-50%) translateY(-50%)',
                   background: currentStage >= stage 
-                    ? 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.2), transparent)'
-                    : 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1), transparent)',
-                  transform: 'translate(-1px, -1px)', // 偏移到左上角营造立体感
+                    ? 'linear-gradient(145deg, rgba(59, 130, 246, 0.9), rgba(147, 51, 234, 0.8))'
+                    : (isDark 
+                        ? 'rgba(255, 255, 255, 0.15)' 
+                        : 'rgba(0, 0, 0, 0.1)'),
+                  border: currentStage >= stage 
+                    ? '1px solid rgba(59, 130, 246, 0.4)' 
+                    : (isDark 
+                        ? '1px solid rgba(255, 255, 255, 0.2)' 
+                        : '1px solid rgba(0, 0, 0, 0.2)'),
+                  boxShadow: currentStage >= stage
+                    ? '0 2px 8px rgba(59, 130, 246, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+                    : (isDark
+                        ? '0 2px 6px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                        : '0 2px 6px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4)'),
+                  zIndex: 20,
                 }}
-              />
-            </button>
-          ))}
+              >
+                {/* 内部高光点 */}
+                <div 
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{
+                    background: currentStage >= stage 
+                      ? 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.2), transparent)'
+                      : 'radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1), transparent)',
+                    transform: 'translate(-1px, -1px)',
+                  }}
+                />
+              </button>
+            ))}
           </div>
 
           {/* 阶段指示器 */}
           <div 
-            className="flex items-center gap-2 text-sm font-medium"
+            className="flex items-center gap-2 text-xs font-medium"
             style={{
-              color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)'
+              color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
             }}
           >
             <span>Stage</span>
             <span 
-              className="px-2 py-1 rounded-full text-xs"
+              className="px-1.5 py-0.5 rounded-full text-[10px]"
               style={{
                 background: isDark 
                   ? 'rgba(255, 255, 255, 0.1)' 
-                  : 'rgba(0, 0, 0, 0.1)',
-                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)'
+                  : 'rgba(0, 0, 0, 0.15)',
+                color: isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.9)'
               }}
             >
               {currentStage + 1}/8
             </span>
           </div>
-        </div>
+        </GlassSurface>
+      </div>
       </AuroraBackground>
   );
 }

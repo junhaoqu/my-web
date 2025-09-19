@@ -67,22 +67,52 @@ const ProfileImage: React.FC = () => {
   return (
     <div 
       ref={cardRef}
-      className="profile-card w-72 h-72 rounded-full relative cursor-grab"
+      className="profile-card w-72 h-72 rounded-full relative cursor-grab transition-all duration-500 ease-out group"
       style={{
         transformStyle: 'preserve-3d',
         perspective: '1000px',
         userSelect: 'none',
-        touchAction: 'pan-y'
+        touchAction: 'pan-y',
       }}
     >
+      {/* 渐变发光效果层 - 从右上角到左下角蓝粉渐变 */}
+      <div 
+        className="absolute -inset-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-700 ease-in-out blur-lg"
+        style={{
+          background: 'linear-gradient(135deg, rgba(15, 107, 253, 0.8) 0%, rgba(147, 51, 234, 0.6) 50%, rgba(232, 111, 172, 0.8) 100%)',
+          zIndex: -1,
+          transform: 'scale(0.95)',
+        }}
+      />
+      
+      {/* 内层渐变发光 */}
+      <div 
+        className="absolute -inset-1 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out blur-md"
+        style={{
+          background: 'linear-gradient(135deg, rgba(141, 181, 245, 0.6) 0%, rgba(147, 51, 234, 0.4) 50%, rgba(242, 116, 179, 0.6) 100%)',
+          zIndex: -1,
+          transform: 'scale(0.98)',
+        }}
+      />
+      
+      {/* 微妙的外层光晕 */}
+      <div 
+        className="absolute -inset-3 rounded-full opacity-0 group-hover:opacity-60 transition-all duration-1000 ease-in-out blur-xl"
+        style={{
+          background: 'linear-gradient(135deg, rgba(15, 107, 253, 0.3) 0%, rgba(147, 51, 234, 0.2) 50%, rgba(232, 111, 172, 0.3) 100%)',
+          zIndex: -2,
+          transform: 'scale(0.9)',
+        }}
+      />
+      
       {/* 正面 */}
-      <div className="absolute inset-0 w-full h-full rounded-full overflow-hidden border-4 border-gray-300 dark:border-gray-600 shadow-lg backface-hidden">
+      <div className="absolute inset-0 w-full h-full rounded-full overflow-hidden shadow-lg backface-hidden group-hover:shadow-2xl transition-all duration-500 ease-in-out">
         <Image
           src="/images/profile/Front.jpeg"
           alt="Profile Front"
           width={384}
           height={384}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-all duration-500 ease-in-out group-hover:brightness-110 group-hover:contrast-105"
           style={{
             objectPosition: 'center left' // 可以调节：center top, center bottom, left center, right center, 或具体像素值如 '0px -20px'
           }}
@@ -91,7 +121,7 @@ const ProfileImage: React.FC = () => {
       
       {/* 背面 */}
       <div 
-        className="absolute inset-0 w-full h-full rounded-full overflow-hidden border-4 border-gray-300 dark:border-gray-600 shadow-lg backface-hidden"
+        className="absolute inset-0 w-full h-full rounded-full overflow-hidden shadow-lg backface-hidden group-hover:shadow-2xl transition-all duration-500 ease-in-out"
         style={{
           transform: 'rotateY(180deg)'
         }}
@@ -101,7 +131,7 @@ const ProfileImage: React.FC = () => {
           alt="Profile Back"
           width={384}
           height={384}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-all duration-500 ease-in-out group-hover:brightness-110 group-hover:contrast-105"
           style={{
             objectPosition: '50% 40%' // 可以调节：center top, center bottom, left center, right center, 或具体像素值如 '0px -20px'
           }}
