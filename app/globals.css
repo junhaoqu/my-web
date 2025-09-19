@@ -29,15 +29,12 @@
 }
 
 /* Aurora animation */
-@theme inline {
-  --animate-aurora: aurora 60s linear infinite;
-  @keyframes aurora {
-    from {
-      background-position: 50% 50%, 50% 50%;
-    }
-    to {
-      background-position: 350% 50%, 350% 50%;
-    }
+@keyframes aurora {
+  from {
+    background-position: 50% 50%, 50% 50%;
+  }
+  to {
+    background-position: 350% 50%, 350% 50%;
   }
 }
 /* Theme transition */
@@ -90,6 +87,15 @@ html {
     transform: translateX(200%) skewX(-15deg);
     opacity: 0;
   }
+}
+
+/* Profile card 3D styles */
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.profile-card {
+  transform-style: preserve-3d;
 }
 
 body {

@@ -383,7 +383,7 @@ export default function Home() {
           // 第3阶段结束时Camera状态：scale=0.3, translateX=-200, blur=5px
           const startScale = 0.3;
           const startTranslateX = -200;
-          const targetScale = 0.6; // 回到初始大小
+          const targetScale = 0.4; // 从0.6改为0.4，为焦点时的放大做准备
           const targetTranslateX = 0; // 回到初始位置
           
           const scale = startScale + (1 - easedProgress) * (targetScale - startScale);
@@ -443,13 +443,13 @@ export default function Home() {
 
         // Camera获得焦点 - 从第4阶段结束位置平滑过渡
         if (cameraContainerRef.current) {
-          // 第4阶段结束时Camera的状态：scale=0.6, translateX=0, blur=5px
-          const startScale = 0.6;
-          const targetScale = 1.0;
+          // 第4阶段结束时Camera的状态：scale=0.4, translateX=0, blur=5px
+          const startScale = 0.4; // 从0.6改为0.4
+          const targetScale = 0.6; // 焦点时放大到0.6
           const targetTranslateX = -40; // 轻微向中心移动
           const targetTranslateY = 20; // 轻微向上
           
-          const scale = startScale + easedProgress * (targetScale - startScale); // 从0.6平滑到1.0
+          const scale = startScale + easedProgress * (targetScale - startScale); // 从0.4平滑到0.6
           const translateX = easedProgress * targetTranslateX; // 从0平滑到-40
           const translateY = easedProgress * targetTranslateY; // 从0平滑到20
           const blurIntensity = Math.max(0, 5 * (1 - easedProgress * 2)); // 从5px平滑到0px
@@ -510,11 +510,11 @@ export default function Home() {
 
         // Camera回到初始状态，从第5阶段的状态平滑回到平衡位置
         if (cameraContainerRef.current) {
-          // 第5阶段结束时Camera状态：scale=1.0, translateX=-40, translateY=20, blur=0px
-          const startScale = 1.0;
+          // 第5阶段结束时Camera状态：scale=0.6, translateX=-40, translateY=20, blur=0px
+          const startScale = 0.6; // 从0.8改为0.6，与阶段5的调整保持一致
           const startTranslateX = -40;
           const startTranslateY = 20;
-          const targetScale = 0.6; // 回到初始大小
+          const targetScale = 0.4; // 从0.6改为0.4，回到第4阶段结束时的大小
           const targetTranslateX = 0; // 回到初始位置
           const targetTranslateY = 0; // 回到初始位置
           
@@ -573,7 +573,7 @@ export default function Home() {
 
         // Camera模糊并向上移动离开画面
         if (cameraContainerRef.current) {
-          const scale = 0.6 * (1 - easedProgress * 0.5); // 更明显的缩小效果
+          const scale = 0.4 * (1 - easedProgress * 0.5); // 从0.6改为0.4，与stage 6结束时的大小保持一致
           const opacity = 1 - easedProgress * 0.3; // 轻微透明度变化
           cameraContainerRef.current.style.transform = `scale(${scale}) translateY(${scrollOffset}px)`;
           cameraContainerRef.current.style.filter = `blur(${totalBlur}px)`;
@@ -716,9 +716,9 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.4, delay: 0 }}
-              className="fixed top-1/2 -translate-y-1/2 z-40 w-80 space-y-6"
+              className="fixed top-2/5 -translate-y-1/2 z-40 w-80 space-y-6"
               style={{
-                left: `calc(50% - ${responsiveSize.mac.width / 2 + 320 + 150}px)` // 参考Camera的定位方式，320是组件宽度，150是间距
+                left: `calc(50% - ${responsiveSize.mac.width / 2 + 320 + 120}px)` // 参考Camera的定位方式，320是组件宽度，150是间距
               }}
             >
               {/* Profile Image */}
