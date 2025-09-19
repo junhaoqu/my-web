@@ -728,7 +728,12 @@ export default function Home() {
               </div>
               
               {/* Personal Intro */}
-              <PersonalIntro />
+              <PersonalIntro 
+                onContactClick={() => {
+                  // 可以打开邮箱或跳转到联系页面
+                  window.open('mailto:your.email@example.com', '_blank');
+                }}
+              />
             </motion.div>
 
             {/* 右侧组件 */}
