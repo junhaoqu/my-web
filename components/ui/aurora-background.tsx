@@ -51,7 +51,7 @@ export const AuroraBackground = ({
         style={{
           backgroundColor: isDark ? '#0a0a0a' : '#f9fafb',
           color: isDark ? '#ededed' : '#1f2937',
-          transition: 'background-color 0.3s ease, color 0.3s ease'
+          // 移除transition，避免与Aurora动画冲突
         }}
         {...props}
       >
@@ -79,7 +79,8 @@ export const AuroraBackground = ({
         >
           <div
             className={cn(
-              `after:animate-aurora pointer-events-none absolute -inset-[10px] opacity-50 blur-[10px] filter will-change-transform`,
+              `pointer-events-none absolute -inset-[10px] opacity-50 blur-[10px] filter will-change-transform`,
+              // 使用内联样式来确保动画生效
               isDark 
                 ? `[background-image:var(--dark-gradient),var(--aurora)] invert-0 after:absolute after:inset-0 after:[background-image:var(--dark-gradient),var(--aurora)] after:[background-size:200%,_100%] after:[background-attachment:fixed] after:mix-blend-difference after:content-[""]`
                 : `[background-image:var(--white-gradient),var(--aurora)] invert after:absolute after:inset-0 after:[background-image:var(--white-gradient),var(--aurora)] after:[background-size:200%,_100%] after:[background-attachment:fixed] after:mix-blend-difference after:content-[""]`,
@@ -87,6 +88,9 @@ export const AuroraBackground = ({
               showRadialGradient &&
                 `[mask-image:radial-gradient(ellipse_at_100%_0%,black_10%,var(--transparent)_70%)]`,
             )}
+            style={{
+              animation: 'aurora 60s linear infinite',
+            }}
           ></div>
         </div>
         {children}

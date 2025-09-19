@@ -37,8 +37,8 @@
     background-position: 350% 50%, 350% 50%;
   }
 }
-/* Theme transition */
-* {
+/* Theme transition - 排除Aurora动画元素 */
+*:not([class*="aurora"]):not([class*="animate-aurora"]) {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
