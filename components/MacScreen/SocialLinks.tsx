@@ -45,7 +45,7 @@ const SocialLinks: React.FC = () => {
       title: "LinkedIn",
       icon: (
         <Image
-          src="/images/icon/linkedin.png"
+          src="/images/icon/LinkedIn.png"
           width={40}
           height={40}
           alt="LinkedIn"
