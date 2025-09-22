@@ -1,13 +1,40 @@
 "use client";
 import { animate } from "animejs";
-import React, { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
+import React, {
+  useEffect,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import { motion } from "framer-motion";
+
+const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+export interface IpadAsset {
+  id: string;
+  imageId: string;
+  videoId: string;
+  label?: string;
+}
 
 export interface IpadRef {
   updateAnimation: (progress: number) => void;
 }
 
-const IpadScroll = forwardRef<IpadRef>((props, ref) => {
+interface IpadScrollProps {
+  assets: IpadAsset[];
+  showContent: boolean;
+  isDark: boolean;
+  selectedIndex: number;
+  onSelect: (index: number) => void;
+}
+
+const buildImageUrl = (publicId: string) => {
+  if (!cloudName) return "";
+  return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/${publicId}`;
+};
+
+const IpadScroll = forwardRef<IpadRef, IpadScrollProps>(({ assets, showContent, isDark, selectedIndex, onSelect }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useImperativeHandle(ref, () => ({
@@ -58,8 +85,8 @@ const IpadScroll = forwardRef<IpadRef>((props, ref) => {
       <div
         className="ipad-base absolute top-0 left-0 rounded-2xl will-change-transform [transform-style:preserve-3d]"
         style={{ 
-          width: '20rem', // 恢复固定尺寸
-          height: '28rem', // 恢复固定尺寸
+          width: '20rem',
+          height: '28rem',
           backgroundColor: 'var(--device-background)',
           color: 'var(--device-foreground)',
           transition: 'background-color 0.3s ease, color 0.3s ease'
@@ -67,18 +94,78 @@ const IpadScroll = forwardRef<IpadRef>((props, ref) => {
       >
         {/* Screen */}
         <motion.div
-          className="ipad-animated-screen absolute inset-0 h-full w-full rounded-2xl bg-[#010101] p-[2%]"
+          className="ipad-animated-screen absolute inset-0 h-full w-full rounded-2xl p-[2%]"
           style={{
             transformStyle: "preserve-3d",
             transformOrigin: "bottom",
+            backgroundColor: isDark ? "#050505" : "#f6f8fa",
           }}
         >
-          <div className="absolute inset-0 rounded-lg bg-[#272729]" />
-          <img
-            src="/images/github.png"
-            alt="GitHub Profile"
-            className="absolute inset-0 h-full w-full rounded-lg object-cover object-left-top"
+          <div
+            className="absolute inset-0 rounded-xl"
+            style={{
+              background: isDark ? "rgba(8,11,17,0.85)" : "rgba(248,250,252,0.92)",
+              border: isDark ? "1px solid rgba(148, 163, 184, 0.12)" : "1px solid rgba(71, 85, 105, 0.12)",
+            }}
           />
+
+          <motion.div
+            className="relative h-full w-full"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: showContent ? 1 : 0.45, y: showContent ? 0 : 8 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            style={{
+              background: isDark ? "rgba(8,11,17,0.55)" : "rgba(248,250,252,0.65)",
+              backdropFilter: "blur(6px)",
+              borderRadius: "12px",
+              border: isDark
+                ? "1px solid rgba(148,163,184,0.12)"
+                : "1px solid rgba(148,163,184,0.18)",
+              padding: "18px",
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gridTemplateRows: "repeat(2, 1fr)",
+              gap: "14px",
+              pointerEvents: showContent ? "auto" : "none",
+            }}
+          >
+            {assets.map((asset, index) => {
+              const isActive = index === selectedIndex;
+              return (
+                <button
+                  key={asset.id}
+                  type="button"
+                  onClick={() => showContent && onSelect(index)}
+                  className={
+                    "relative overflow-hidden rounded-[14px] transition-transform" +
+                    (isActive ? " scale-[1.03]" : showContent ? " hover:scale-[1.02]" : "")
+                  }
+                  style={{
+                    aspectRatio: "3 / 4",
+                    width: "100%",
+                    border: isActive
+                      ? "1px solid rgba(37,99,235,0.65)"
+                      : "1px solid rgba(148,163,184,0.12)",
+                    background: isDark
+                      ? "rgba(15,23,42,0.55)"
+                      : "rgba(241,245,249,0.7)",
+                    boxShadow: isActive
+                      ? "0 0 18px rgba(37,99,235,0.36)"
+                      : "0 4px 14px rgba(15,23,42,0.12)",
+                    opacity: showContent ? 1 : 0.7,
+                  }}
+                >
+                  <img
+                    src={buildImageUrl(asset.imageId)}
+                    alt={asset.label || asset.id}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                </button>
+              );
+            })}
+          </motion.div>
+
         </motion.div>
       </div>
     </div>

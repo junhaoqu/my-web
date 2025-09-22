@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Macbook, { MacbookRef } from "./mac";
-import Ipad, { IpadRef } from "./ipad";
+import Ipad, { IpadRef, IpadAsset } from "./ipad";
 import Camera, { CameraRef } from "./camera";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { TextHoverEffect } from "@/components/ui/text-hover-effect";
@@ -13,6 +13,27 @@ import TechStack from "@/components/MacScreen/TechStack";
 import WorkExperience from "@/components/MacScreen/WorkExperience";
 import GlassSurface from "@/components/GlassSurface";
 import ProgressBar from "@/components/ProgressBar";
+
+const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+const IPAD_ASSETS: IpadAsset[] = [
+  { id: "starry", videoId: "Starry_cxlzfr", imageId: "Starry_eoj8qu", label: "Starry" },
+  { id: "ultramarine", videoId: "Ultramarine_gclt3x", imageId: "Ultramarine_hpnprl", label: "Ultramarine" },
+  { id: "suzuki", videoId: "suzuki_xotgn1", imageId: "suzuki_zqssxs", label: "Suzuki" },
+  { id: "eva", videoId: "eva_ek1mpo", imageId: "eva_scuwn0", label: "Eva" },
+  { id: "violin", videoId: "Violin_ssdwx8", imageId: "Violin_g1emwi", label: "Violin" },
+  { id: "wind", videoId: "Wind_sp9xdv", imageId: "Wind_dtzebp", label: "Wind" },
+];
+
+const buildCloudinaryImageUrl = (publicId: string) => {
+  if (!cloudName) return "";
+  return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/${publicId}`;
+};
+
+const buildCloudinaryVideoUrl = (publicId: string) => {
+  if (!cloudName) return "";
+  return `https://res.cloudinary.com/${cloudName}/video/upload/f_auto,q_auto/${publicId}.mp4`;
+};
 
 export default function Home() {
   const macbookRef = useRef<MacbookRef>(null);
@@ -29,6 +50,9 @@ export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentStage, setCurrentStage] = useState(0);
   const [devicesHidden, setDevicesHidden] = useState(false);
+  const [ipadContentVisible, setIpadContentVisible] = useState(false);
+  const [selectedAssetIndex, setSelectedAssetIndex] = useState(0);
+  const prevIpadVisibleRef = useRef(false);
 
   // 切换主题
   const toggleTheme = () => {
@@ -122,6 +146,19 @@ export default function Home() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const selectedAsset = IPAD_ASSETS.length
+    ? IPAD_ASSETS[Math.min(selectedAssetIndex, IPAD_ASSETS.length - 1)]
+    : null;
+
+  const floatingWindowWidth = 1.2*responsiveSize.ipad.width;
+  const floatingWindowHeight = 1.2*responsiveSize.ipad.height;
+  const floatingWindowGap = 70;
+  const extraSeparation = 150;
+  const ipadOffsetX = responsiveSize.mac.width / 2 + 80;
+  const imageWindowOffsetX = ipadOffsetX - (floatingWindowWidth + floatingWindowGap + extraSeparation);
+  const videoWindowOffsetX = imageWindowOffsetX - (floatingWindowWidth + floatingWindowGap);
+  const floatingWindowTop = `calc(50% - ${floatingWindowHeight / 2}px)`;
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
@@ -153,6 +190,8 @@ export default function Home() {
         }
       }
       
+      let nextIpadContentVisible = false;
+
       // 阶段1: Mac成为焦点，其他设备缩小推远 (0-14.29%)
       if (overallProgress <= 1/7) {
         const stage1Progress = overallProgress / (1/7);
@@ -265,6 +304,8 @@ export default function Home() {
         
         // iPad获得焦点并打开
         ipadRef.current?.updateAnimation(easedProgress);
+
+        nextIpadContentVisible = stage3Progress >= 0.7;
         
         // iPad获得焦点时，调整图层顺序
         if (ipadContainerRef.current) {
@@ -591,6 +632,10 @@ export default function Home() {
           }
         }
       }
+
+      setIpadContentVisible((prev) =>
+        prev === nextIpadContentVisible ? prev : nextIpadContentVisible
+      );
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -600,6 +645,13 @@ export default function Home() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []); // 移除 devicesHidden 依赖，避免无限循环
+
+  useEffect(() => {
+    if (ipadContentVisible && !prevIpadVisibleRef.current) {
+      setSelectedAssetIndex(0);
+    }
+    prevIpadVisibleRef.current = ipadContentVisible;
+  }, [ipadContentVisible]);
 
   return (
     <AuroraBackground className="relative min-h-[900vh]">
@@ -764,6 +816,74 @@ export default function Home() {
         )}
       </AnimatePresence>
       
+      <AnimatePresence>
+        {ipadContentVisible && selectedAsset && (
+          <>
+            <motion.div
+              key="ipad-video-window"
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 30, scale: 0.95 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="fixed overflow-hidden rounded-2xl shadow-2xl"
+              style={{
+                left: `calc(50% + ${videoWindowOffsetX}px)`,
+                top: floatingWindowTop,
+                width: `${floatingWindowWidth}px`,
+                height: `${floatingWindowHeight}px`,
+                background: isDark ? "rgba(8,11,17,0.85)" : "rgba(248,250,252,0.92)",
+                border: isDark
+                  ? "1px solid rgba(148,163,184,0.18)"
+                  : "1px solid rgba(100,116,139,0.18)",
+                backdropFilter: "blur(12px)",
+                zIndex: 80,
+              }}
+            >
+              <video
+                key={selectedAsset.videoId}
+                src={buildCloudinaryVideoUrl(selectedAsset.videoId)}
+                className="h-full w-full object-cover"
+                autoPlay
+                loop
+                muted={false}
+                controls
+                playsInline
+              >
+                Your browser does not support the video tag.
+              </video>
+            </motion.div>
+
+            <motion.div
+              key="ipad-image-window"
+              initial={{ opacity: 0, y: -30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -30, scale: 0.95 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="fixed overflow-hidden"
+              style={{
+                left: `calc(50% + ${imageWindowOffsetX}px)`,
+                top: floatingWindowTop,
+                width: `${floatingWindowWidth}px`,
+                height: `${floatingWindowHeight}px`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 0,
+                zIndex: 80,
+              }}
+            >
+              <img
+                key={selectedAsset.imageId}
+                src={buildCloudinaryImageUrl(selectedAsset.imageId)}
+                alt={selectedAsset.label || selectedAsset.id}
+                className="h-full w-full object-contain"
+                loading="lazy"
+              />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       {/* iPad设备容器 - 初始位置在Mac右侧，较小尺寸 */}
       <div 
         ref={ipadContainerRef}
@@ -775,7 +895,14 @@ export default function Home() {
           transform: 'scale(0.7)'
         }}
       >
-        <Ipad ref={ipadRef} />
+        <Ipad
+          ref={ipadRef}
+          assets={IPAD_ASSETS}
+          showContent={ipadContentVisible}
+          isDark={isDark}
+          selectedIndex={selectedAssetIndex}
+          onSelect={setSelectedAssetIndex}
+        />
       </div>
 
       {/* 滚动区域 - 提供滚动空间 */}
