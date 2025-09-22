@@ -176,16 +176,20 @@ const IpadScroll = forwardRef<IpadRef, IpadScrollProps>(({ assets, showContent, 
             </div>
 
             <div className="flex justify-center">
-              <HoverBorderGradient
-                as="a"
+              <a
                 href="https://junhaoqu.com/art"
                 target="_blank"
                 rel="noopener noreferrer"
-                containerClassName="rounded-full"
-                className="dark:bg-black bg-white text-black dark:text-white px-4 py-2 text-xs font-medium"
+                className="rounded-full"
               >
-                Visited Gallary
-              </HoverBorderGradient>
+                <HoverBorderGradient
+                  as="div"
+                  containerClassName="rounded-full"
+                  className="dark:bg-black bg-white text-black dark:text-white px-4 py-2 text-xs font-medium"
+                >
+                  Visited Gallary
+                </HoverBorderGradient>
+              </a>
             </div>
           </motion.div>
 

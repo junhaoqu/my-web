@@ -1,0 +1,100 @@
+Personal Knowledge Base for Junhao Qu
+Core Profile
+Name: Junhao Qu
+
+Role: Software Engineer / Full-Stack Developer
+
+Location: San Diego, CA
+
+Passion: I am passionate about building beautiful, high-performance, and user-friendly web applications using modern technologies. I have a deep curiosity for AI, interactive design, and robust back-end architecture.
+
+Education
+Master of Computer Science, University of California San Diego (Expected Dec 2025)
+
+GPA: 3.8/4.0
+
+Relevant Coursework: Data Structures & Algorithms, OS, Databases, Distributed Systems, Machine Learning, Deep Learning.
+
+Bachelor of Science in Math and Computer Science, University of California San Diego (Jun 2024)
+
+GPA: 3.9/4.0, Cum Laude Honors
+
+University of California Santa Cruz (Computer Science Major, 2020-2022)
+
+GPA: 3.96/4.0, Dean's Honors List
+
+Professional Experience
+Amazon Web Services (AWS), EC2 Core Platform - Software Developer Intern (Summer 2025)
+Engineered an automated preventative scale-up system for the capacity reservation system, reducing API latency by 50% and manual adjustments by 35%.
+
+Architected a modification API model, enabling idempotent programmatic changes.
+
+Developed a matching engine with multi-criteria filtering, reducing database query latency by 20% using Java.
+
+Achieved 91% branch coverage in unit tests, identifying and resolving three critical bugs.
+
+UCSD Mental Health Team - Software Developer (Jan 2024 - Apr 2025)
+Led an Agile team through the full SDLC to build a mobile goal-tracking application.
+
+Directed 80% of the front-end development and UI/UX using Next.js, React, and TypeScript.
+
+Improved UI responsiveness by 150ms through an optimized rendering architecture.
+
+Independently developed an AI-driven tarot card feature for iOS (Swift) and Android (Java), attracting over 5,000 additional monthly active users.
+
+Abgent, Inc - Software Developer Intern (Summer 2023)
+Built a comprehensive paper search engine using OCR and a vector database.
+
+Enhanced search relevance by 40% by implementing the Semantic Scholar API for metadata.
+
+Reduced translation processing time by 50-80% by integrating the GPT-4 API with Stream mode.
+
+Cut server requests by 60% by pioneering a React.js pagination system.
+
+Skills
+Languages: Java, Python, Go, C++, JavaScript/TypeScript, SQL, HTML/CSS, Swift
+
+Technologies: Node.js, React, MongoDB, Spring Boot, CI/CD (GitHub Actions/Jenkins), Docker, Git, Kubernetes
+
+Databases & Cloud: PostgreSQL/MySQL, Redis, DynamoDB, AWS (EKS, S3, EC2), Vector Databases
+
+Frameworks & Testing: Gin, Next.js, gRPC, Tailwind CSS, JUnit, Mockito, Framer Motion, Anime.js, GSAP
+
+Projects
+Web3 Financial Services Platform
+Developed a secure RESTful API with the Gin framework in Go, using JWT and OAuth2.
+
+Achieved 99.99% availability by implementing the Raft consensus protocol on an AWS EC2 cluster.
+
+Handled asynchronous email verification reliably using Redis task queues and Asynq in Go.
+
+Personal Portfolio Website (This Site)
+A fully interactive portfolio designed and developed by me.
+
+Tech Stack: Next.js, TypeScript, Tailwind CSS, Anime.js, Cloudinary, Vercel.
+
+Highlights: Features complex scroll-triggered animations and an integrated AI Agent to answer questions about me.
+
+Personal Philosophy & Interests
+Work Philosophy: I believe code should not only work but also be elegant and maintainable. I strive for pixel-perfect implementation and always prioritize the user experience.
+
+Hobbies & Interests:
+
+Photography: I am an avid photographer and love capturing moments from life.
+
+Painting: I also enjoy expressing creativity through painting.
+
+Cinema: I am a big movie fan. My recommendations include:
+
+The Grand Budapest Hotel: for its stunning aesthetics and absurdly charming story.
+
+Howl's Moving Castle: It represents an ideal fairy tale.
+
+Porco Rosso: A fairy tale grounded in reality.
+
+Literature: I appreciate profound reads. My top recommendations are:
+
+Siddhartha by Hermann Hesse.
+
+Steppenwolf by Hermann Hesse.
+
