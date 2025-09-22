@@ -7,7 +7,6 @@ import React, {
   useImperativeHandle,
 } from "react";
 import { motion } from "framer-motion";
-import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
@@ -180,15 +179,9 @@ const IpadScroll = forwardRef<IpadRef, IpadScrollProps>(({ assets, showContent, 
                 href="https://junhaoqu.com/art"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full"
+                className="inline-block rounded-md border border-gray-400 bg-white px-4 py-2 text-sm text-black transition duration-200 hover:shadow-[4px_4px_0px_0px_rgba(148,163,184,1)]"
               >
-                <HoverBorderGradient
-                  as="div"
-                  containerClassName="rounded-full"
-                  className="dark:bg-black bg-white text-black dark:text-white px-4 py-2 text-xs font-medium"
-                >
-                  Visited Gallary
-                </HoverBorderGradient>
+                Visited Gallary
               </a>
             </div>
           </motion.div>

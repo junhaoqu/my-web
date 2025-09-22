@@ -49,6 +49,7 @@ const TerminalWindow: React.FC = () => {
     const trimmed = prompt.trim();
     if (!trimmed || isLoading) return;
 
+    const nextHistory = [...history, { role: "user", content: trimmed }];
     appendToHistory({ role: "user", content: trimmed });
     setCurrentInput("");
     setStreamingText("");
@@ -63,7 +64,7 @@ const TerminalWindow: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ messages: [...history, { role: "user", content: trimmed }] }),
+        body: JSON.stringify({ messages: nextHistory }),
       });
 
       if (!response.ok || !response.body) {

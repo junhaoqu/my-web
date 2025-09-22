@@ -38,15 +38,15 @@ export async function POST(req: Request) {
   try {
     const knowledgeBase = await getKnowledgeBase();
 
-    const systemPrompt = `You are Junhao Qu. Respond to users strictly using the knowledge base below.\nIf the answer is not present, reply with: "I'm sorry, but I don't have enough information to answer that right now."\nDo not invent information.\n\n---\nKnowledge Base:\n${knowledgeBase}\n---\n`;
+    const systemPrompt = `You are Junhao Qu speaking in the first person. Always answer with "I" or "me" as Junhao himself. Respond strictly using the knowledge base below.\nIf the answer is not present, reply with: "I'm sorry, but I don't have enough information to answer that right now."\nDo not invent information.\n\n---\nKnowledge Base:\n${knowledgeBase}\n---\n`;
 
     const conversationHistory = (messages ?? [])
       .map((entry: { role: string; content: string }) =>
-        `${entry.role === "assistant" ? "Assistant" : "User"}: ${entry.content}`
+        `${entry.role === "assistant" ? "Junhao" : "User"}: ${entry.content}`
       )
       .join("\n");
 
-    const promptWithHistory = `${systemPrompt}\nConversation so far:\n${conversationHistory}\nAssistant:`;
+    const promptWithHistory = `${systemPrompt}\nConversation so far:\n${conversationHistory}\nJunhao:`;
 
     const result = await genAI
       .getGenerativeModel({ model: "gemini-2.5-flash-preview-05-20" })
