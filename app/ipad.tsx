@@ -7,6 +7,7 @@ import React, {
   useImperativeHandle,
 } from "react";
 import { motion } from "framer-motion";
+import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
@@ -112,7 +113,7 @@ const IpadScroll = forwardRef<IpadRef, IpadScrollProps>(({ assets, showContent, 
           <motion.div
             className="relative h-full w-full"
             initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: showContent ? 1 : 0.45, y: showContent ? 0 : 8 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
             style={{
               background: isDark ? "rgba(8,11,17,0.55)" : "rgba(248,250,252,0.65)",
@@ -122,19 +123,28 @@ const IpadScroll = forwardRef<IpadRef, IpadScrollProps>(({ assets, showContent, 
                 ? "1px solid rgba(148,163,184,0.12)"
                 : "1px solid rgba(148,163,184,0.18)",
               padding: "18px",
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gridTemplateRows: "repeat(2, 1fr)",
-              gap: "14px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: "18px",
               pointerEvents: showContent ? "auto" : "none",
             }}
           >
-            {assets.map((asset, index) => {
-              const isActive = index === selectedIndex;
-              return (
-                <button
-                  key={asset.id}
-                  type="button"
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gridTemplateRows: "repeat(2, 1fr)",
+                gap: "14px",
+                flex: "1",
+              }}
+            >
+              {assets.map((asset, index) => {
+                const isActive = index === selectedIndex;
+                return (
+                  <button
+                    key={asset.id}
+                    type="button"
                   onClick={() => showContent && onSelect(index)}
                   className={
                     "relative overflow-hidden rounded-[14px] transition-transform" +
@@ -152,7 +162,6 @@ const IpadScroll = forwardRef<IpadRef, IpadScrollProps>(({ assets, showContent, 
                     boxShadow: isActive
                       ? "0 0 18px rgba(37,99,235,0.36)"
                       : "0 4px 14px rgba(15,23,42,0.12)",
-                    opacity: showContent ? 1 : 0.7,
                   }}
                 >
                   <img
@@ -163,7 +172,21 @@ const IpadScroll = forwardRef<IpadRef, IpadScrollProps>(({ assets, showContent, 
                   />
                 </button>
               );
-            })}
+              })}
+            </div>
+
+            <div className="flex justify-center">
+              <HoverBorderGradient
+                as="a"
+                href="https://junhaoqu.com/art"
+                target="_blank"
+                rel="noopener noreferrer"
+                containerClassName="rounded-full"
+                className="dark:bg-black bg-white text-black dark:text-white px-4 py-2 text-xs font-medium"
+              >
+                Visited Gallary
+              </HoverBorderGradient>
+            </div>
           </motion.div>
 
         </motion.div>
