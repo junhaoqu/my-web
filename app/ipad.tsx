@@ -7,6 +7,7 @@ import React, {
   useImperativeHandle,
 } from "react";
 import { motion } from "framer-motion";
+import { Cinzel } from "next/font/google";
 
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
@@ -33,6 +34,8 @@ const buildImageUrl = (publicId: string) => {
   if (!cloudName) return "";
   return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/${publicId}`;
 };
+
+const cinzel = Cinzel({ weight: ["400", "600"], subsets: ["latin"], display: "swap" });
 
 const IpadScroll = forwardRef<IpadRef, IpadScrollProps>(({ assets, showContent, isDark, selectedIndex, onSelect }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -140,37 +143,50 @@ const IpadScroll = forwardRef<IpadRef, IpadScrollProps>(({ assets, showContent, 
             >
               {assets.map((asset, index) => {
                 const isActive = index === selectedIndex;
+                const fileName = asset.imageId.split("/").pop() || asset.imageId;
+                const caption = asset.label ?? fileName;
                 return (
                   <button
                     key={asset.id}
                     type="button"
-                  onClick={() => showContent && onSelect(index)}
-                  className={
-                    "relative overflow-hidden rounded-[14px] transition-transform" +
-                    (isActive ? " scale-[1.03]" : showContent ? " hover:scale-[1.02]" : "")
-                  }
-                  style={{
-                    aspectRatio: "3 / 4",
-                    width: "100%",
-                    border: isActive
-                      ? "1px solid rgba(37,99,235,0.65)"
-                      : "1px solid rgba(148,163,184,0.12)",
-                    background: isDark
-                      ? "rgba(15,23,42,0.55)"
-                      : "rgba(241,245,249,0.7)",
-                    boxShadow: isActive
-                      ? "0 0 18px rgba(37,99,235,0.36)"
-                      : "0 4px 14px rgba(15,23,42,0.12)",
-                  }}
-                >
-                  <img
-                    src={buildImageUrl(asset.imageId)}
-                    alt={asset.label || asset.id}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
-                </button>
-              );
+                    onClick={() => showContent && onSelect(index)}
+                    className={
+                      "relative overflow-hidden rounded-[14px] transition-transform" +
+                      (isActive ? " scale-[1.03]" : showContent ? " hover:scale-[1.02]" : "")
+                    }
+                    style={{
+                      aspectRatio: "3 / 4",
+                      width: "100%",
+                      border: isActive
+                        ? "1px solid rgba(37,99,235,0.65)"
+                        : "1px solid rgba(148,163,184,0.12)",
+                      background: isDark
+                        ? "rgba(15,23,42,0.55)"
+                        : "rgba(241,245,249,0.7)",
+                      boxShadow: isActive
+                        ? "0 0 18px rgba(37,99,235,0.36)"
+                        : "0 4px 14px rgba(15,23,42,0.12)",
+                    }}
+                  >
+                    <img
+                      src={buildImageUrl(asset.imageId)}
+                      alt={asset.label || asset.id}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                    <span
+                      className="pointer-events-none absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-center whitespace-nowrap"
+                      style={{
+                        background: isDark ? "rgba(15,23,42,0.7)" : "rgba(241,245,249,0.85)",
+                        color: isDark ? "rgba(226,232,240,0.86)" : "rgba(51,65,85,0.82)",
+                        letterSpacing: "0.04em",
+                        minWidth: '82px'
+                      }}
+                    >
+                      {caption}
+                    </span>
+                  </button>
+                );
               })}
             </div>
 
@@ -179,7 +195,7 @@ const IpadScroll = forwardRef<IpadRef, IpadScrollProps>(({ assets, showContent, 
                 href="https://junhaoqu.com/art"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block rounded-md border border-gray-400 bg-white px-4 py-2 text-sm text-black transition duration-200 hover:shadow-[4px_4px_0px_0px_rgba(148,163,184,1)]"
+                className={`${cinzel.className} inline-block rounded-md border border-gray-400 bg-white px-4 py-2 text-sm text-black transition duration-200 hover:shadow-[4px_4px_0px_0px_rgba(148,163,184,1)]`}
               >
                 Visited Gallary
               </a>

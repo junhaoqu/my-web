@@ -50,38 +50,12 @@ const CloseIcon = () => {
 };
 
 const experienceCards: ExperienceCard[] = [
-  {
-    title: "UC San Diego",
-    description: "Master's in Computer Science",
-    src: "/images/icon/ucsd.png",
-    ctaText: "View",
-    ctaLink: "https://ucsd.edu",
-    imageStyle: {
-      scale: 0.8,
-      objectFit: 'contain',
-      padding: 2
-    },
-    buttonStyle: {
-      background: "rgba(31, 55, 107, 1)",
-      hoverBackground: "rgb(29, 78, 216)",
-      textColor: "rgb(255, 255, 255)",
-    },
-    content: () => (
-      <p className="text-neutral-600 dark:text-neutral-400">
-        Pursuing Master's degree in Computer Science at UC San Diego, focusing on 
-        advanced algorithms, machine learning, and software engineering. 
-        <br /><br />
-        Engaging in cutting-edge research and collaborating with world-class faculty 
-        on innovative projects that push the boundaries of technology.
-      </p>
-    ),
-  },
-  {
-    title: "Jacobs School of Engineering",
-    description: "Research & Development",
+   {
+    title: "UCSD - Jacobs School of Engineering",
+    description: "Master of Computer Science (Exp. Dec 2025)",
     src: "/images/icon/jacobs.jpeg",
     ctaText: "Explore",
-    ctaLink: "https://jacobsschool.ucsd.edu",
+    ctaLink: "https://cse.ucsd.edu/graduate/degree-programs/ms-program",
     imageStyle: {
       scale: 1.3,
       objectFit: 'cover',
@@ -95,20 +69,43 @@ const experienceCards: ExperienceCard[] = [
     },
     content: () => (
       <p className="text-neutral-600 dark:text-neutral-400">
-        Active participant in research initiatives at the Jacobs School of Engineering,
-        contributing to interdisciplinary projects that bridge computer science 
-        with other engineering domains.
+        Currently pursuing a Master's degree with a <strong>3.8/4.0 GPA</strong>. 
+        My coursework includes advanced topics like Computer Systems, Computer Networks, and Machine Learning & Deep Learning.
         <br /><br />
-        Working on innovative solutions that address real-world challenges through
-        the application of advanced computational techniques.
+        I am actively applying these concepts to address real-world challenges through advanced computational techniques.
+      </p>
+    ),
+  },
+  {
+    title: "UC San Diego",
+    description: "B.S. in Math & Computer Science",
+    src: "/images/icon/ucsd.png",
+    ctaText: "Explore",
+    ctaLink: "https://math.ucsd.edu/students/undergraduate/ma30-math-computer-science-b-s",
+    imageStyle: {
+      scale: 0.8,
+      objectFit: 'contain',
+      padding: 2
+    },
+    buttonStyle: {
+      background: "rgba(31, 55, 107, 1)",
+      hoverBackground: "rgb(29, 78, 216)",
+      textColor: "rgb(255, 255, 255)",
+    },
+    content: () => (
+      <p className="text-neutral-600 dark:text-neutral-400">
+        Graduated in June 2024 with a <strong>3.9/4.0 GPA</strong> and <strong>Cum Laude Honors</strong>. 
+        This program provided a strong foundational understanding of both theoretical and practical aspects of computer science and mathematics.
+        <br /><br />
+        My coursework included Data Structures, Algorithms, Probability, and Statistics.
       </p>
     ),
   },
   {
     title: "AWS Cloud Solutions",
-    description: "Cloud Architecture & DevOps",
+    description: "Software Developer Intern, EC2 Core Platform",
     src: "/images/icon/ec2.jpg",
-    ctaText: "Learn More",
+    ctaText: "Explore",
     ctaLink: "https://aws.amazon.com",
     imageStyle: {
       scale: 2,
@@ -122,11 +119,9 @@ const experienceCards: ExperienceCard[] = [
     },
     content: () => (
       <p className="text-neutral-600 dark:text-neutral-400">
-        Extensive experience with Amazon Web Services, specializing in cloud 
-        architecture design, EC2 instances, and scalable infrastructure solutions.
-        <br /><br />
-        Proficient in implementing DevOps practices, automated deployment pipelines,
-        and cost-effective cloud strategies for enterprise applications.
+        Worked backwards from customer pain points and conducted deep dives into reservation patterns to design and implement an automated scale-up system. 
+        This customer-obsessed approach not only improved reliability and responsiveness, 
+        but also delivered tangible benefits—cutting <strong>API latency by 50%</strong> and reducing manual overhead by <strong>35%</strong> for billions of enterprise users.
       </p>
     ),
   },
@@ -134,8 +129,8 @@ const experienceCards: ExperienceCard[] = [
     title: "Abgent Biotech",
     description: "Software Development Intern",
     src: "/images/icon/Abgent-Logo.jpg",
-    ctaText: "Details",
-    ctaLink: "https://abgent.com",
+    ctaText: "Explore",
+    ctaLink: "https://www.abcepta.com",
     imageStyle: {
       scale: 0.7,
       objectFit: 'contain',
@@ -148,12 +143,9 @@ const experienceCards: ExperienceCard[] = [
     },
     content: () => (
       <p className="text-neutral-600 dark:text-neutral-400">
-        Software development internship at Abgent, a biotechnology company 
-        specializing in protein research and antibody development.
-        <br /><br />
-        Contributed to the development of laboratory management systems and 
-        data analysis tools that streamline research workflows and enhance 
-        productivity in biotech operations.
+        Passionately explored the frontier of AI by working backwards from customer needs and diving deep into complex systems, 
+        from building scalable search and translation platforms to applying AI agents in the biochemical domain, 
+        delivering reliable knowledge bases and intuitive AI assistance that empowered experts and elevated research efficiency.
       </p>
     ),
   },

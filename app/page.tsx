@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import Macbook, { MacbookRef } from "./mac";
 import Ipad, { IpadRef, IpadAsset } from "./ipad";
@@ -18,10 +19,10 @@ const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
 const IPAD_ASSETS: IpadAsset[] = [
   { id: "starry", videoId: "Starry_cxlzfr", imageId: "Starry_eoj8qu", label: "Starry" },
-  { id: "ultramarine", videoId: "Ultramarine_gclt3x", imageId: "Ultramarine_hpnprl", label: "Ultramarine" },
-  { id: "suzuki", videoId: "suzuki_xotgn1", imageId: "suzuki_zqssxs", label: "Suzuki" },
-  { id: "eva", videoId: "eva_ek1mpo", imageId: "eva_scuwn0", label: "Eva" },
-  { id: "violin", videoId: "Violin_ssdwx8", imageId: "Violin_g1emwi", label: "Violin" },
+  { id: "ultramarine", videoId: "Ultramarine_gclt3x", imageId: "Ultramarine_hpnprl", label: "群青" },
+  { id: "suzuki", videoId: "suzuki_xotgn1", imageId: "suzuki_zqssxs", label: "鈴木愛理" },
+  { id: "eva", videoId: "eva_ek1mpo", imageId: "eva_scuwn0", label: "綾波レイ" },
+  { id: "violin", videoId: "Violin_ssdwx8", imageId: "Violin_g1emwi", label: "Vilion" },
   { id: "wind", videoId: "Wind_sp9xdv", imageId: "Wind_dtzebp", label: "Wind" },
 ];
 
@@ -36,6 +37,7 @@ const buildCloudinaryVideoUrl = (publicId: string) => {
 };
 
 export default function Home() {
+  const router = useRouter();
   const macbookRef = useRef<MacbookRef>(null);
   const ipadRef = useRef<IpadRef>(null);
   const cameraRef = useRef<CameraRef>(null);
@@ -158,6 +160,8 @@ export default function Home() {
   const imageWindowOffsetX = ipadOffsetX - (floatingWindowWidth + floatingWindowGap + extraSeparation);
   const videoWindowOffsetX = imageWindowOffsetX - (floatingWindowWidth + floatingWindowGap);
   const floatingWindowTop = `calc(50% - ${floatingWindowHeight / 2}px)`;
+  const floatingIntroTop = `calc(50% - ${floatingWindowHeight / 2 + 80}px)`;
+  const dualWindowWidth = floatingWindowWidth * 2 + floatingWindowGap;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -770,7 +774,7 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.4, delay: 0 }}
-              className="fixed top-2/5 -translate-y-1/2 z-40 w-80 space-y-6"
+              className="fixed top-4/9 -translate-y-1/2 z-40 w-80 space-y-6"
               style={{
                 left: `calc(50% - ${responsiveSize.mac.width / 2 + 320 + 120}px)` // 参考Camera的定位方式，320是组件宽度，150是间距
               }}
@@ -783,8 +787,7 @@ export default function Home() {
               {/* Personal Intro */}
               <PersonalIntro 
                 onContactClick={() => {
-                  // 可以打开邮箱或跳转到联系页面
-                  window.open('mailto:your.email@example.com', '_blank');
+                  router.push('/project');
                 }}
               />
             </motion.div>
@@ -819,6 +822,32 @@ export default function Home() {
       <AnimatePresence>
         {ipadContentVisible && selectedAsset && (
           <>
+            <motion.div
+              key="ipad-intro-text"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="fixed z-[78] text-center"
+              style={{
+                left: `calc(50% + ${videoWindowOffsetX}px)`,
+                top: floatingIntroTop,
+                width: `${dualWindowWidth}px`,
+                pointerEvents: 'none',
+              }}
+            >
+              <span
+                className="inline-block rounded-full bg-black/40 px-4 py-2 text-sm uppercase tracking-[0.2em] text-white shadow-lg backdrop-blur"
+                style={{
+                  background: isDark ? 'rgba(8,11,17,0.45)' : 'rgba(248,250,252,0.7)',
+                  color: isDark ? 'rgba(226,232,240,0.9)' : 'rgba(15,23,42,0.8)',
+                  border: isDark ? '1px solid rgba(148,163,184,0.25)' : '1px solid rgba(148,163,184,0.2)',
+                }}
+              >
+                Immersive Gallery Preview
+              </span>
+            </motion.div>
+
             <motion.div
               key="ipad-video-window"
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -907,52 +936,20 @@ export default function Home() {
 
       {/* 滚动区域 - 提供滚动空间 */}
       <div className="h-[800vh] relative">
-        <div className="h-screen flex items-center justify-center">
-          <div className="text-center mt-32">
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 1: MacBook becomes focus</p>
-          </div>
-        </div>
-        <div className="h-screen flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 2: Return to balance</p>
-          </div>
-        </div>
-        <div className="h-screen flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 3: iPad becomes focus</p>
-          </div>
-        </div>
-        <div className="h-screen flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 4: Return to balance</p>
-          </div>
-        </div>
-        <div className="h-screen flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 5: Camera becomes focus</p>
-          </div>
-        </div>
-        <div className="h-screen flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 6: Return to balance</p>
-          </div>
-        </div>
-        <div className="h-screen flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Stage 7: All devices blur and move up off screen</p>
-          </div>
-        </div>
+        <div className="h-screen" />
+        <div className="h-screen" />
+        <div className="h-screen" />
+        <div className="h-screen" />
+        <div className="h-screen" />
+        <div className="h-screen" />
+        <div className="h-screen" />
         {/* TextHoverEffect组件 - 在设备移出后显示 */}
         {devicesHidden && (
           <div className="h-[40rem] flex items-center justify-center relative z-40">
             <TextHoverEffect text="ACET" />
           </div>
         )}
-        <div className="h-screen flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>Animation Complete!</p>
-          </div>
-        </div>
+        <div className="h-screen" />
       </div>
 
       {/* 液体玻璃进度条 */}

@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useCallback, useMemo } from "react";
+import { Audiowide } from "next/font/google";
 
 interface PersonalIntroProps {
   className?: string;
@@ -20,6 +21,8 @@ const ANIMATION_CONFIG = {
   INITIAL_Y_OFFSET: 60,
 } as const;
 
+const audiowide = Audiowide({ weight: ["400"], subsets: ["latin"], display: "swap" });
+
 const clamp = (value: number, min = 0, max = 100): number => Math.min(Math.max(value, min), max);
 const round = (value: number, precision = 3): number => parseFloat(value.toFixed(precision));
 const adjust = (value: number, fromMin: number, fromMax: number, toMin: number, toMax: number): number =>
@@ -29,7 +32,7 @@ const easeInOutCubic = (x: number): number => (x < 0.5 ? 4 * x * x * x : 1 - Mat
 const PersonalIntro: React.FC<PersonalIntroProps> = ({
   className = '',
   enableTilt = true,
-  contactText = 'Contact Me',
+  contactText = 'Project',
   onContactClick
 }) => {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -210,6 +213,7 @@ const PersonalIntro: React.FC<PersonalIntroProps> = ({
         perspective: '500px',
         transform: 'translate3d(0, 0, 0.1px)',
         position: 'relative',
+        top: '-5px',
         touchAction: 'none',
         '--pointer-x': '50%',
         '--pointer-y': '50%',
@@ -240,7 +244,7 @@ const PersonalIntro: React.FC<PersonalIntroProps> = ({
         ref={cardRef}
         className="pc-card relative rounded-[1.5rem] overflow-hidden transition-transform duration-300 ease-out"
         style={{
-          height: '320px',
+          height: '350px',
           width: '320px',
           display: 'grid',
           aspectRatio: '0.718',
@@ -286,6 +290,7 @@ const PersonalIntro: React.FC<PersonalIntroProps> = ({
               overflow: 'hidden',
               textAlign: 'center',
               position: 'relative',
+              paddingBottom: '72px',
               transform: `translate3d(
                 calc(var(--pointer-from-left) * -3px + 1.5px),
                 calc(var(--pointer-from-top) * -3px + 1.5px),
@@ -305,9 +310,8 @@ const PersonalIntro: React.FC<PersonalIntroProps> = ({
               }}
             >
               <h3 
-                className="text-2xl font-semibold mb-4 m-0"
+                className={`${audiowide.className} text-2xl mb-4 m-0`}
                 style={{
-                  fontWeight: 600,
                   margin: 0,
                   fontSize: 'min(5svh, 3em)',
                   color: '#ffffff',
@@ -320,42 +324,30 @@ const PersonalIntro: React.FC<PersonalIntroProps> = ({
                 className="text-base leading-relaxed m-0 px-6"
                 style={{
                   fontWeight: 400,
-                  position: 'relative',
-                  top: '-12px',
                   fontSize: '14px',
                   margin: '0 auto',
+                  marginTop: '18px',
                   color: 'rgba(255, 255, 255, 0.9)',
                   textShadow: '0 1px 2px rgba(0,0,0,0.2)',
-                  lineHeight: '1.5',
+                  lineHeight: '1.6',
                 }}
               >
-                Hi, I'm a passionate full-stack developer with expertise in modern web technologies. 
-                I love creating beautiful and functional user experiences with React, Next.js, and TypeScript.
+                I have a deep curiosity for AI, interactive design, and robust back-end architecture. 
+                I believe in rapid development, working backwards from customer needs, and maintaining a user-first focus on the user experience. 
               </p>
             </div>
 
             {/* 联系信息 */}
-            <div 
-              className="pc-user-info absolute bottom-5 left-5 right-5 z-10 flex items-center justify-center"
+            <div
+              className="pc-contact absolute inset-x-0 flex justify-center"
               style={{
-                position: 'absolute',
-                bottom: '20px',
-                left: '20px',
-                right: '20px',
-                zIndex: 2,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                borderRadius: '15px',
-                padding: '12px 14px',
-                pointerEvents: 'auto',
+                bottom: '25px',
+                padding: '0 24px',
+                transform: 'translate3d(0, 0, 0.1px)',
               }}
             >
               <button
-                className="pc-contact-btn transition-all duration-200 ease-out hover:bg-white/20 hover:-translate-y-0.5"
+              className={`pc-contact-btn transition-all duration-200 ease-out hover:bg-white/20 hover:-translate-y-0.5 ${audiowide.className}`}
                 onClick={handleContactClick}
                 style={{ 
                   pointerEvents: 'auto',
@@ -371,7 +363,7 @@ const PersonalIntro: React.FC<PersonalIntroProps> = ({
                   background: 'rgba(255, 255, 255, 0.1)',
                 }}
                 type="button"
-                aria-label="Contact me"
+                aria-label={contactText}
               >
                 {contactText}
               </button>
