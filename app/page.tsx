@@ -7,6 +7,7 @@ import Ipad, { IpadRef, IpadAsset } from "./ipad";
 import Camera, { CameraRef } from "./camera";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { TextHoverEffect } from "@/components/ui/text-hover-effect";
+import { LayoutTextFlipDemo } from "@/components/LayoutTextFlipDemo";
 import ProfileImage from "@/components/MacScreen/ProfileImage";
 import PersonalIntro from "@/components/MacScreen/PersonalIntro";
 import SocialLinks from "@/components/MacScreen/SocialLinks";
@@ -160,7 +161,8 @@ export default function Home() {
   const imageWindowOffsetX = ipadOffsetX - (floatingWindowWidth + floatingWindowGap + extraSeparation);
   const videoWindowOffsetX = imageWindowOffsetX - (floatingWindowWidth + floatingWindowGap);
   const floatingWindowTop = `calc(50% - ${floatingWindowHeight / 2}px)`;
-  const floatingIntroTop = `calc(50% - ${floatingWindowHeight / 2 + 80}px)`;
+  const floatingIntroOffset = 80;
+  const floatingIntroTop = `calc(50% - ${floatingWindowHeight / 2 + floatingIntroOffset}px)`;
   const dualWindowWidth = floatingWindowWidth * 2 + floatingWindowGap;
 
   useEffect(() => {
@@ -827,25 +829,16 @@ export default function Home() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="fixed z-[78] text-center"
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="fixed z-[78] text-left"
               style={{
                 left: `calc(50% + ${videoWindowOffsetX}px)`,
                 top: floatingIntroTop,
-                width: `${dualWindowWidth}px`,
+                width: 'max-content',
                 pointerEvents: 'none',
               }}
             >
-              <span
-                className="inline-block rounded-full bg-black/40 px-4 py-2 text-sm uppercase tracking-[0.2em] text-white shadow-lg backdrop-blur"
-                style={{
-                  background: isDark ? 'rgba(8,11,17,0.45)' : 'rgba(248,250,252,0.7)',
-                  color: isDark ? 'rgba(226,232,240,0.9)' : 'rgba(15,23,42,0.8)',
-                  border: isDark ? '1px solid rgba(148,163,184,0.25)' : '1px solid rgba(148,163,184,0.2)',
-                }}
-              >
-                Immersive Gallery Preview
-              </span>
+              <LayoutTextFlipDemo isDark={isDark} />
             </motion.div>
 
             <motion.div
