@@ -156,7 +156,7 @@ const CameraScroll = forwardRef<CameraRef, CameraScrollProps>((props, ref) => {
             {/* 闪光灯 */}
             <div className="absolute left-[25px] top-[25px] w-[90px] h-[160px] rounded-[15px]"
                  style={{
-                   backgroundColor: 'var(--device-background)',
+                   backgroundColor: 'white',
                    boxShadow: '-1px -1px 1px rgba(189,184,181,0.8), -1.5px -2.1px 0.5px rgba(36,32,29,0.3), -4px 4px 3px 3px rgba(244,240,239,0.9), -5px 8px 8px rgba(171,166,170,0.6), 0.25px 1px 1px 5px rgba(62,58,56,0.4) inset, 0 -6px 1px 1px rgba(246,246,248,0.8) inset',
                    transform: 'translateZ(25px)',
                    backgroundImage: 'radial-gradient(circle, #08080A 0.5px, transparent 0.5px)',
@@ -295,16 +295,11 @@ const CameraScroll = forwardRef<CameraRef, CameraScrollProps>((props, ref) => {
             <div className="absolute top-[100px] left-[80px] w-[40px] h-[46px]"
                  style={{
                    background: `linear-gradient(
-                     #1D160F 5%,
-                     #0E9EE0 5% 14%,
-                     #1F211A 14% 19%,
-                     #0EAE4F 19% 32%,
-                     #2B2106 32% 37%,
-                     #FFB404 37% 50%,
-                     #2A1303 50% 55%,
-                     #FE8204 55% 68%,
-                     #292313 68% 80%,
-                     #E02D28 80%
+                     #0E9EE0 0% 20%,
+                     #0EAE4F 0% 40%,
+                     #FFB404 0% 60%,
+                     #FE8204 0% 80%,
+                     #E02D28 0% 100%
                    )`,
                    transform: 'translateZ(20px)'
                  }}></div>

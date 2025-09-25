@@ -243,9 +243,9 @@ export default function Home() {
   const cameraHorizontalOffset = responsiveSize.mac.width / 2 + responsiveSize.camera.width + 100;
   const polaroidGap = Math.round(180 * POLAROID_SCALE);
   const polaroidBaseLeft = `calc(50% - ${cameraHorizontalOffset}px + ${responsiveSize.camera.width + polaroidGap}px)`;
-  const textBaseLeft = `calc(50% - ${cameraHorizontalOffset}px + ${responsiveSize.camera.width / 2 + 350}px)`;
-  const polaroidBaseTop = '20%';
-  const textBaseTop = '50%';
+  const textBaseLeft = `calc(50% - ${cameraHorizontalOffset}px + ${responsiveSize.camera.width / 2 + 300}px)`;
+  const polaroidBaseTop = '10%';
+  const textBaseTop = '43%';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -958,8 +958,8 @@ export default function Home() {
               }}
             >
               <p
-                className="whitespace-pre-line text-4xl font-semibold leading-tight md:text-5xl"
-                style={{ color: isDark ? "#ffffff" : "#4b5563" }}
+                className="whitespace-pre-line text-5xl font-semibold leading-tight md:text-6xl"
+                style={{ color: isDark ? "#ffffff" : "#252d38ff" }}
               >
                 Capturing Moments,{"\n"}Creating Worlds.
               </p>
@@ -967,7 +967,12 @@ export default function Home() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => router.push("/photo")}
-                className="mt-3 rounded-full bg-black px-7 py-2 text-sm font-semibold uppercase tracking-[0.24em] text-white shadow-[0_12px_24px_rgba(15,23,42,0.35)] transition-colors hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
+                className={cn(
+                  "mt-3 rounded-full px-7 py-2 text-sm font-semibold uppercase tracking-[0.24em] text-white shadow-[0_12px_24px_rgba(15,23,42,0.35)] transition-colors",
+                  isDark
+                    ? "bg-white text-black hover:bg-neutral-200"
+                    : "bg-[#252d38ff] text-white hover:bg-neutral-800"
+                )}
               >
                 Explore
               </motion.button>

@@ -81,7 +81,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   }, [isNavOpen]);
 
   return (
-    <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-50 ${className}`} style={style}>
+    <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] ${className}`} style={style}>
       <div className="relative">
         <GlassSurface
           width={450}
