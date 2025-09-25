@@ -33,7 +33,7 @@ export function LayoutTextFlipDemo({ isDark }: LayoutTextFlipDemoProps) {
         duration={2600}
       />
       <span className={baseClass} style={colorStyle}>
-        to construct landscapes of Dream and Emotion.
+        to construct landscapes of emotion.
       </span>
     </motion.div>
   );

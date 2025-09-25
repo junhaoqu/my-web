@@ -14,12 +14,14 @@ interface ProgressBarProps {
 }
 
 const NAV_ITEMS = [
-  { label: "Project", href: "/project" },
-  { label: "Art", href: "/art" }
+  { label: "HOME", href: "/" },
+  { label: "PROJ", href: "/project" },
+  { label: "ART", href: "/art" },
+  { label: "PHOTO", href: "/photo" }
 ];
 
 const STAGE_LABELS: Record<number, string> = {
-  1: "Me",
+  1: "Project",
   3: "Art",
   5: "Photo",
 };
@@ -40,7 +42,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   const stageLabel = STAGE_LABELS[currentStage] ?? "";
 
   // 主要阶段（有圆点标记的阶段）
-  const keyStages = [0, 1, 3, 5, 6];
+  const keyStages = [0, 1, 3, 5, 7];
 
   const handleStageClick = (stage: number) => {
     if (onJumpToStage) {
@@ -196,10 +198,18 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
             color: isDark ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
           }}
         >
-          {stageLabel && <span className="px-1.5 py-0.5 rounded-full bg-white/10 text-white/90 dark:bg-slate-900/30 dark:text-white/85" style={{
-            background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(15, 23, 42, 0.1)',
-            color: isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(15, 23, 42, 0.75)'
-          }}>{stageLabel}</span>}
+          {stageLabel && (
+            <span
+              className="px-1.5 py-0.5 rounded-full bg-white/10 text-white/90 dark:bg-slate-900/30 dark:text-white/85"
+              style={{
+                marginLeft: '15px',
+                background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(15, 23, 42, 0.1)',
+                color: isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(15, 23, 42, 0.75)'
+              }}
+            >
+              {stageLabel}
+            </span>
+          )}
         </div>
       </GlassSurface>
 
@@ -266,7 +276,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
               style={{ pointerEvents: 'auto' }}
             >
               <GlassSurface
-                width={220}
+                width={240}
                 height={108}
                 borderRadius={18}
                 brightness={isDark ? 55 : 120}
@@ -285,13 +295,13 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
                   padding: '12px'
                 }}
               >
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-4 gap-3">
                   {NAV_ITEMS.map((item) => (
                     <button
                       key={item.href}
                       type="button"
                       onClick={() => handleNavigate(item.href)}
-                      className="flex h-20 w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-medium transition-transform duration-150 hover:-translate-y-0.5"
+                      className="flex h-20 w-full items-center justify-center rounded-xl px-4 py-3 text-xs font-medium transition-transform duration-150 hover:-translate-y-0.5"
                       style={{
                         background: isDark
                           ? 'rgba(255, 255, 255, 0.08)'
@@ -301,10 +311,11 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
                           ? '1px solid rgba(255, 255, 255, 0.12)'
                           : '1px solid rgba(15, 23, 42, 0.15)',
                         boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 6px 20px rgba(30, 64, 175, 0.2)',
+                        fontFamily: 'var(--font-audiowide)',
                         writingMode: 'vertical-rl',
                         textOrientation: 'upright',
-                        letterSpacing: '0.12em',
-                        lineHeight: 1.4
+                        letterSpacing: '-0.3em',
+                        lineHeight: 1.2
                       }}
                     >
                       {item.label}
@@ -315,8 +326,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
             </div>
           )}
         </div>
-      </div>
-
+        </div>
       {/* 添加CSS动画样式 */}
       <style jsx>{`
         @keyframes liquidFlow {

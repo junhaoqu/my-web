@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import Macbook, { MacbookRef } from "./mac";
@@ -8,6 +8,9 @@ import Camera, { CameraRef } from "./camera";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { TextHoverEffect } from "@/components/ui/text-hover-effect";
 import { LayoutTextFlipDemo } from "@/components/LayoutTextFlipDemo";
+import PolaroidCard from "@/components/CameraScreen/FireworkCard";
+import { DraggableCardContainer } from "@/components/ui/draggable-card";
+import { cn } from "@/lib/utils";
 import ProfileImage from "@/components/MacScreen/ProfileImage";
 import PersonalIntro from "@/components/MacScreen/PersonalIntro";
 import SocialLinks from "@/components/MacScreen/SocialLinks";
@@ -25,6 +28,78 @@ const IPAD_ASSETS: IpadAsset[] = [
   { id: "eva", videoId: "eva_ek1mpo", imageId: "eva_scuwn0", label: "綾波レイ" },
   { id: "violin", videoId: "Violin_ssdwx8", imageId: "Violin_g1emwi", label: "Vilion" },
   { id: "wind", videoId: "Wind_sp9xdv", imageId: "Wind_dtzebp", label: "Wind" },
+];
+
+const POLAROID_TOTAL_WIDTH_PX = Math.round(3.483 * 96);
+const POLAROID_TOTAL_HEIGHT_PX = Math.round(4.233 * 96);
+const POLAROID_SCALE = 0.7;
+
+type CameraPolaroidItem = {
+  id: string;
+  title: string;
+  imageId: string;
+  className: string;
+  imagePosition?: string;
+  imageStyle?: CSSProperties;
+};
+
+const CAMERA_POLAROID_ITEMS: CameraPolaroidItem[] = [
+  {
+    id: "firework",
+    title: "Firework",
+    imageId: "firework1_cshymx",
+    className: "absolute top-[-140px] left-[-120px] rotate-[-12deg]",
+    imagePosition: "center 42%",
+  },
+  {
+    id: "city",
+    title: "City",
+    imageId: "city_dqvgc3",
+    className: "absolute top-[-220px] left-[-10px] rotate-[-10deg]",
+    imagePosition: "center 70%",
+  },
+  {
+    id: "art",
+    title: "Art",
+    imageId: "art_small_qbcxsk",
+    className: "absolute top-[-160px] left-[140px] rotate-[6deg]",
+    imagePosition: "35% center",
+  },
+  {
+    id: "starTrail",
+    title: "Star Trail",
+    imageId: "Star_trail_small_r3zut3",
+    className: "absolute top-[-60px] left-[240px] rotate-[9deg]",
+    imagePosition: "center 100%",
+  },
+  {
+    id: "street",
+    title: "Street",
+    imageId: "street_small_un7xsc",
+    className: "absolute top-[0px] left-[120px] rotate-[-6deg]",
+    imagePosition: "center 38%",
+  },
+  {
+    id: "sunrise",
+    title: "Sunrise",
+    imageId: "sun_rise_small_i6dmqi",
+    className: "absolute top-[40px] left-[0px] rotate-[4deg]",
+    imagePosition: "center 35%",
+  },
+  {
+    id: "nature",
+    title: "Nature",
+    imageId: "Natural_small_b7e3lt",
+    className: "absolute top-[100px] left-[180px] rotate-[-8deg]",
+    imagePosition: "center 42%",
+  },
+  {
+    id: "mountain",
+    title: "Mountain",
+    imageId: "mountain_small_vnvevc",
+    className: "absolute top-[140px] left-[40px] rotate-[2deg]",
+    imagePosition: "center 45%",
+  },
 ];
 
 const buildCloudinaryImageUrl = (publicId: string) => {
@@ -54,6 +129,7 @@ export default function Home() {
   const [currentStage, setCurrentStage] = useState(0);
   const [devicesHidden, setDevicesHidden] = useState(false);
   const [ipadContentVisible, setIpadContentVisible] = useState(false);
+  const [cameraContentVisible, setCameraContentVisible] = useState(false);
   const [selectedAssetIndex, setSelectedAssetIndex] = useState(0);
   const prevIpadVisibleRef = useRef(false);
 
@@ -163,7 +239,13 @@ export default function Home() {
   const floatingWindowTop = `calc(50% - ${floatingWindowHeight / 2}px)`;
   const floatingIntroOffset = 80;
   const floatingIntroTop = `calc(50% - ${floatingWindowHeight / 2 + floatingIntroOffset}px)`;
-  const dualWindowWidth = floatingWindowWidth * 2 + floatingWindowGap;
+  const polaroidScaledHeight = Math.round(POLAROID_TOTAL_HEIGHT_PX * POLAROID_SCALE);
+  const cameraHorizontalOffset = responsiveSize.mac.width / 2 + responsiveSize.camera.width + 100;
+  const polaroidGap = Math.round(180 * POLAROID_SCALE);
+  const polaroidBaseLeft = `calc(50% - ${cameraHorizontalOffset}px + ${responsiveSize.camera.width + polaroidGap}px)`;
+  const textBaseLeft = `calc(50% - ${cameraHorizontalOffset}px + ${responsiveSize.camera.width / 2 + 350}px)`;
+  const polaroidBaseTop = '20%';
+  const textBaseTop = '50%';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -197,6 +279,7 @@ export default function Home() {
       }
       
       let nextIpadContentVisible = false;
+      let nextCameraContentVisible = false;
 
       // 阶段1: Mac成为焦点，其他设备缩小推远 (0-14.29%)
       if (overallProgress <= 1/7) {
@@ -451,6 +534,7 @@ export default function Home() {
         
         // Camera获得焦点并激活
         cameraRef.current?.updateAnimation(easedProgress);
+        nextCameraContentVisible = stage5Progress >= 0.45;
         
         // Camera获得焦点时，调整图层顺序
         if (cameraContainerRef.current) {
@@ -573,6 +657,8 @@ export default function Home() {
           cameraContainerRef.current.style.transform = `scale(${scale}) translateX(${translateX}px) translateY(${translateY}px)`;
           cameraContainerRef.current.style.filter = 'blur(0px)';
         }
+
+        nextCameraContentVisible = false;
       }
       // 阶段7: 所有设备模糊并向上移动离开画面 (85.71-100%)
       else {
@@ -637,10 +723,15 @@ export default function Home() {
             }
           }
         }
+
+        nextCameraContentVisible = false;
       }
 
       setIpadContentVisible((prev) =>
         prev === nextIpadContentVisible ? prev : nextIpadContentVisible
+      );
+      setCameraContentVisible((prev) =>
+        prev === nextCameraContentVisible ? prev : nextCameraContentVisible
       );
     };
 
@@ -820,7 +911,71 @@ export default function Home() {
           </>
         )}
       </AnimatePresence>
-      
+
+      <AnimatePresence>
+        {cameraContentVisible && (
+          <>
+            <motion.div
+              key="camera-polaroids"
+              initial={{ opacity: 0, scale: 0.92, x: 60 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              exit={{ opacity: 0, scale: 0.92, x: 60 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="fixed z-[78] pointer-events-none"
+              style={{
+                left: polaroidBaseLeft,
+                top: polaroidBaseTop,
+                transform: "translateY(-50%)",
+              }}
+            >
+              <DraggableCardContainer className="relative flex h-[460px] w-[520px] items-center justify-center overflow-visible">
+                {CAMERA_POLAROID_ITEMS.map((item, index) => (
+                  <PolaroidCard
+                    key={`polaroid-${item.id}`}
+                    imageUrl={buildCloudinaryImageUrl(item.imageId)}
+                    title={item.title}
+                    imagePosition={item.imagePosition}
+                    imageStyle={item.imageStyle}
+                    scale={POLAROID_SCALE}
+                    className={cn("pointer-events-auto", item.className)}
+                    style={{ zIndex: 2 + index }}
+                  />
+                ))}
+              </DraggableCardContainer>
+            </motion.div>
+
+            <motion.div
+              key="camera-polaroid-text"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 40 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="fixed z-[30] flex flex-col items-center text-center"
+              style={{
+                left: textBaseLeft,
+                top: textBaseTop,
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              <p
+                className="whitespace-pre-line text-4xl font-semibold leading-tight md:text-5xl"
+                style={{ color: isDark ? "#ffffff" : "#4b5563" }}
+              >
+                Capturing Moments,{"\n"}Creating Worlds.
+              </p>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => router.push("/photo")}
+                className="mt-3 rounded-full bg-black px-7 py-2 text-sm font-semibold uppercase tracking-[0.24em] text-white shadow-[0_12px_24px_rgba(15,23,42,0.35)] transition-colors hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
+              >
+                Explore
+              </motion.button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {ipadContentVisible && selectedAsset && (
           <>
