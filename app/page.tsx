@@ -1097,7 +1097,7 @@ export default function Home() {
         <div className="h-screen" />
         {/* TextHoverEffect组件 - 在设备移出后显示 */}
         {devicesHidden && (
-          <div className="h-[40rem] flex items-center justify-center relative z-40" style={{ marginTop: '0rem' }}>
+          <div className="h-[40rem] flex items-center pt-8 justify-center relative z-40">
             
             <TextHoverEffect text="CCC" />
           </div>

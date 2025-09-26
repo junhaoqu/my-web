@@ -16,29 +16,6 @@ interface CardData {
   content?: () => React.ReactNode;
 }
 
-const workIconLogos = [
-  { src: "/images/icon/Android.png", alt: "Android" },
-  { src: "/images/icon/AWS.png", alt: "AWS" },
-  { src: "/images/icon/Docker.png", alt: "Docker" },
-  { src: "/images/icon/github-mark-white.png", alt: "GitHub White" },
-  { src: "/images/icon/github-mark.png", alt: "GitHub" },
-  { src: "/images/icon/Go.png", alt: "Go" },
-  { src: "/images/icon/Java.png", alt: "Java" },
-  { src: "/images/icon/Kubernetes.png", alt: "Kubernetes" },
-  { src: "/images/icon/Linux.png", alt: "Linux" },
-  { src: "/images/icon/MySQL.png", alt: "MySQL" },
-  { src: "/images/icon/Next.js.png", alt: "Next.js" },
-  { src: "/images/icon/React.png", alt: "React" },
-  { src: "/images/icon/Swift.png", alt: "Swift" },
-];
-
-const projectIconLogos = [
-  { src: "/images/icon/Pandas.png", alt: "Pandas" },
-  { src: "/images/icon/Python.png", alt: "Python" },
-  { src: "/images/icon/TensorFlow.png", alt: "TensorFlow" },
-  { src: "/images/icon/React.png", alt: "React" },
-  { src: "/images/icon/Next.js.png", alt: "Next.js" },
-];
 
 const workExperiences: CardData[] = [
   {
@@ -87,6 +64,7 @@ const projects: CardData[] = [
 ];
 
 export default function ProjectPage() {
+  // ...existing code...
   const [isDark, setIsDark] = useState(true);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentStage, setCurrentStage] = useState(0);
@@ -99,20 +77,50 @@ export default function ProjectPage() {
   const sectionRefs = [workRef, projectsRef, connectRef];
 
   useEffect(() => {
+    console.log('Initializing theme...');
     const storedTheme = localStorage.getItem('theme');
-    const shouldBeDark = storedTheme !== 'light';
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // 默认使用 dark 主题，除非用户明确选择了 light
+    const shouldBeDark = storedTheme === 'light' ? false : true;
     setIsDark(shouldBeDark);
     document.documentElement.setAttribute('data-theme', shouldBeDark ? 'dark' : 'light');
-    
+    console.log('Theme initialized to:', shouldBeDark ? 'dark' : 'light');
+
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
     const timer = setTimeout(() => {
-        window.scrollTo(0, 0);
+      window.scrollTo(0, 0);
     }, 10);
 
     return () => clearTimeout(timer);
   }, []);
+
+  // workIconLogos 必须在 isDark 初始化后定义
+  const workIconLogos = [
+    { src: "/images/icon/Android.png", alt: "Android" },
+    { src: "/images/icon/AWS.png", alt: "AWS" },
+    { src: "/images/icon/Docker.png", alt: "Docker" },
+    { src: isDark ? "/images/icon/github-mark-white.png" : "/images/icon/github-mark.png", alt: "GitHub" },
+    { src: "/images/icon/Go.png", alt: "Go" },
+    { src: "/images/icon/Java.png", alt: "Java" },
+    { src: "/images/icon/Kubernetes.png", alt: "Kubernetes" },
+    { src: "/images/icon/Linux.png", alt: "Linux" },
+    { src: "/images/icon/MySQL.png", alt: "MySQL" },
+    { src: "/images/icon/Next.js.png", alt: "Next.js" },
+    { src: "/images/icon/React.png", alt: "React" },
+    { src: "/images/icon/Swift.png", alt: "Swift" },
+  ];
+
+
+const projectIconLogos = [
+  { src: "/images/icon/Pandas.png", alt: "Pandas" },
+  { src: "/images/icon/Python.png", alt: "Python" },
+  { src: "/images/icon/TensorFlow.png", alt: "TensorFlow" },
+  { src: "/images/icon/React.png", alt: "React" },
+  { src: "/images/icon/Next.js.png", alt: "Next.js" },
+];
+
 
   const toggleTheme = () => {
     const newIsDark = !isDark;
@@ -217,13 +225,8 @@ export default function ProjectPage() {
           </div>
         </motion.button>
 
-        <section id="work" ref={workRef} className="w-full min-h-screen flex flex-col justify-center items-center pt-24">
-          <h1 className="text-4xl font-semibold tracking-tight w-full pb-8">Work Experience</h1>
-          <div className="w-full max-w-3xl space-y-4">
-            {workExperiences.map((work, i) => (
-              <ExpandableCard key={i} card={work} active={activeCard} setActive={setActiveCard} />
-            ))}
-          </div>
+        <section id="work" ref={workRef} className="w-full min-h-screen flex flex-col items-center pt-16">
+          <h1 className="text-4xl font-semibold tracking-tight w-full pb-8 pt-8" style={{ fontFamily: 'Audiowide, cursive' }}>Work Experience</h1>
           <div style={{ margin: '32px 0', width: '100%' }}>
             <div className="w-full flex justify-center">
               <div className="max-w-md w-full mx-auto">
@@ -231,13 +234,18 @@ export default function ProjectPage() {
               </div>
             </div>
           </div>
+          <div className="w-full max-w-3xl space-y-4">
+            {workExperiences.map((work, i) => (
+              <ExpandableCard key={i} card={work} active={activeCard} setActive={setActiveCard} isDark={isDark} />
+            ))}
+          </div>
         </section>
 
         <section id="projects" ref={projectsRef} className="w-full min-h-screen flex flex-col justify-center items-center pt-24">
           <h2 className="text-4xl font-semibold tracking-tight w-full pb-8">Projects</h2>
           <div className="w-full max-w-3xl space-y-4">
             {projects.map((project, i) => (
-              <ExpandableCard key={i} card={project} active={activeCard} setActive={setActiveCard} />
+              <ExpandableCard key={i} card={project} active={activeCard} setActive={setActiveCard} isDark={isDark} />
             ))}
           </div>
           <div style={{ margin: '32px 0', width: '100%' }}>
@@ -255,7 +263,7 @@ export default function ProjectPage() {
         </section>
       </main>
 
-      <ExpandedCardModal active={activeCard} setActive={setActiveCard} />
+      <ExpandedCardModal active={activeCard} setActive={setActiveCard} isDark={isDark} />
 
       <ProjectProgressBar
         scrollProgress={scrollProgress}
