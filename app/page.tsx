@@ -16,8 +16,8 @@ import PersonalIntro from "@/components/MacScreen/PersonalIntro";
 import SocialLinks from "@/components/MacScreen/SocialLinks";
 import TechStack from "@/components/MacScreen/TechStack";
 import WorkExperience from "@/components/MacScreen/WorkExperience";
-import GlassSurface from "@/components/GlassSurface";
 import ProgressBar from "@/components/ProgressBar";
+
 
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
@@ -38,11 +38,10 @@ type CameraPolaroidItem = {
   id: string;
   title: string;
   imageId: string;
-  className: string;
+  className?: string;
   imagePosition?: string;
-  imageStyle?: CSSProperties;
+  imageStyle?: React.CSSProperties;
 };
-
 const CAMERA_POLAROID_ITEMS: CameraPolaroidItem[] = [
   {
     id: "firework",
@@ -822,10 +821,10 @@ export default function Home() {
           }}
         >
           <h1 className="text-4xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
-            哈吉米哦南北绿豆
+            Capture, Code, Create!
           </h1>
           <p className="text-xl" style={{ color: 'var(--text-secondary)' }}>
-            曼波！
+            Scroll to see how！
           </p>
         </motion.div>
       )}
@@ -1098,12 +1097,64 @@ export default function Home() {
         <div className="h-screen" />
         {/* TextHoverEffect组件 - 在设备移出后显示 */}
         {devicesHidden && (
-          <div className="h-[40rem] flex items-center justify-center relative z-40">
-            <TextHoverEffect text="ACET" />
+          <div className="h-[40rem] flex items-center justify-center relative z-40" style={{ marginTop: '-15rem' }}>
+            
+            <TextHoverEffect text="CCC" />
           </div>
         )}
         <div className="h-screen" />
       </div>
+
+        {/* ScrollReveal组件显示'When does a man die?'，在ACET之后出现 */}
+        <div
+          className="relative z-40 flex w-full justify-center"
+          style={{
+            marginTop: '-40rem',
+            paddingLeft: '12vw',
+            paddingRight: '12vw',
+            boxSizing: 'border-box',
+          }}
+        >
+          <span
+            className="font-semibold text-center"
+            style={{
+              fontSize: 'clamp(1.2rem, 2vw, 2.2rem)',
+              color: isDark ? '#fff' : '#222',
+              background: isDark ? 'rgba(0,0,0,0.01)' : 'rgba(255,255,255,0.01)',
+              borderRadius: '1.2rem',
+              padding: '1.2rem 0',
+            }}
+          >
+            Captured, Code, Create<br />
+            From a fleeting moment captured through a lens, to lines of code meticulously crafted, 
+            every project is a journey to create something new and inspiring.
+          </span>
+        </div>
+
+        {/* Credits in Northwell font在滚动最后显示 */}
+        <div
+          className="fixed left-1/2 z-50 flex w-full justify-center pointer-events-none"
+          style={{
+            top: '80%',
+            transform: 'translateX(-50%)',
+            opacity: scrollProgress > 0.98 ? 1 : 0,
+            transition: 'opacity 0.8s cubic-bezier(0.4,0,0.2,1)',
+          }}
+        >
+          <span
+            className={`text-3xl md:text-4xl text-center`}
+            style={{
+              color: isDark ? '#fff' : '#252d38ff',
+              fontFamily: 'Northwell, cursive',
+              letterSpacing: '0.08em',
+            }}
+          >
+            ©7un Studio
+            <br />
+            By Junhao Qu
+          </span>
+        </div>
+        <div className="h-screen" />
 
       {/* 液体玻璃进度条 */}
       <ProgressBar
