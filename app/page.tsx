@@ -1122,7 +1122,7 @@ export default function Home() {
               padding: '1.2rem 0',
             }}
           >
-            Captured, Code, Create<br />
+            Capture, Code, Create<br />
             From a fleeting moment captured through a lens, to lines of code meticulously crafted, 
             every project is a journey to create something new and inspiring.
           </span>
