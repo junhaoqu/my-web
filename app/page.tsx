@@ -750,7 +750,7 @@ export default function Home() {
   }, [ipadContentVisible]);
 
   return (
-    <AuroraBackground className="relative min-h-[900vh]">
+    <AuroraBackground className="relative min-h-[800vh]">
       {/* 主题切换按钮 */}
       <motion.button
         initial={{ opacity: 0, scale: 0.8 }}
@@ -1097,19 +1097,16 @@ export default function Home() {
         <div className="h-screen" />
         {/* TextHoverEffect组件 - 在设备移出后显示 */}
         {devicesHidden && (
-          <div className="h-[40rem] flex items-center justify-center relative z-40" style={{ marginTop: '-15rem' }}>
+          <div className="h-[40rem] flex items-center justify-center relative z-40" style={{ marginTop: '0rem' }}>
             
             <TextHoverEffect text="CCC" />
           </div>
         )}
-        <div className="h-screen" />
-      </div>
-
         {/* ScrollReveal组件显示'When does a man die?'，在ACET之后出现 */}
         <div
           className="relative z-40 flex w-full justify-center"
           style={{
-            marginTop: '-40rem',
+            marginTop: '-12rem',
             paddingLeft: '12vw',
             paddingRight: '12vw',
             boxSizing: 'border-box',
@@ -1130,6 +1127,9 @@ export default function Home() {
             every project is a journey to create something new and inspiring.
           </span>
         </div>
+      </div>
+
+        
 
         {/* Credits in Northwell font在滚动最后显示 */}
         <div
