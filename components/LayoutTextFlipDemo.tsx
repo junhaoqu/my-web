@@ -25,7 +25,7 @@ export function LayoutTextFlipDemo({ isDark }: LayoutTextFlipDemoProps) {
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
       <span className={baseClass} style={colorStyle}>
-        Beyond the logical world of code, I use
+        Beyond the logical world of Code, I use
       </span>
       <LayoutTextFlip
         text=""
@@ -33,7 +33,7 @@ export function LayoutTextFlipDemo({ isDark }: LayoutTextFlipDemoProps) {
         duration={2600}
       />
       <span className={baseClass} style={colorStyle}>
-        to construct landscapes of emotion.
+        to Create landscapes of emotion.
       </span>
     </motion.div>
   );

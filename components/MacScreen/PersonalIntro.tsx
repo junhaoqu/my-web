@@ -333,7 +333,7 @@ const PersonalIntro: React.FC<PersonalIntroProps> = ({
                 }}
               >
                 I have a deep curiosity for AI, interactive design, and robust back-end architecture. 
-                I believe in rapid development, working backwards from customer needs, and maintaining a user-first focus on the user experience. 
+                I believe in agile development, working backwards from customer needs, and maintaining a user-first focus on the user experience. 
               </p>
             </div>
 
