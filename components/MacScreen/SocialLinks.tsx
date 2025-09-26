@@ -84,15 +84,17 @@ const SocialLinks: React.FC = () => {
 
   let mouseX = useMotionValue(Infinity);
 
+  // 统一字体颜色
+  const fontColor = isDark ? '#fff' : '#222';
   return (
-    <div className="flex items-center justify-center h-full w-full">
+    <div className="flex items-center justify-center h-full w-full" style={{ color: fontColor }}>
       <motion.div
         onMouseMove={(e) => mouseX.set(e.pageX)}
         onMouseLeave={() => mouseX.set(Infinity)}
         className="mx-auto flex h-10 items-end gap-6"
       >
         {links.map((item) => (
-          <IconContainer mouseX={mouseX} key={item.title} {...item} />
+          <IconContainer mouseX={mouseX} key={item.title} {...item} isDark={isDark} />
         ))}
       </motion.div>
     </div>
@@ -104,12 +106,14 @@ function IconContainer({
   title,
   icon,
   href,
-}: {
-  mouseX: MotionValue;
-  title: string;
-  icon: React.ReactNode;
-  href: string;
-}) {
+  isDark
+  }: {
+    mouseX: MotionValue;
+    title: string;
+    icon: React.ReactNode;
+    href: string;
+    isDark: boolean;
+  }) {
   let ref = useRef<HTMLDivElement>(null);
 
   let distance = useTransform(mouseX, (val) => {
@@ -151,6 +155,8 @@ function IconContainer({
 
   const [hovered, setHovered] = useState(false);
 
+  // 主题色判断
+  const labelColor = isDark ? '#fff' : '#222';
   return (
     <a href={href} target="_blank" rel="noopener noreferrer">
       <motion.div
@@ -166,7 +172,8 @@ function IconContainer({
               initial={{ opacity: 0, y: 10, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 2, x: "-50%" }}
-              className="absolute -top-8 left-1/2 w-fit rounded-md border border-white/20 bg-white/10 backdrop-blur-md px-2 py-0.5 text-xs whitespace-pre text-black dark:text-white"
+              className="absolute -top-8 left-1/2 w-fit rounded-md border border-white/20 bg-white/10 backdrop-blur-md px-2 py-0.5 text-xs whitespace-pre"
+              style={{ color: labelColor }}
             >
               {title}
             </motion.div>
