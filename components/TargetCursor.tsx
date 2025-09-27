@@ -334,7 +334,7 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
     <div
       ref={cursorRef}
       className="target-cursor-wrapper"
-      style={{ ['--target-cursor-color' as any]: isDark ? '#fff' : '#111' }}
+      style={{ ['--target-cursor-color' as any]: isDark ? '#fff' : '#000000ff' }}
     >
       <div ref={dotRef} className="target-cursor-dot" />
       <div className="target-cursor-corner corner-tl" />

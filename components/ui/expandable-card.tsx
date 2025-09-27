@@ -183,7 +183,6 @@ export function ExpandedCardModal({ active, setActive, isDark }: { active: CardD
                   <div
                     ref={thumbRef}
                     className="absolute right-0 w-1.5 rounded-sm transition-transform"
-                    style={{ background: isDark ? 'rgba(255,255,255,0.95)' : 'rgba(0,0,0,0.95)', width: 6, transform: 'translateY(0)' }}
                   />
                 </div>
               </div>
