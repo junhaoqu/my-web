@@ -83,7 +83,7 @@ const ProjectProgressBar: React.FC<ProgressBarProps> = ({
     <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] ${className}`} style={style}>
       <div className="relative">
         <GlassSurface
-          width={null}
+          width={-1}
           height={45}
           borderRadius={22}
           className="w-[320px] sm:w-[450px] lg:w-[550px] flex items-center justify-between px-5 transition-all duration-300 ease-in-out"

@@ -3,7 +3,7 @@ import './GlassSurface.css';
 
 const GlassSurface = ({
   children,
-  width = 200,
+  width = -1,
   height = 80,
   borderRadius = 20,
   borderWidth = 0.07,
@@ -161,13 +161,16 @@ const GlassSurface = ({
 
   const containerStyle = {
     ...style,
-    width: typeof width === 'number' ? `${width}px` : width,
     height: typeof height === 'number' ? `${height}px` : height,
     borderRadius: `${borderRadius}px`,
     '--glass-frost': backgroundOpacity,
     '--glass-saturation': saturation,
     '--filter-id': `url(#${filterId})`
   };
+
+  if (width !== -1) {
+    containerStyle.width = typeof width === 'number' ? `${width}px` : width;
+  }
 
   return (
     <div
