@@ -3,6 +3,9 @@ import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import LogoLoop, { LogoItem } from '@/components/ui/LogoLoop';
 import { AuroraBackground } from '@/components/ui/aurora-background';
+import AWSDetails from '@/components/ui/AWSDetails';
+import UCSDDetails from '@/components/ui/UCSDDetails';
+import AbgentDetails from '@/components/ui/AbgentDetails';
 import ProjectProgressBar from "@/components/ProjectProgressBar";
 import { ExpandableCard, ExpandedCardModal } from "@/components/ui/expandable-card";
 import ProjectCard from "@/components/ui/project-card";
@@ -15,29 +18,14 @@ interface CardData {
   description: string;
   title: string;
   src: string;
+  expandedSrc?: string;
   ctaText?: string;
   ctaLink?: string;
   content?: () => React.ReactNode;
 }
 
 
-const workExperiences: CardData[] = [
-  {
-    src: "/images/icon/ucsd.png",
-    title: "Work Experience 1",
-    description: "Detailed description of work experience 1.",
-  },
-  {
-    src: "/images/icon/jacobs.jpeg",
-    title: "Work Experience 2",
-    description: "Detailed description of work experience 2.",
-  },
-  {
-    src: "/images/icon/Abgent-Logo.jpg",
-    title: "Work Experience 3",
-    description: "Detailed description of work experience 3.",
-  },
-];
+// work experiences are defined inside the component so they can access runtime state like `isDark` when needed.
 
 const projects = [
     {
@@ -72,6 +60,29 @@ export default function ProjectPage() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentStage, setCurrentStage] = useState(0);
   const [activeCard, setActiveCard] = useState<CardData | null>(null);
+
+  const workExperiences: CardData[] = [
+    {
+      src: "/images/icon/ucsd.png",
+  title: "Amazon Web Services",
+  description: "Software Developer Intern",
+  content: () => <AWSDetails isDark={isDark} />,
+    },
+    {
+      src: "/images/icon/jacobs.jpeg",
+  title: "UCSD Mental Health",
+  description: "Software Developer",
+  expandedSrc: "/images/profile/Front.jpeg",
+  content: () => <UCSDDetails isDark={isDark} />,
+    },
+    {
+      src: "/images/icon/Abgent-Logo.jpg",
+  title: "Abgent, Inc",
+  description: "Software Developer Intern",
+  expandedSrc: "/images/icon/abcepta.png",
+  content: () => <AbgentDetails isDark={isDark} />,
+    },
+  ];
 
   const workRef = useRef<HTMLDivElement>(null);
   const projectsRef = useRef<HTMLDivElement>(null);
@@ -165,7 +176,6 @@ export default function ProjectPage() {
   { src: "/images/icon/MySQL.png", alt: "MySQL" },
   { src: "/images/icon/Next.js.png", alt: "Next.js", className: "logo-circle-bg", style: { background: '#fff', borderRadius: '50%', padding: '4px', boxSizing: 'content-box' as React.CSSProperties['boxSizing'] } },
   { src: "/images/icon/React.png", alt: "React" },
-  { src: "/images/icon/Swift.png", alt: "Swift" },
   ];
 
 
@@ -173,7 +183,11 @@ const projectIconLogos: LogoItem[] = [
   { src: "/images/icon/Pandas.png", alt: "Pandas" },
   { src: "/images/icon/Python.png", alt: "Python" },
   { src: "/images/icon/TensorFlow.png", alt: "TensorFlow" },
+  { src: "/images/icon/AWS.png", alt: "AWS", className: "logo-circle-bg", style: { background: '#fff', borderRadius: '50%', padding: '4px', boxSizing: 'content-box' as React.CSSProperties['boxSizing'] } },
   { src: "/images/icon/React.png", alt: "React" },
+  { src: "/images/icon/Swift.png", alt: "Swift" },
+  { src: "/images/icon/Kubernetes.png", alt: "Kubernetes" },
+  { src: "/images/icon/CSS3.png", alt: "CSS3" },
   { src: "/images/icon/Next.js.png", alt: "Next.js", className: "logo-circle-bg", style: { background: '#fff', borderRadius: '50%', padding: '6px', boxSizing: 'content-box' as React.CSSProperties['boxSizing'] } },
 ];
 
@@ -286,7 +300,7 @@ const projectIconLogos: LogoItem[] = [
           <div style={{ margin: '32px 0', width: '100%' }}>
             <div className="w-full flex justify-center">
               <div className="max-w-md w-full mx-auto">
-                <LogoLoop logos={workIconLogos} speed={120} direction="left" logoHeight={48} gap={40} pauseOnHover scaleOnHover ariaLabel="Work Tech Logo Loop" className="bg-transparent shadow-none border-none" />
+                <LogoLoop logos={workIconLogos} speed={120} direction="right" logoHeight={48} gap={40} pauseOnHover scaleOnHover ariaLabel="Work Tech Logo Loop" className="bg-transparent shadow-none border-none" />
               </div>
             </div>
           </div>

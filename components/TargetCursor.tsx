@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { gsap } from 'gsap';
 import './TargetCursor.css';
 
@@ -328,7 +329,8 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
     }
   }, [spinDuration]);
 
-  return (
+  const node = (typeof document !== 'undefined') ? document.body : null;
+  const cursorEl = (
     <div
       ref={cursorRef}
       className="target-cursor-wrapper"
@@ -341,6 +343,8 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
       <div className="target-cursor-corner corner-bl" />
     </div>
   );
+
+  return node ? createPortal(cursorEl, node) : cursorEl;
 };
 
 export default TargetCursor;

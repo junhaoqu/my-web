@@ -8,6 +8,7 @@ interface CardData {
   description: string;
   title: string;
   src: string;
+  expandedSrc?: string;
   ctaText?: string;
   ctaLink?: string;
   content?: () => React.ReactNode;
@@ -70,6 +71,37 @@ export function ExpandableCard({ card, active, setActive, isDark }: { card: Card
 export function ExpandedCardModal({ active, setActive, isDark }: { active: CardData | null, setActive: (card: CardData | null) => void, isDark: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const id = useId();
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const thumbRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    const thumb = thumbRef.current;
+    if (!el) return;
+    const container = el as HTMLDivElement;
+
+    function updateThumb() {
+      const scrollTop = container.scrollTop;
+      const scrollHeight = container.scrollHeight;
+      const clientHeight = container.clientHeight;
+      const ratio = clientHeight / scrollHeight;
+      const thumbHeight = Math.max(16, Math.floor(clientHeight * ratio));
+      const maxTop = clientHeight - thumbHeight;
+      const top = scrollHeight === clientHeight ? 0 : Math.min(maxTop, Math.floor((scrollTop / (scrollHeight - clientHeight)) * maxTop));
+      if (thumb) {
+        thumb.style.height = thumbHeight + 'px';
+        thumb.style.transform = `translateY(${top}px)`;
+      }
+    }
+
+    updateThumb();
+    container.addEventListener('scroll', updateThumb, { passive: true });
+    window.addEventListener('resize', updateThumb);
+    return () => {
+      container.removeEventListener('scroll', updateThumb);
+      window.removeEventListener('resize', updateThumb);
+    };
+  }, [active]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -117,43 +149,44 @@ export function ExpandedCardModal({ active, setActive, isDark }: { active: CardD
           ref={ref}
           className={`w-full max-w-[500px] h-full md:h-fit md:max-h-[90%] flex flex-col sm:rounded-3xl overflow-hidden ${isDark ? 'bg-neutral-900' : 'bg-white'}`}
         >
-          <motion.div layoutId={`image-${active.title}-${id}`}>
+            <motion.div layoutId={`image-${active.title}-${id}`}>
             <img
               width={200}
               height={200}
-              src={active.src}
+              src={active.expandedSrc ?? active.src}
               alt={active.title}
-              className="w-full h-80 lg:h-80 sm:rounded-tr-lg sm:rounded-tl-lg object-cover object-top"
+              className="w-full h-48 lg:h-56 sm:rounded-tr-lg sm:rounded-tl-lg object-cover object-top"
             />
           </motion.div>
           <div>
             <div className="flex justify-between items-start p-4">
               <div>
-                <motion.h3
-                  layoutId={`title-${active.title}-${id}`}
-                  className={`font-bold ${isDark ? 'text-white' : 'text-neutral-700'}`}
-                >
-                  {active.title}
-                </motion.h3>
-                <motion.p
-                  layoutId={`description-${active.description}-${id}`}
-                  className={`${isDark ? 'text-gray-300' : 'text-neutral-600'}`}
-                >
-                  {active.description}
-                </motion.p>
+                {/* Header intentionally omitted in expanded modal — details contain the necessary info */}
               </div>
               {/* Visit link removed per request */}
             </div>
             <div className="pt-4 relative px-4">
-              <motion.div
-                layout
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className={`text-xs md:text-sm lg:text-base h-40 md:h-fit pb-10 flex flex-col items-start gap-4 overflow-auto ${isDark ? 'text-gray-300' : 'text-neutral-600'} [mask:linear-gradient(to_bottom,white,white,transparent)] [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch]"`}
-              >
-                {typeof active.content === "function" ? active.content() : active.content}
-              </motion.div>
+              <div className="relative">
+                <motion.div
+                  layout
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  ref={contentRef}
+                    className={`text-lg md:text-xl lg:text-2xl h-[200px] md:h-[300px] pb-10 flex flex-col items-start gap-4 overflow-auto pr-4 ${isDark ? 'text-gray-300' : 'text-neutral-600'} [-webkit-overflow-scrolling:touch]`}
+                >
+                  {typeof active.content === "function" ? active.content() : active.content}
+                </motion.div>
+
+                {/* custom scrollbar */}
+                <div aria-hidden className="absolute top-0 right-0 h-full w-3 flex items-start">
+                  <div
+                    ref={thumbRef}
+                    className="absolute right-0 w-1.5 rounded-sm transition-transform"
+                    style={{ background: isDark ? 'rgba(255,255,255,0.95)' : 'rgba(0,0,0,0.95)', width: 6, transform: 'translateY(0)' }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>
