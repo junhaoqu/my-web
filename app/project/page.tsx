@@ -1,10 +1,12 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import LogoLoop from '@/components/ui/LogoLoop';
 import { AuroraBackground } from '@/components/ui/aurora-background';
 import ProjectProgressBar from "@/components/ProjectProgressBar";
 import { ExpandableCard, ExpandedCardModal } from "@/components/ui/expandable-card";
+import ProjectCard from "@/components/ui/project-card";
+import { Timeline } from "@/components/ui/time-line";
 
 // Define the type for card data
 interface CardData {
@@ -35,33 +37,32 @@ const workExperiences: CardData[] = [
   },
 ];
 
-const projects: CardData[] = [
-  {
-    src: "/images/profile/Back.jpeg",
-    title: "Project 1",
-    description: "Detailed description of project 1.",
-  },
-  {
-    src: "/images/profile/Front.jpeg",
-    title: "Project 2",
-    description: "Detailed description of project 2.",
-  },
-  {
-    src: "/images/profile/Back.jpeg",
-    title: "Project 3",
-    description: "Detailed description of project 3.",
-  },
-  {
-    src: "/images/profile/Front.jpeg",
-    title: "Project 4",
-    description: "Detailed description of project 4.",
-  },
-  {
-    src: "/images/profile/Back.jpeg",
-    title: "Project 5",
-    description: "Detailed description of project 5.",
-  },
-];
+const projects = [
+    {
+        title: "Chat Collect",
+        date: "Jan 2024 - Feb 2024",
+        description: "With the release of the OpenAI GPT Store, I decided to build a SaaS which allows users to collect email addresses from their GPT users. This is a great way to build an audience and monetize your GPT API usage.",
+        tags: ["Next.js", "Typescript", "PostgreSQL", "Prisma", "TailwindCSS", "Stripe", "Shadcn UI", "Magic UI"],
+        websiteUrl: "#", // Replace with actual URL
+        imageUrl: "https://placehold.co/600x400/f87171/ffffff?text=Chat+Collect"
+    },
+    {
+        title: "AI Portfolio",
+        date: "Mar 2024 - Present",
+        description: "An AI-powered portfolio website that showcases my projects and skills. It uses Gemini to provide an interactive experience.",
+        tags: ["Next.js", "Typescript", "TailwindCSS", "Framer Motion", "Gemini API"],
+        websiteUrl: "#", // Replace with actual URL
+        imageUrl: "https://placehold.co/600x400/71f8f1/ffffff?text=AI+Portfolio"
+    },
+    {
+        title: "Project 2023",
+        date: "Jun 2023 - Aug 2023",
+        description: "A project from 2023 to demonstrate the timeline.",
+        tags: ["React", "Gatsby"],
+        websiteUrl: "#",
+        imageUrl: "https://placehold.co/600x400/c084fc/ffffff?text=Project+2023"
+    }
+].sort((a, b) => new Date(b.date.split(' - ')[0]).getTime() - new Date(a.date.split(' - ')[0]).getTime());
 
 export default function ProjectPage() {
   // ...existing code...
@@ -73,8 +74,61 @@ export default function ProjectPage() {
   const workRef = useRef<HTMLDivElement>(null);
   const projectsRef = useRef<HTMLDivElement>(null);
   const connectRef = useRef<HTMLDivElement>(null);
+  const projectCardsContainerRef = useRef<HTMLDivElement>(null);
+  const yearRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [timelineData, setTimelineData] = useState<{ title: string; top: number }[]>([]);
 
   const sectionRefs = [workRef, projectsRef, connectRef];
+
+  const projectsByYear = useMemo(() => {
+    return projects.reduce((acc, project) => {
+      const year = new Date(project.date.split(' - ')[0]).getFullYear().toString();
+      (acc[year] ||= []).push(project);
+      return acc;
+    }, {} as Record<string, typeof projects>);
+  }, []);
+
+  const sortedYears = useMemo(
+    () => Object.keys(projectsByYear).sort((a, b) => parseInt(b) - parseInt(a)),
+    [projectsByYear]
+  );
+
+  const calculatePositions = useCallback(() => {
+    if (!projectCardsContainerRef.current) return;
+    const next: { title: string; top: number }[] = [];
+    for (const year of sortedYears) {
+      const el = yearRefs.current[year];
+      if (!el) continue;
+      const top = el.offsetTop - projectCardsContainerRef.current.offsetTop;
+      next.push({ title: year, top });
+    }
+    // prevent state churn if equal
+    setTimelineData(prev => {
+      if (prev.length === next.length && prev.every((p, i) => p.title === next[i].title && p.top === next[i].top)) {
+        return prev;
+      }
+      return next;
+    });
+  }, [sortedYears]);
+
+  useEffect(() => {
+    let raf = 0;
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(calculatePositions);
+    });
+
+    if (projectCardsContainerRef.current) {
+      ro.observe(projectCardsContainerRef.current);
+    }
+    // run once after mount & when sortedYears change meaningfully
+    calculatePositions();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
+  }, [calculatePositions]);
 
   useEffect(() => {
     console.log('Initializing theme...');
@@ -121,7 +175,6 @@ const projectIconLogos = [
   { src: "/images/icon/Next.js.png", alt: "Next.js" },
 ];
 
-
   const toggleTheme = () => {
     const newIsDark = !isDark;
     setIsDark(newIsDark);
@@ -144,36 +197,36 @@ const projectIconLogos = [
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
       const docHeight = document.documentElement.scrollHeight;
+      const total = docHeight - windowHeight;
+      const nextProgress = total > 0 ? Math.min(1, scrollY / total) : 0;
 
-      const totalScrollHeight = docHeight - windowHeight;
-      const overallProgress = totalScrollHeight > 0 ? Math.min(1, scrollY / totalScrollHeight) : 0;
-      setScrollProgress(overallProgress);
+      setScrollProgress(prev => (prev === nextProgress ? prev : nextProgress));
 
-      let stage = 0;
+      // stage calc
+      let nextStage = 0;
       for (let i = sectionRefs.length - 1; i >= 0; i--) {
         const ref = sectionRefs[i];
         if (ref.current && scrollY >= ref.current.offsetTop - windowHeight / 2) {
-          stage = i;
+          nextStage = i;
           break;
         }
       }
-      setCurrentStage(stage);
+      setCurrentStage(prev => (prev === nextStage ? prev : nextStage));
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll);
     handleScroll();
-
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
     };
-  }, [sectionRefs]);
+  }, []);
 
   const fontColor = isDark ? '#fff' : '#222';
 
   return (
-    <AuroraBackground className="relative min-h-[300vh]">
+    <AuroraBackground className="relative min-h-[450vh]">
       <main className="relative z-10 flex flex-col items-center gap-16 text-center px-4" style={{ color: fontColor }}>
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
@@ -235,23 +288,39 @@ const projectIconLogos = [
             </div>
           </div>
           <div className="w-full max-w-3xl space-y-4">
-            {workExperiences.map((work, i) => (
-              <ExpandableCard key={i} card={work} active={activeCard} setActive={setActiveCard} isDark={isDark} />
-            ))}
+            {/* 调整最大宽度为 540px，更窄更紧凑 */}
+            <div className="w-full max-w-md mx-auto space-y-4">
+              {workExperiences.map((work, i) => (
+                <ExpandableCard key={i} card={work} active={activeCard} setActive={setActiveCard} isDark={isDark} />
+              ))}
+            </div>
           </div>
         </section>
 
         <section id="projects" ref={projectsRef} className="w-full min-h-screen flex flex-col justify-center items-center pt-24">
           <h2 className="text-4xl font-semibold tracking-tight w-full pb-8">Projects</h2>
-          <div className="w-full max-w-3xl space-y-4">
-            {projects.map((project, i) => (
-              <ExpandableCard key={i} card={project} active={activeCard} setActive={setActiveCard} isDark={isDark} />
-            ))}
-          </div>
-          <div style={{ margin: '32px 0', width: '100%' }}>
+           <div style={{ margin: '32px 0', width: '100%' }}>
             <div className="w-full flex justify-center">
               <div className="max-w-md w-full mx-auto">
                 <LogoLoop logos={projectIconLogos} speed={100} direction="right" logoHeight={48} gap={40} pauseOnHover scaleOnHover ariaLabel="Project Tech Logo Loop" className="bg-transparent shadow-none border-none" />
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-row w-full max-w-6xl mx-auto">
+            <div className="grid grid-cols-6 w-full max-w-6xl mx-auto">
+              <div className="col-start-1 col-span-1 pr-6 relative">
+                <Timeline containerRef={projectCardsContainerRef} data={timelineData} />
+              </div>
+              <div className="col-start-2 col-span-4" ref={projectCardsContainerRef}>
+                {sortedYears.map(year => (
+                  <div key={year} ref={el => { yearRefs.current[year] = el; }} className="mb-16">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      {projectsByYear[year].map(project => (
+                        <ProjectCard key={project.title} {...project} isDark={isDark} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
