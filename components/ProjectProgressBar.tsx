@@ -83,10 +83,10 @@ const ProjectProgressBar: React.FC<ProgressBarProps> = ({
     <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] ${className}`} style={style}>
       <div className="relative">
         <GlassSurface
-          width={450}
+          width={null}
           height={45}
           borderRadius={22}
-          className="flex items-center justify-between px-5"
+          className="w-[320px] sm:w-[450px] lg:w-[550px] flex items-center justify-between px-5 transition-all duration-300 ease-in-out"
           brightness={isDark ? 50 : 120}
           opacity={isDark ? 0.95 : 0.75}
           blur={15}
@@ -105,7 +105,7 @@ const ProjectProgressBar: React.FC<ProgressBarProps> = ({
           <div className="relative flex items-center gap-4">
             {/* 进度条背景 */}
             <div 
-              className="relative w-80 h-2 rounded-full overflow-hidden"
+              className="relative w-56 sm:w-80 lg:w-[400px] h-2 rounded-full overflow-hidden transition-all duration-300 ease-in-out"
               style={{
                 background: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.15)'
             }}
