@@ -1,3 +1,4 @@
+
 "use client";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
@@ -1096,12 +1097,17 @@ export default function Home() {
         <div className="h-screen" />
         <div className="h-screen" />
         {/* TextHoverEffect组件 - 在设备移出后显示 */}
-        {devicesHidden && (
-          <div className="h-[40rem] flex items-center pt-8 justify-center relative z-40">
-            
-            <TextHoverEffect text="CCC" />
-          </div>
-        )}
+        <div 
+          className="h-[40rem] flex items-center justify-center relative z-40"
+          style={{
+            marginTop: '0rem',
+            opacity: devicesHidden ? 1 : 0,
+            transition: 'opacity 0.3s ease-in-out',
+            pointerEvents: devicesHidden ? 'auto' : 'none',
+          }}
+        >
+          <TextHoverEffect text="CCC" />
+        </div>
         {/* ScrollReveal组件显示'When does a man die?'，在ACET之后出现 */}
         <div
           className="relative z-40 flex w-full justify-center"
@@ -1112,20 +1118,22 @@ export default function Home() {
             boxSizing: 'border-box',
           }}
         >
-          <span
-            className="font-semibold text-center"
-            style={{
-              fontSize: 'clamp(1.2rem, 2vw, 2.2rem)',
-              color: isDark ? '#fff' : '#222',
-              background: isDark ? 'rgba(0,0,0,0.01)' : 'rgba(255,255,255,0.01)',
-              borderRadius: '1.2rem',
-              padding: '1.2rem 0',
-            }}
-          >
-            Capture, Code, Create<br />
-            From a fleeting moment captured through a lens, to lines of code meticulously crafted, 
-            every project is a journey to create something new and inspiring.
-          </span>
+          {scrollProgress > 0.05 && (
+            <span
+              className="font-semibold text-center"
+              style={{
+                fontSize: 'clamp(1.2rem, 2vw, 2.2rem)',
+                color: isDark ? '#fff' : '#222',
+                background: isDark ? 'rgba(0,0,0,0.01)' : 'rgba(255,255,255,0.01)',
+                borderRadius: '1.2rem',
+                padding: '1.2rem 0',
+              }}
+            >
+              Capture, Code, Create<br />
+              From a fleeting moment captured through a lens, to lines of code meticulously crafted, 
+              every project is a journey to create something new and inspiring.
+            </span>
+          )}
         </div>
       </div>
 
