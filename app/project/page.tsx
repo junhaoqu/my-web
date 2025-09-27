@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
-import LogoLoop from '@/components/ui/LogoLoop';
+import LogoLoop, { LogoItem } from '@/components/ui/LogoLoop';
 import { AuroraBackground } from '@/components/ui/aurora-background';
 import ProjectProgressBar from "@/components/ProjectProgressBar";
 import { ExpandableCard, ExpandedCardModal } from "@/components/ui/expandable-card";
@@ -153,9 +153,9 @@ export default function ProjectPage() {
   }, []);
 
   // workIconLogos 必须在 isDark 初始化后定义
-  const workIconLogos = [
+  const workIconLogos: LogoItem[] = [
   { src: "/images/icon/Android.png", alt: "Android" },
-  { src: "/images/icon/AWS.png", alt: "AWS", className: "logo-circle-bg", style: { background: '#fff', borderRadius: '50%', padding: '4px', boxSizing: 'content-box' } },
+  { src: "/images/icon/AWS.png", alt: "AWS", className: "logo-circle-bg", style: { background: '#fff', borderRadius: '50%', padding: '4px', boxSizing: 'content-box' as React.CSSProperties['boxSizing'] } },
   { src: "/images/icon/Docker.png", alt: "Docker" },
   { src: isDark ? "/images/icon/github-mark-white.png" : "/images/icon/github-mark.png", alt: "GitHub" },
   { src: "/images/icon/Go.png", alt: "Go" },
@@ -163,18 +163,18 @@ export default function ProjectPage() {
   { src: "/images/icon/Kubernetes.png", alt: "Kubernetes" },
   { src: "/images/icon/Linux.png", alt: "Linux" },
   { src: "/images/icon/MySQL.png", alt: "MySQL" },
-  { src: "/images/icon/Next.js.png", alt: "Next.js", className: "logo-circle-bg", style: { background: '#fff', borderRadius: '50%', padding: '4px', boxSizing: 'content-box' } },
+  { src: "/images/icon/Next.js.png", alt: "Next.js", className: "logo-circle-bg", style: { background: '#fff', borderRadius: '50%', padding: '4px', boxSizing: 'content-box' as React.CSSProperties['boxSizing'] } },
   { src: "/images/icon/React.png", alt: "React" },
   { src: "/images/icon/Swift.png", alt: "Swift" },
   ];
 
 
-const projectIconLogos = [
+const projectIconLogos: LogoItem[] = [
   { src: "/images/icon/Pandas.png", alt: "Pandas" },
   { src: "/images/icon/Python.png", alt: "Python" },
   { src: "/images/icon/TensorFlow.png", alt: "TensorFlow" },
   { src: "/images/icon/React.png", alt: "React" },
-  { src: "/images/icon/Next.js.png", alt: "Next.js", className: "logo-circle-bg", style: { background: '#fff', borderRadius: '50%', padding: '6px', boxSizing: 'content-box' } },
+  { src: "/images/icon/Next.js.png", alt: "Next.js", className: "logo-circle-bg", style: { background: '#fff', borderRadius: '50%', padding: '6px', boxSizing: 'content-box' as React.CSSProperties['boxSizing'] } },
 ];
 
   const toggleTheme = () => {
@@ -281,8 +281,8 @@ const projectIconLogos = [
         </motion.button>
 
         <section id="work" ref={workRef} className="w-full min-h-screen flex flex-col items-center pt-4">
-          <h1 className="text-4xl font-semibold tracking-tight w-full pb-8 pt-8" style={{ fontFamily: 'Audiowide, cursive' }}>Work Experience</h1>
-          
+          <h1 className="text-5xl font-semibold tracking-tight w-full pb-8 " style={{ top: '20px',fontFamily: 'Audiowide, cursive' }}>Work Experience</h1>
+
           <div style={{ margin: '32px 0', width: '100%' }}>
             <div className="w-full flex justify-center">
               <div className="max-w-md w-full mx-auto">
@@ -303,16 +303,29 @@ const projectIconLogos = [
             <TargetCursor 
               spinDuration={2}
               hideDefaultCursor={true}
+              isDark={isDark}
             />
             
-            <h1 className="text-2xl font-bold font-sans my-4">Hover over the elements below</h1>
-            <button className="cursor-target p-2 bg-blue-500 text-white rounded">Click me!</button>
-            <div className="cursor-target mt-2 p-2 border border-dashed">Hover target</div>
+
+            <div className="mt-6 flex flex-col items-center gap-4">
+              <div className="flex items-center gap-3" style={{ fontFamily: 'Audiowide, cursive', fontSize: '36px', lineHeight: 1 }}>
+                <span className="uppercase">ship</span>
+                <span className="uppercase cursor-target">Fast</span>
+              </div>
+              <div className="flex items-center gap-3" style={{ fontFamily: 'Audiowide, cursive', fontSize: '36px', lineHeight: 1 }}>
+                <span className="uppercase">ship</span>
+                <span className="uppercase cursor-target">Clean</span>
+              </div>
+              <div className="flex items-center gap-3" style={{ fontFamily: 'Audiowide, cursive', fontSize: '36px', lineHeight: 1 }}>
+                <span className="uppercase">ship</span>
+                <span className="uppercase cursor-target">Scalable</span>
+              </div>
+            </div>
           </div>
         </section>
 
         <section id="projects" ref={projectsRef} className="w-full min-h-screen flex flex-col justify-center items-center pt-24">
-          <h2 className="text-4xl font-semibold tracking-tight w-full pb-8">Projects</h2>
+          <h2 className="text-5xl font-semibold tracking-tight w-full pb-8" style={{ fontFamily: 'Audiowide, cursive' }}>Projects</h2>
            <div style={{ margin: '32px 0', width: '100%' }}>
             <div className="w-full flex justify-center">
               <div className="max-w-md w-full mx-auto">

@@ -45,7 +45,8 @@ export const AuroraBackground = ({
     <main>
       <div
         className={cn(
-          "transition-bg relative flex h-[100vh] flex-col items-center justify-center",
+          // Use min-h-screen and avoid vertical centering so page content flows from the top.
+          "transition-bg relative flex min-h-screen flex-col items-center",
           className,
         )}
         style={{

@@ -6,12 +6,14 @@ export interface TargetCursorProps {
   targetSelector?: string;
   spinDuration?: number;
   hideDefaultCursor?: boolean;
+  isDark?: boolean;
 }
 
 const TargetCursor: React.FC<TargetCursorProps> = ({
   targetSelector = '.cursor-target',
   spinDuration = 2,
-  hideDefaultCursor = true
+  hideDefaultCursor = true,
+  isDark = true
 }) => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const cornersRef = useRef<NodeListOf<HTMLDivElement>>(null);
@@ -327,7 +329,11 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
   }, [spinDuration]);
 
   return (
-    <div ref={cursorRef} className="target-cursor-wrapper">
+    <div
+      ref={cursorRef}
+      className="target-cursor-wrapper"
+      style={{ ['--target-cursor-color' as any]: isDark ? '#fff' : '#111' }}
+    >
       <div ref={dotRef} className="target-cursor-dot" />
       <div className="target-cursor-corner corner-tl" />
       <div className="target-cursor-corner corner-tr" />

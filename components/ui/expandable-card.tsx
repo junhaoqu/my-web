@@ -48,10 +48,8 @@ export function ExpandableCard({ card, active, setActive, isDark }: { card: Card
           </motion.p>
         </div>
       </div>
-      <motion.div
-        layoutId={`button-${card.title}-${id}`}
+      <div
         className="mt-4 md:mt-0"
-        whileHover={{ scale: 1.1 }}
       >
         <GlassSurface
           width={40}
@@ -64,7 +62,7 @@ export function ExpandableCard({ card, active, setActive, isDark }: { card: Card
         >
           <span className={isDark ? "text-white" : "text-black"}>→</span>
         </GlassSurface>
-      </motion.div>
+      </div>
     </motion.div>
   );
 }
@@ -144,14 +142,7 @@ export function ExpandedCardModal({ active, setActive, isDark }: { active: CardD
                   {active.description}
                 </motion.p>
               </div>
-              <motion.a
-                layoutId={`button-${active.title}-${id}`}
-                href={active.ctaLink}
-                target="_blank"
-                className="px-4 py-3 text-sm rounded-full font-bold bg-green-500 text-white"
-              >
-                {active.ctaText || "Visit"}
-              </motion.a>
+              {/* Visit link removed per request */}
             </div>
             <div className="pt-4 relative px-4">
               <motion.div
