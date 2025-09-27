@@ -1162,7 +1162,6 @@ export default function Home() {
             By Junhao Qu
           </span>
         </div>
-        <div className="h-screen" />
 
       {/* 液体玻璃进度条 */}
       <ProgressBar
