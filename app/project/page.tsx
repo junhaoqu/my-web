@@ -7,6 +7,8 @@ import ProjectProgressBar from "@/components/ProjectProgressBar";
 import { ExpandableCard, ExpandedCardModal } from "@/components/ui/expandable-card";
 import ProjectCard from "@/components/ui/project-card";
 import { Timeline } from "@/components/ui/time-line";
+import TargetCursor from '@/components/TargetCursor';
+
 
 // Define the type for card data
 interface CardData {
@@ -152,18 +154,18 @@ export default function ProjectPage() {
 
   // workIconLogos 必须在 isDark 初始化后定义
   const workIconLogos = [
-    { src: "/images/icon/Android.png", alt: "Android" },
-    { src: "/images/icon/AWS.png", alt: "AWS" },
-    { src: "/images/icon/Docker.png", alt: "Docker" },
-    { src: isDark ? "/images/icon/github-mark-white.png" : "/images/icon/github-mark.png", alt: "GitHub" },
-    { src: "/images/icon/Go.png", alt: "Go" },
-    { src: "/images/icon/Java.png", alt: "Java" },
-    { src: "/images/icon/Kubernetes.png", alt: "Kubernetes" },
-    { src: "/images/icon/Linux.png", alt: "Linux" },
-    { src: "/images/icon/MySQL.png", alt: "MySQL" },
-    { src: "/images/icon/Next.js.png", alt: "Next.js" },
-    { src: "/images/icon/React.png", alt: "React" },
-    { src: "/images/icon/Swift.png", alt: "Swift" },
+  { src: "/images/icon/Android.png", alt: "Android" },
+  { src: "/images/icon/AWS.png", alt: "AWS", className: "logo-circle-bg", style: { background: '#fff', borderRadius: '50%', padding: '4px', boxSizing: 'content-box' } },
+  { src: "/images/icon/Docker.png", alt: "Docker" },
+  { src: isDark ? "/images/icon/github-mark-white.png" : "/images/icon/github-mark.png", alt: "GitHub" },
+  { src: "/images/icon/Go.png", alt: "Go" },
+  { src: "/images/icon/Java.png", alt: "Java" },
+  { src: "/images/icon/Kubernetes.png", alt: "Kubernetes" },
+  { src: "/images/icon/Linux.png", alt: "Linux" },
+  { src: "/images/icon/MySQL.png", alt: "MySQL" },
+  { src: "/images/icon/Next.js.png", alt: "Next.js", className: "logo-circle-bg", style: { background: '#fff', borderRadius: '50%', padding: '4px', boxSizing: 'content-box' } },
+  { src: "/images/icon/React.png", alt: "React" },
+  { src: "/images/icon/Swift.png", alt: "Swift" },
   ];
 
 
@@ -172,7 +174,7 @@ const projectIconLogos = [
   { src: "/images/icon/Python.png", alt: "Python" },
   { src: "/images/icon/TensorFlow.png", alt: "TensorFlow" },
   { src: "/images/icon/React.png", alt: "React" },
-  { src: "/images/icon/Next.js.png", alt: "Next.js" },
+  { src: "/images/icon/Next.js.png", alt: "Next.js", className: "logo-circle-bg", style: { background: '#fff', borderRadius: '50%', padding: '6px', boxSizing: 'content-box' } },
 ];
 
   const toggleTheme = () => {
@@ -226,7 +228,7 @@ const projectIconLogos = [
   const fontColor = isDark ? '#fff' : '#222';
 
   return (
-    <AuroraBackground className="relative min-h-[450vh]">
+    <AuroraBackground className="relative min-h-[350vh]">
       <main className="relative z-10 flex flex-col items-center gap-16 text-center px-4" style={{ color: fontColor }}>
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
@@ -278,8 +280,9 @@ const projectIconLogos = [
           </div>
         </motion.button>
 
-        <section id="work" ref={workRef} className="w-full min-h-screen flex flex-col items-center pt-16">
+        <section id="work" ref={workRef} className="w-full min-h-screen flex flex-col items-center pt-4">
           <h1 className="text-4xl font-semibold tracking-tight w-full pb-8 pt-8" style={{ fontFamily: 'Audiowide, cursive' }}>Work Experience</h1>
+          
           <div style={{ margin: '32px 0', width: '100%' }}>
             <div className="w-full flex justify-center">
               <div className="max-w-md w-full mx-auto">
@@ -287,6 +290,7 @@ const projectIconLogos = [
               </div>
             </div>
           </div>
+          
           <div className="w-full max-w-3xl space-y-4">
             {/* 调整最大宽度为 540px，更窄更紧凑 */}
             <div className="w-full max-w-md mx-auto space-y-4">
@@ -294,6 +298,16 @@ const projectIconLogos = [
                 <ExpandableCard key={i} card={work} active={activeCard} setActive={setActiveCard} isDark={isDark} />
               ))}
             </div>
+          </div>
+          <div className="mt-16">
+            <TargetCursor 
+              spinDuration={2}
+              hideDefaultCursor={true}
+            />
+            
+            <h1 className="text-2xl font-bold font-sans my-4">Hover over the elements below</h1>
+            <button className="cursor-target p-2 bg-blue-500 text-white rounded">Click me!</button>
+            <div className="cursor-target mt-2 p-2 border border-dashed">Hover target</div>
           </div>
         </section>
 

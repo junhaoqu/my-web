@@ -21,7 +21,7 @@ export function ExpandableCard({ card, active, setActive, isDark }: { card: Card
       layoutId={`card-${card.title}-${id}`}
       key={`card-${card.title}-${id}`}
       onClick={() => setActive(card)}
-      className="p-4 flex flex-col md:flex-row justify-between items-center rounded-xl cursor-pointer"
+      className="cursor-target p-4 flex flex-col md:flex-row justify-between items-center rounded-xl cursor-pointer"
     >
       <div className="flex gap-4 flex-col md:flex-row items-center">
         <motion.div layoutId={`image-${card.title}-${id}`}>

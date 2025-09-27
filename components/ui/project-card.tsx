@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import TargetCursor from '../TargetCursor';
 
 interface ProjectCardProps {
   title: string;
@@ -15,7 +16,7 @@ interface ProjectCardProps {
 const ProjectCard = ({ title, date, description, tags, websiteUrl, imageUrl, isDark }: ProjectCardProps) => {
   return (
     <motion.div
-      className={`rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 ${!isDark ? 'bg-white' : ''}`}
+      className={`cursor-target rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 ${!isDark ? 'bg-white' : ''}`}
       style={{ ...(isDark ? { background: '#131414ff' } : {}), transform: 'scaleY(0.7)' }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './LogoLoop.css';
+import TargetCursor from '../TargetCursor';
 
 export type LogoItem =
   | {
@@ -17,6 +18,8 @@ export type LogoItem =
       sizes?: string;
       width?: number;
       height?: number;
+      className?: string;
+      style?: React.CSSProperties;
     };
 
 export interface LogoLoopProps {
@@ -263,6 +266,8 @@ export const LogoLoop = React.memo<LogoLoopProps>(
           loading="lazy"
           decoding="async"
           draggable={false}
+          className={item.className}
+          style={item.style}
         />
       );
 
@@ -283,7 +288,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
       );
 
       return (
-        <li className="logoloop__item" key={key} role="listitem">
+        <li className="logoloop__item cursor-target" key={key} role="listitem">
           {itemContent}
         </li>
       );
