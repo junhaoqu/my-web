@@ -63,20 +63,21 @@ export default function ProjectPage() {
 
   const workExperiences: CardData[] = [
     {
-      src: "/images/icon/ucsd.png",
+      src: "/images/icon/awslogo.png",
   title: "Amazon Web Services",
   description: "Software Developer Intern",
+  expandedSrc: "/images/icon/aws_stat.jpg",
   content: () => <AWSDetails isDark={isDark} />,
     },
     {
-      src: "/images/icon/jacobs.jpeg",
+      src: "/images/icon/sd.png",
   title: "UCSD Mental Health",
   description: "Software Developer",
-  expandedSrc: "/images/profile/Front.jpeg",
+  expandedSrc: "/images/icon/ucsdproj.png",
   content: () => <UCSDDetails isDark={isDark} />,
     },
     {
-      src: "/images/icon/Abgent-Logo.jpg",
+      src: "/images/icon/abgentlogo.png",
   title: "Abgent, Inc",
   description: "Software Developer Intern",
   expandedSrc: "/images/icon/abcepta.png",
