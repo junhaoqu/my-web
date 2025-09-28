@@ -8,12 +8,13 @@ interface ProjectCardProps {
   date: string;
   description: string;
   tags: string[];
-  websiteUrl: string;
+  websiteUrl?: string;
   imageUrl: string;
   isDark: boolean;
+  showWebsite?: boolean;
 }
 
-const ProjectCard = ({ title, date, description, tags, websiteUrl, imageUrl, isDark }: ProjectCardProps) => {
+const ProjectCard = ({ title, date, description, tags, websiteUrl, imageUrl, isDark, showWebsite = true }: ProjectCardProps) => {
   return (
     <motion.div
       className={`cursor-target rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 ${!isDark ? 'bg-white' : ''}`}
@@ -29,7 +30,7 @@ const ProjectCard = ({ title, date, description, tags, websiteUrl, imageUrl, isD
         <p className={`text-sm mb-4 ${isDark ? 'text-white' : 'text-gray-700'}`}>
           {description}
         </p>
-  <div className="flex flex-wrap gap-2 mb-6 justify-start">
+        <div className="flex flex-wrap gap-2 mb-6 justify-start">
           {tags.map((tag) => (
             <span
               key={tag}
@@ -40,16 +41,18 @@ const ProjectCard = ({ title, date, description, tags, websiteUrl, imageUrl, isD
             </span>
           ))}
         </div>
-        <a
-          href={websiteUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`inline-flex items-center gap-2 px-3 py-1.5 font-semibold rounded-lg transition-colors duration-300 text-sm ${isDark ? 'bg-gray-100 text-gray-900 hover:bg-gray-300' : 'bg-gray-900 text-white hover:bg-gray-700'} ml-0 mt-1`}
-          style={{ marginLeft: 0 }}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-globe"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-          Website
-        </a>
+        {showWebsite && websiteUrl && (
+          <a
+            href={websiteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`inline-flex items-center gap-2 px-3 py-1.5 font-semibold rounded-lg transition-colors duration-300 text-sm ${isDark ? 'bg-gray-100 text-gray-900 hover:bg-gray-300' : 'bg-gray-900 text-white hover:bg-gray-700'} ml-0 mt-1`}
+            style={{ marginLeft: 0 }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-globe"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            Website
+          </a>
+        )}
       </div>
     </motion.div>
   );

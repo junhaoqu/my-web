@@ -29,24 +29,48 @@ interface CardData {
 
 const projects = [
     {
-        title: "Chat Collect",
-        date: "Jan 2025 - Feb 2025",
-        description: "With the release of the OpenAI GPT Store, I decided to build a SaaS which allows users to collect email addresses from their GPT users. This is a great way to build an audience and monetize your GPT API usage.",
-        tags: ["Next.js", "Typescript", "PostgreSQL", "Prisma", "TailwindCSS", "Stripe", "Shadcn UI", "Magic UI"],
+        title: "Fast UI",
+        date: "Sep 2025 - Present",
+        description: "Inspired by amazing open-source libraries like Aceternity UI, I'm developing an open-source UI library. It will feature a collection of meticulously designed components to help developers build their dream websites. Custom UI services will also be offered in the future.",
+        tags: ["React", "Typescript", "PostgreSQL", "Tailwind CSS", "TailwindCSS", "GSAP", "Storybook UI", "Vite/Rollup", "NPM / Yarn"],
         websiteUrl: "#", // Replace with actual URL
-        imageUrl: "https://placehold.co/600x400/f87171/ffffff?text=Chat+Collect"
+        imageUrl: "/images/icon/comingSoon.png"
     },
     {
-        title: "AI Portfolio",
-        date: "Mar 2025 - Present",
-        description: "An AI-powered portfolio website that showcases my projects and skills. It uses Gemini to provide an interactive experience.",
-        tags: ["Next.js", "Typescript", "TailwindCSS", "Framer Motion", "Gemini API"],
+        title: "My Website",
+        date: "Sep 2025 - Present",
+        description: " I have meticulously crafted four websites with distinct styles, each offering a unique visual experience. The sites not only integrate AI chat functionality but also feature a wide range of cool animations to create an outstanding interactive experience. A key highlight is the intricate illustrations of a Mac and a camera, drawn purely with CSS, demonstrating a passion for CSS art. Currently, a full 3D version is in development and is set to launch this year.",
+        tags: ["Next.js", "React", "Typescript", "Javascript", "TailwindCSS", "GSAP", "Gemini API","Three.js"],
         websiteUrl: "#", // Replace with actual URL
-        imageUrl: "https://placehold.co/600x400/71f8f1/ffffff?text=AI+Portfolio"
+        imageUrl: "/images/icon/web.gif"
     },
     {
-        title: "Project 2023",
-        date: "Jun 2024 - Aug 2024",
+        title: "QTarot",
+        date: "Jun 2025 - Apr 2024",
+        description: "QTarot is your AI-powered tarot companion, offering uplifting guidance and inspiration whenever you need it. Each reading provides positive affirmations that help you stay focused on your goals and navigate mental challenges with confidence. Designed to be modern and accessible, QTarot makes the wisdom of tarot available at your fingertips.The web app is built on a subscription-based SaaS model, offering flexible plans tailored to individual needs.",
+        tags: ["Swift", "Web", "Node.js", "PostgreSQL","MongoDB", "Stripe", "Auth/Firebase","AWS"],
+        websiteUrl: "#",
+        imageUrl: "/images/icon/tarot.gif"
+    },
+    {
+        title: "QTarot5",
+        date: "Jun 2025 - Apr 2024",
+        description: "A project from 2023 to demonstrate the timeline.",
+        tags: ["React", "Gatsby"],
+        websiteUrl: "#",
+        imageUrl: "https://placehold.co/600x400/c084fc/ffffff?text=Project+2023"
+    },
+    {
+        title: "QTarot2",
+        date: "Jun 2024 - Apr 2024",
+        description: "A project from 2023 to demonstrate the timeline.",
+        tags: ["React", "Gatsby"],
+        websiteUrl: "#",
+        imageUrl: "https://placehold.co/600x400/c084fc/ffffff?text=Project+2023"
+    },
+    {
+        title: "QTarot3",
+        date: "Jun 2024 - Apr 2024",
         description: "A project from 2023 to demonstrate the timeline.",
         tags: ["React", "Gatsby"],
         websiteUrl: "#",
@@ -360,7 +384,7 @@ const projectIconLogos: LogoItem[] = [
                       <div key={year} ref={el => { yearRefs.current[year] = el; }} className="mb-16">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                           {projectsByYear[year].map(project => (
-                            <ProjectCard key={project.title} {...project} isDark={isDark} />
+                            <ProjectCard key={project.title} {...project} isDark={isDark} showWebsite={false} />
                           ))}
                         </div>
                       </div>
