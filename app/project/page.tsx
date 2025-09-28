@@ -11,6 +11,7 @@ import { ExpandableCard, ExpandedCardModal } from "@/components/ui/expandable-ca
 import ProjectCard from "@/components/ui/project-card";
 import { Timeline } from "@/components/ui/time-line";
 import TargetCursor from '@/components/TargetCursor';
+import ContactButton from '@/components/ui/ContactButton';
 
 
 // Define the type for card data
@@ -46,35 +47,35 @@ const projects = [
     },
     {
         title: "QTarot",
-        date: "Jun 2025 - Apr 2024",
+        date: "Jan 2025 - Apr 2025",
         description: "QTarot is your AI-powered tarot companion, offering uplifting guidance and inspiration whenever you need it. Each reading provides positive affirmations that help you stay focused on your goals and navigate mental challenges with confidence. Designed to be modern and accessible, QTarot makes the wisdom of tarot available at your fingertips.The web app is built on a subscription-based SaaS model, offering flexible plans tailored to individual needs.",
         tags: ["Swift", "Web", "Node.js", "PostgreSQL","MongoDB", "Stripe", "Auth/Firebase","AWS"],
         websiteUrl: "#",
         imageUrl: "/images/icon/tarot.gif"
     },
     {
-        title: "QTarot5",
-        date: "Jun 2025 - Apr 2024",
-        description: "A project from 2023 to demonstrate the timeline.",
-        tags: ["React", "Gatsby"],
+        title: "Piano Song Generator",
+        date: "Sep 2024 - Dec 2024",
+        description: "Intended for fine-tuning Facebook’s MusicGen model to enable continuous, conditioned music generation in the style of Animenz.Animenz's musical style is a fusion of classical piano virtuosity, the emotive expression of anime music, and his distinctive arrangement techniques. Our model rated the Animenz‐style similarity of our fine‐tuned outputs at 4.3/5, whereas the baseline scored only 2.5/5",
+        tags: ["Python", "Hugging Face", "Transformers", "MusicGen"],
         websiteUrl: "#",
-        imageUrl: "https://placehold.co/600x400/c084fc/ffffff?text=Project+2023"
+        imageUrl: "/images/icon/music.png"
     },
     {
-        title: "QTarot2",
-        date: "Jun 2024 - Apr 2024",
-        description: "A project from 2023 to demonstrate the timeline.",
-        tags: ["React", "Gatsby"],
-        websiteUrl: "#",
-        imageUrl: "https://placehold.co/600x400/c084fc/ffffff?text=Project+2023"
+        title: "Video recommendation platform",
+        date: "Sep 2024 - Dec 2024",
+        description: "This project is a scalable video recommendation platform designed to deliver personalized content to users in real time. It leverages gRPC for efficient microservice-to-microservice communication and supports streaming APIs for high-throughput data exchange. To ensure consistency and fault tolerance in distributed environments, Raft consensus is used to manage metadata and coordinate storage nodes. Video files themselves are stored in an object storage system, while the recommendation engine integrates user profiles and video features to provide tailored suggestions at scale.",
+        tags: ["Go", "gRPC", "Raft", "Microservices", "Docker", "Kubernetes", "AWS S3","AWS EC2",  "Redis", "React"],
+        websiteUrl: "#", 
+        imageUrl: "/images/icon/video_reco_arch.gif"
     },
     {
-        title: "QTarot3",
-        date: "Jun 2024 - Apr 2024",
-        description: "A project from 2023 to demonstrate the timeline.",
-        tags: ["React", "Gatsby"],
+        title: "Bitcoin Price Prediction & Trading Bot",
+        date: "Apr 2024 - Jul 2024",
+        description: "combines deep learning with financial time-series analysis to predict Bitcoin price trends. Using historical market data, the system trains neural networks to capture complex temporal patterns and forecast short-term or long-term price movements. In addition, the project integrates with TradingView by providing an automated trading strategy bot. The bot translates model forecasts into actionable signals (buy/sell/hold) and executes them based on customizable risk management rules..",
+        tags: ["Python", "TensorFlow", "Keras", "TradingView","Pine Script"],
         websiteUrl: "#",
-        imageUrl: "https://placehold.co/600x400/c084fc/ffffff?text=Project+2023"
+        imageUrl: "/images/icon/btc.png"
     }
 ].sort((a, b) => new Date(b.date.split(' - ')[0]).getTime() - new Date(a.date.split(' - ')[0]).getTime());
 
@@ -394,10 +395,13 @@ const projectIconLogos: LogoItem[] = [
               </div>
             </section>
   
-            <section id="connect" ref={connectRef} className="w-full min-h-screen flex flex-col justify-center items-center pt-24">
-              <h2 className="text-4xl font-semibold tracking-tight w-full pb-2">Connect</h2>
-              <p>What content should be here?</p>
-            </section>
+        <section id="connect" ref={connectRef} className="w-full min-h-screen flex flex-col justify-center items-center pt-12">
+          <h2 className="text-4xl font-semibold tracking-tight w-full pb-4">Get in touch</h2>
+          <div className="flex items-center gap-4">
+            <ContactButton email="junhaoquwork@gmail.com" isDark={isDark} />
+            <p className="text-lg" style={{ color: isDark ? '#FFFFFF' : '#1a1a1a' }}>junhaoquwork@gmail.com</p>
+          </div>
+        </section>
           </main>
   
           <ExpandedCardModal active={activeCard} setActive={setActiveCard} isDark={isDark} />
