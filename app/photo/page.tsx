@@ -14,13 +14,18 @@ const buildCloudinaryImageUrl = (publicId: string) => {
   return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/${publicId}`;
 };
 
+type SelectedItem = { section: string; index: number } | null;
+
 const PhotoPage = () => {
   const bgImages = [
-    "firework1_cshymx",
-    "Star_trail_small_r3zut3",
+    'seacity1_ltvdkq',
+    'firework1_cshymx',
+    'glass_txtew7',
+    'stars_awdjkq',
   ];
 
   const [currentBgIndex, setCurrentBgIndex] = React.useState(0);
+  const [selected, setSelected] = React.useState<SelectedItem>(null);
 
   const handlePrev = () => {
     setCurrentBgIndex((prevIndex) => (prevIndex - 1 + bgImages.length) % bgImages.length);
@@ -30,33 +35,66 @@ const PhotoPage = () => {
     setCurrentBgIndex((prevIndex) => (prevIndex + 1) % bgImages.length);
   };
 
-
+  // 初屏滚动动画：放大 + 上滑一屏，露出下方内容（无空白、不卡住）
   useEffect(() => {
     const timeline = gsap.timeline({
       scrollTrigger: {
-        trigger: ".photo-wrapper",
-        start: "top top",
-        end: "+=150%",
+        trigger: '.photo-wrapper',
+        start: 'top top',
+        end: () => `+=${window.innerHeight + 3}`,
         pin: true,
+        pinSpacing: false, // 不生成占位，直接与下方内容衔接
         scrub: true,
-      }
+        onUpdate: (self) => {
+          const el = document.querySelector<HTMLElement>('.photo-wrapper');
+          if (!el) return;
+          // 开始上滑后放开指针事件，避免遮挡下方内容交互
+          el.style.pointerEvents = self.progress >= 0.5 ? 'none' : 'auto';
+        },
+      },
     });
 
     timeline
-      .to(".photo-image", {
-        scale: 3,
-        z: 400,
-        transformOrigin: "center center",
-        ease: "power1.inOut"
-      })
+      // 前半段：背景/照片放大
       .to(
-        ".section.hero",
+        '.photo-image',
+        {
+          scale: 3,
+          z: 400,
+          transformOrigin: 'center center',
+          ease: 'power1.inOut',
+          duration: 0.6,
+        },
+        0,
+      )
+      .to(
+        '.section.hero',
         {
           scale: 1.1,
-          transformOrigin: "center center",
-          ease: "power1.inOut"
+          transformOrigin: 'center center',
+          ease: 'power1.inOut',
+          duration: 0.6,
         },
-        "<"
+        0,
+      )
+      // 后半段：向上滑动移出视口，露出下面的白色长页内容
+      .to(
+        ['.image-container', '.photo-content'],
+        {
+          y: () => -window.innerHeight,
+          ease: 'power2.inOut',
+          duration: 0.4,
+        },
+        0.6,
+      )
+      .to(
+        '.arrow-button',
+        {
+          opacity: 0,
+          ease: 'power1.out',
+          duration: 0.4,
+        },
+        0.6,
       );
 
     return () => {
@@ -67,28 +105,181 @@ const PhotoPage = () => {
   const heroStyle = {
     backgroundImage: `url(${buildCloudinaryImageUrl(bgImages[currentBgIndex])})`,
     transition: 'background-image 0.5s ease-in-out',
+  } as React.CSSProperties;
+
+  // 画廊用的占位数据
+  const sections = [
+    { key: 'citylife', title: 'Citylife', count: 18 },
+    { key: 'landscape', title: 'Landscape / Nature', count: 18 },
+    { key: 'abstract', title: 'Abstract', count: 18 },
+  ] as const;
+
+  const openItem = (sectionKey: string, index: number) => setSelected({ section: sectionKey, index });
+  const closeItem = () => setSelected(null);
+
+  const getCount = (sectionKey: string) => {
+    const sec = sections.find((s) => s.key === sectionKey);
+    return sec ? sec.count : 0;
+  };
+
+  const goPrev = () => {
+    setSelected((sel) => {
+      if (!sel) return sel;
+      const total = getCount(sel.section);
+      if (total <= 0) return sel;
+      return { section: sel.section, index: (sel.index - 1 + total) % total };
+    });
+  };
+
+  const goNext = () => {
+    setSelected((sel) => {
+      if (!sel) return sel;
+      const total = getCount(sel.section);
+      if (total <= 0) return sel;
+      return { section: sel.section, index: (sel.index + 1) % total };
+    });
+  };
+
+  // 弹层开启时：锁定滚动，并启用键盘左右切换/ESC关闭
+  useEffect(() => {
+    if (selected) {
+      document.body.style.overflow = 'hidden';
+      const onKey = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') closeItem();
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          goPrev();
+        }
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          goNext();
+        }
+      };
+      window.addEventListener('keydown', onKey);
+      return () => window.removeEventListener('keydown', onKey);
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selected]);
+
+  // 移动端下滑关闭（轻量手势）
+  const [dragY, setDragY] = React.useState(0);
+  const [overlayAlpha, setOverlayAlpha] = React.useState(0.5);
+  const startXYRef = React.useRef<{ x: number; y: number } | null>(null);
+  const draggingRef = React.useRef(false);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    startXYRef.current = { x: t.clientX, y: t.clientY };
+    draggingRef.current = true;
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (!draggingRef.current || !startXYRef.current) return;
+    const t = e.touches[0];
+    const dy = t.clientY - startXYRef.current.y;
+    const dx = t.clientX - startXYRef.current.x;
+    // 主要是纵向下滑才触发拖拽
+    if (dy > 0 && Math.abs(dy) > Math.abs(dx) * 1.1) {
+      setDragY(dy);
+      setOverlayAlpha(Math.max(0.15, 0.5 - dy / 800));
+    }
+  };
+
+  const onTouchEnd = () => {
+    draggingRef.current = false;
+    if (dragY > 100) {
+      closeItem();
+      setTimeout(() => {
+        setDragY(0);
+        setOverlayAlpha(0.5);
+      }, 0);
+    } else {
+      setDragY(0);
+      setOverlayAlpha(0.5);
+    }
   };
 
   return (
-    <div className="photo-wrapper">
-      <div className="photo-content">
-        <section className="section hero" style={heroStyle}></section>
-      </div>
-      <div className="image-container">
-        <img src={buildCloudinaryImageUrl("window_k8hdtc")} alt="image" className="photo-image" />
+    <>
+      {/* 首屏动画块 */}
+      <div className="photo-wrapper">
+        <div className="photo-content">
+          <section className="section hero" style={heroStyle}></section>
+        </div>
+        <div className="image-container">
+          <img src={buildCloudinaryImageUrl('window_k8hdtc')} alt="image" className="photo-image" />
+        </div>
+
+        <button onClick={handlePrev} className="arrow-button left-arrow" aria-label="Previous">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15.75 19.5L8.25 12L15.75 4.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        <button onClick={handleNext} className="arrow-button right-arrow" aria-label="Next">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8.25 4.5L15.75 12L8.25 19.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
       </div>
 
-      <button onClick={handlePrev} className="arrow-button left-arrow">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M15.75 19.5L8.25 12L15.75 4.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </button>
-      <button onClick={handleNext} className="arrow-button right-arrow">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M8.25 4.5L15.75 12L8.25 19.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </button>
-    </div>
+      {/* 白色画廊区域 */}
+      <div className="gallery-container">
+        {sections.map((sec) => (
+          <section key={sec.key} className="gallery-section">
+            <div className="section-header">
+              <h2 className="section-title">{sec.title}</h2>
+            </div>
+            <div className="gallery-grid">
+              {Array.from({ length: sec.count }).map((_, i) => (
+                <button
+                  key={`${sec.key}-${i}`}
+                  className="gallery-item"
+                  onClick={() => openItem(sec.key, i)}
+                  aria-label={`Open ${sec.title} item ${i + 1}`}
+                />
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+
+      {/* 弹层 - 居中卡片 + 右侧白色信息栏（移动端文字在下） */}
+      {selected && (
+        <div
+          className="modal-overlay"
+          role="dialog"
+          aria-modal="true"
+          onClick={closeItem}
+          style={{ background: `rgba(0,0,0,${overlayAlpha})` }}
+        >
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+            style={{ transform: `translateY(${dragY}px)` }}
+          >
+            <div className="modal-image" />
+            <aside className="modal-aside">
+              <div className="aside-inner">
+                <p className="aside-meta">Took with camera XXX</p>
+                <p className="aside-time">Apr 29, 2025 • 19:30</p>
+              </div>
+            </aside>
+            <button className="modal-close" aria-label="Close" onClick={closeItem}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
