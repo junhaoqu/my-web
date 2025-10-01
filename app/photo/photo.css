@@ -47,6 +47,7 @@
   height: 100%;
   object-fit: cover;
   object-position: center center;
+  will-change: transform;
 }
 
 .arrow-button {
@@ -89,6 +90,8 @@
   margin: 0 auto;
   padding: 4rem 1.25rem; /* py-16 px-5 */
   border-top: 1px solid #f3f4f6; /* gray-100 */
+  content-visibility: auto; /* 不在视口内先跳过布局和绘制，提升滚动流畅度 */
+  contain-intrinsic-size: 1000px; /* 提供占位高度，避免跳动 */
 }
 
 .section-header {
@@ -100,6 +103,63 @@
   font-weight: 700;
   text-align: left; /* 左对齐标题 */
   letter-spacing: 0.01em;
+}
+
+/* Citylife 专用布局：两张大图 + 右侧文案 */
+.feature-layout {
+  --feature-h: clamp(340px, 52vh, 620px);
+  display: grid;
+  grid-template-columns: auto auto 360px; /* 两张图按比例自适应宽度，右侧文案固定 */
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+  cursor: pointer;
+}
+
+.feature-item img {
+  height: var(--feature-h); /* 两张图等高，保持原比例 */
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* 第一张大图可单独调高度（比例）*/
+.feature-item:first-child img {
+  height: var(--feature-h-1, var(--feature-h));
+  transform: scale(1.34);
+}
+
+.feature-aside {
+  align-self: center;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.feature-quote {
+  max-width: 520px;
+  text-align: right;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: #374151; /* gray-700 */
+}
+
+@media (max-width: 900px) {
+  .feature-layout { grid-template-columns: 1fr; }
+  .feature-item img { width: 100%; height: auto; }
+  .feature-aside { justify-content: flex-start; }
+  .feature-quote { text-align: left; }
 }
 
 .gallery-grid {
@@ -115,11 +175,18 @@
   border: 1px solid #e5e7eb;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-}
+  }
 
 .gallery-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* ===== 弹层 ===== */
@@ -139,7 +206,8 @@
   display: flex;
   width: min(92vw, 1100px);
   height: min(86vh, 760px);
-  background: transparent;
+  background: #ffffff; /* 扩展卡片为白色背景 */
+  border: none;
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 24px 64px rgba(0,0,0,0.35);
@@ -148,13 +216,30 @@
 
 .modal-image {
   flex: 1 1 auto;
-  background: #d1d5db; /* gray-300 占位图 */
+  background: transparent; /* 大图区无背景色 */
+}
+
+.modal-image img {
+  display: block;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
+@media (max-width: 640px) {
+  .modal-image img {
+    width: 100%;
+    height: auto;
+  }
 }
 
 .modal-aside {
   width: 260px;
   background: white;
-  border-left: 1px solid #e5e7eb; /* gray-200 */
+  border-left: none; /* 去除分割线，更无痕 */
   display: flex;
   align-items: center;
   justify-content: center;

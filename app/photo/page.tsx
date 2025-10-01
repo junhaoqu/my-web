@@ -9,12 +9,33 @@ gsap.registerPlugin(ScrollTrigger);
 
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
-const buildCloudinaryImageUrl = (publicId: string) => {
-  if (!cloudName) return "";
-  return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/${publicId}`;
+type CldOpts = {
+  w?: number;
+  h?: number;
+  c?: string; // crop mode: fill, fit, crop, scale, etc.
+  g?: string; // gravity: auto, face, etc.
+  dpr?: 'auto' | number;
+  q?: 'auto' | number;
 };
 
-type SelectedItem = { section: string; index: number } | null;
+const buildCloudinaryImageUrl = (publicId: string, opts: CldOpts = {}) => {
+  if (!cloudName) return "";
+  const t: string[] = [];
+  // format + quality
+  t.push('f_auto');
+  t.push(`q_${opts.q ?? 'auto'}`);
+  if (opts.w) t.push(`w_${opts.w}`);
+  if (opts.h) t.push(`h_${opts.h}`);
+  if (opts.c) t.push(`c_${opts.c}`);
+  if (opts.g) t.push(`g_${opts.g}`);
+  if (opts.dpr) t.push(`dpr_${opts.dpr}`);
+  return `https://res.cloudinary.com/${cloudName}/image/upload/${t.join(',')}/${publicId}`;
+};
+
+const thumbnailUrl = (publicId: string) =>
+  buildCloudinaryImageUrl(publicId, { w: 320, h: 320, c: 'fill', g: 'auto', dpr: 'auto', q: 'auto' });
+
+type SelectedItem = { section: string; index: number; id?: string } | null;
 
 const PhotoPage = () => {
   const bgImages = [
@@ -114,12 +135,43 @@ const PhotoPage = () => {
     { key: 'abstract', title: 'Abstract', count: 18 },
   ] as const;
 
-  const openItem = (sectionKey: string, index: number) => setSelected({ section: sectionKey, index });
+  // Citylife 专用：两个大图
+  const CITYLIFE_FEATURES = [
+    'IMG_1396_q46dux',
+    'IMG_1401_mugp8p',
+  ];
+
+  // Citylife 小图列表（保持给定顺序，便于成组贴在一起）
+  const CITYLIFE_GRID = [
+    'c16_scnqwq', 'IMG_7582_egxkef', 'IMG_6770_limvti', 'c12_acuyzr', 'c34_u4yyrn',
+    'IMG_5811_bdrkmw', 'IMG_4759_polarr_az5ppu', 'c05_orlfqw', 'c11_sdlhki', 'IMG_0132_assstw',
+    'c21_zobebt', 'c15_lv9mxl', 'c09_wyocsx', 'DSC00730_sjr7qj', 'DSC00726_swxzqu',
+    'IMG_2559_srt2ws', 'c13_hkfhle', 'IMG_4461_vlbvh7', 'c17_xwbdvv', 'IMG_6430_yxmozv',
+    'c22_f1tepf', 'IMG_9873_polarr_vsjcix', 'c10_djjbtv', 'IMG_4339_xs5mtb', 'c06_atpokc',
+    'DSC00470-dorzqu', '1_eazrdy',
+  ];
+
+  const CITYLIFE_ALL = [...CITYLIFE_FEATURES, ...CITYLIFE_GRID];
+
+  // 预留每张图的说明文本（可按 id 自定义）
+  const CITYLIFE_META: Record<string, { caption?: string; time?: string }> = {
+    IMG_1396_q46dux: { caption: 'Took with camera XXX', time: 'Apr 29, 2025 • 19:30' },
+    IMG_1401_mugp8p: { caption: 'Took with camera XXX', time: 'Apr 29, 2025 • 19:32' },
+  };
+
+  const openItem = (sectionKey: string, index: number, id?: string) => setSelected({ section: sectionKey, index, id });
   const closeItem = () => setSelected(null);
 
   const getCount = (sectionKey: string) => {
     const sec = sections.find((s) => s.key === sectionKey);
-    return sec ? sec.count : 0;
+    if (!sec) return 0;
+    if (sectionKey === 'citylife') return CITYLIFE_ALL.length;
+    return sec.count;
+  };
+
+  const getIdByIndex = (sectionKey: string, index: number): string | undefined => {
+    if (sectionKey === 'citylife') return CITYLIFE_ALL[index];
+    return undefined;
   };
 
   const goPrev = () => {
@@ -127,7 +179,8 @@ const PhotoPage = () => {
       if (!sel) return sel;
       const total = getCount(sel.section);
       if (total <= 0) return sel;
-      return { section: sel.section, index: (sel.index - 1 + total) % total };
+      const nextIndex = (sel.index - 1 + total) % total;
+      return { section: sel.section, index: nextIndex, id: getIdByIndex(sel.section, nextIndex) };
     });
   };
 
@@ -136,7 +189,8 @@ const PhotoPage = () => {
       if (!sel) return sel;
       const total = getCount(sel.section);
       if (total <= 0) return sel;
-      return { section: sel.section, index: (sel.index + 1) % total };
+      const nextIndex = (sel.index + 1) % total;
+      return { section: sel.section, index: nextIndex, id: getIdByIndex(sel.section, nextIndex) };
     });
   };
 
@@ -233,16 +287,58 @@ const PhotoPage = () => {
             <div className="section-header">
               <h2 className="section-title">{sec.title}</h2>
             </div>
-            <div className="gallery-grid">
-              {Array.from({ length: sec.count }).map((_, i) => (
-                <button
-                  key={`${sec.key}-${i}`}
-                  className="gallery-item"
-                  onClick={() => openItem(sec.key, i)}
-                  aria-label={`Open ${sec.title} item ${i + 1}`}
-                />
-              ))}
-            </div>
+
+            {sec.key === 'citylife' ? (
+              <>
+                <div className="feature-layout">
+                  {CITYLIFE_FEATURES.map((id, idx) => (
+                    <div key={id} className="feature-item" onClick={() => openItem(sec.key, idx, id)}>
+                      <img
+                        src={buildCloudinaryImageUrl(id, { dpr: 'auto' })}
+                        alt={`Citylife feature ${idx + 1}`}
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority={idx === 0 ? 'high' : 'low'}
+                      />
+                    </div>
+                  ))}
+                  <aside className="feature-aside">
+                    <p className="feature-quote">“We live in this moment — the city molds our stories, frame by frame.”</p>
+                  </aside>
+                </div>
+
+                <div className="gallery-grid">
+                  {CITYLIFE_GRID.map((id, i) => (
+                    <button
+                      key={`${sec.key}-grid-${id}`}
+                      className="gallery-item"
+                      onClick={() => openItem(sec.key, CITYLIFE_FEATURES.length + i, id)}
+                      aria-label={`Open ${sec.title} item ${i + 1}`}
+                    >
+                      <img
+                        src={thumbnailUrl(id)}
+                        alt={id}
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority="low"
+                        sizes="(max-width: 640px) 33vw, (max-width: 1024px) 20vw, 180px"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="gallery-grid">
+                {Array.from({ length: sec.count }).map((_, i) => (
+                  <button
+                    key={`${sec.key}-${i}`}
+                    className="gallery-item"
+                    onClick={() => openItem(sec.key, i)}
+                    aria-label={`Open ${sec.title} item ${i + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </section>
         ))}
       </div>
@@ -264,11 +360,24 @@ const PhotoPage = () => {
             onTouchEnd={onTouchEnd}
             style={{ transform: `translateY(${dragY}px)` }}
           >
-            <div className="modal-image" />
+            <div className="modal-image">
+              {selected?.section === 'citylife' && selected?.id ? (
+                <img src={buildCloudinaryImageUrl(selected.id, { dpr: 'auto' })} alt={selected.id} decoding="async" />
+              ) : null}
+            </div>
             <aside className="modal-aside">
               <div className="aside-inner">
-                <p className="aside-meta">Took with camera XXX</p>
-                <p className="aside-time">Apr 29, 2025 • 19:30</p>
+                {selected?.section === 'citylife' && selected?.id ? (
+                  <>
+                    <p className="aside-meta">{CITYLIFE_META[selected.id]?.caption || 'Took with camera XXX'}</p>
+                    <p className="aside-time">{CITYLIFE_META[selected.id]?.time || '——'}</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="aside-meta">Took with camera XXX</p>
+                    <p className="aside-time">Apr 29, 2025 • 19:30</p>
+                  </>
+                )}
               </div>
             </aside>
             <button className="modal-close" aria-label="Close" onClick={closeItem}>
