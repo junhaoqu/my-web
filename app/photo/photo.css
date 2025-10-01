@@ -204,7 +204,7 @@
 .modal-content {
   position: relative;
   display: flex;
-  width: min(92vw, 1100px);
+  width: min(92vw, 1200px);
   height: min(86vh, 760px);
   background: #ffffff; /* 扩展卡片为白色背景 */
   border: none;

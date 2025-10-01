@@ -16,6 +16,7 @@ type CldOpts = {
   g?: string; // gravity: auto, face, etc.
   dpr?: 'auto' | number;
   q?: 'auto' | number;
+  fl?: string; // flags, e.g. progressive:steep
 };
 
 const buildCloudinaryImageUrl = (publicId: string, opts: CldOpts = {}) => {
@@ -29,11 +30,17 @@ const buildCloudinaryImageUrl = (publicId: string, opts: CldOpts = {}) => {
   if (opts.c) t.push(`c_${opts.c}`);
   if (opts.g) t.push(`g_${opts.g}`);
   if (opts.dpr) t.push(`dpr_${opts.dpr}`);
+  if (opts.fl) t.push(`fl_${opts.fl}`);
   return `https://res.cloudinary.com/${cloudName}/image/upload/${t.join(',')}/${publicId}`;
 };
 
 const thumbnailUrl = (publicId: string) =>
   buildCloudinaryImageUrl(publicId, { w: 320, h: 320, c: 'fill', g: 'auto', dpr: 'auto', q: 'auto' });
+
+const buildCloudinarySrcSet = (publicId: string, widths: number[], base: CldOpts = {}) =>
+  widths
+    .map((w) => `${buildCloudinaryImageUrl(publicId, { ...base, w })} ${w}w`)
+    .join(', ');
 
 type SelectedItem = { section: string; index: number; id?: string } | null;
 
@@ -224,6 +231,16 @@ const PhotoPage = () => {
   const [overlayAlpha, setOverlayAlpha] = React.useState(0.5);
   const startXYRef = React.useRef<{ x: number; y: number } | null>(null);
   const draggingRef = React.useRef(false);
+  const preloadedRef = React.useRef<Set<string>>(new Set());
+
+  const preloadFullImage = (id?: string) => {
+    if (!id || preloadedRef.current.has(id)) return;
+    const url = buildCloudinaryImageUrl(id, { c: 'fit', dpr: 'auto', q: 'auto' });
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = url;
+    preloadedRef.current.add(id);
+  };
 
   const onTouchStart = (e: React.TouchEvent) => {
     const t = e.touches[0];
@@ -292,7 +309,13 @@ const PhotoPage = () => {
               <>
                 <div className="feature-layout">
                   {CITYLIFE_FEATURES.map((id, idx) => (
-                    <div key={id} className="feature-item" onClick={() => openItem(sec.key, idx, id)}>
+                    <div
+                      key={id}
+                      className="feature-item"
+                      onClick={() => openItem(sec.key, idx, id)}
+                      onMouseEnter={() => preloadFullImage(id)}
+                      onTouchStart={() => preloadFullImage(id)}
+                    >
                       <img
                         src={buildCloudinaryImageUrl(id, { dpr: 'auto' })}
                         alt={`Citylife feature ${idx + 1}`}
@@ -313,6 +336,8 @@ const PhotoPage = () => {
                       key={`${sec.key}-grid-${id}`}
                       className="gallery-item"
                       onClick={() => openItem(sec.key, CITYLIFE_FEATURES.length + i, id)}
+                      onMouseEnter={() => preloadFullImage(id)}
+                      onTouchStart={() => preloadFullImage(id)}
                       aria-label={`Open ${sec.title} item ${i + 1}`}
                     >
                       <img
@@ -362,7 +387,14 @@ const PhotoPage = () => {
           >
             <div className="modal-image">
               {selected?.section === 'citylife' && selected?.id ? (
-                <img src={buildCloudinaryImageUrl(selected.id, { dpr: 'auto' })} alt={selected.id} decoding="async" />
+                <img
+                  src={buildCloudinaryImageUrl(selected.id, { c: 'fit', w: 1200, dpr: 'auto', q: 'auto', fl: 'progressive:steep' })}
+                  srcSet={buildCloudinarySrcSet(selected.id, [800, 1200], { c: 'fit', dpr: 'auto', q: 'auto', fl: 'progressive:steep' })}
+                  sizes="(max-width: 640px) 95vw, (max-width: 1024px) 80vw, 1200px"
+                  alt={selected.id}
+                  decoding="async"
+                  fetchPriority="high"
+                />
               ) : null}
             </div>
             <aside className="modal-aside">
