@@ -401,23 +401,33 @@ const PhotoPage = () => {
                 <div className="gallery-grid">
                   {sec.gallery.map((id, i) => {
                     const combinedIndex = (sec.features?.length ?? 0) + i;
-                    const hasImage = Boolean(id);
-                    const thumbUrl = id ? thumbnailUrl(id) : undefined;
+                    const imageId = id ?? undefined;
+                    const hasImage = Boolean(imageId);
+                    const thumbUrl = imageId ? thumbnailUrl(imageId) : undefined;
+
+                    const handleOpen = () => {
+                      if (imageId) openItem(sec.key, combinedIndex, imageId);
+                    };
+
+                    const handlePreload = () => {
+                      if (imageId) preloadFullImage(imageId);
+                    };
+
                     return (
                       <button
                         key={`${sec.key}-grid-${id ?? i}`}
                         type="button"
                         className="gallery-item"
-                        onClick={() => hasImage && openItem(sec.key, combinedIndex, id)}
-                        onMouseEnter={() => hasImage && preloadFullImage(id)}
-                        onTouchStart={() => hasImage && preloadFullImage(id)}
+                        onClick={handleOpen}
+                        onMouseEnter={handlePreload}
+                        onTouchStart={handlePreload}
                         aria-label={`Open ${sec.title} item ${i + 1}`}
                         disabled={!hasImage}
                       >
                         {hasImage ? (
                           <img
                             src={thumbUrl}
-                            alt={id ?? ''}
+                            alt={imageId ?? ''}
                             loading="lazy"
                             decoding="async"
                             fetchPriority="low"
@@ -431,29 +441,43 @@ const PhotoPage = () => {
               </>
             ) : (
               <div className="gallery-grid">
-                {sec.gallery.map((id, i) => (
-                  <button
-                    key={`${sec.key}-${id ?? i}`}
-                    type="button"
-                    className="gallery-item"
-                    onClick={() => id && openItem(sec.key, i, id)}
-                    onMouseEnter={() => id && preloadFullImage(id)}
-                    onTouchStart={() => id && preloadFullImage(id)}
-                    aria-label={`Open ${sec.title} item ${i + 1}`}
-                    disabled={!id}
-                  >
-                    {id ? (
-                      <img
-                        src={thumbnailUrl(id)}
-                        alt={id}
-                        loading="lazy"
-                        decoding="async"
-                        fetchPriority="low"
-                        sizes="(max-width: 640px) 33vw, (max-width: 1024px) 20vw, 180px"
-                      />
-                    ) : null}
-                  </button>
-                ))}
+                {sec.gallery.map((id, i) => {
+                  const imageId = id ?? undefined;
+                  const hasImage = Boolean(imageId);
+                  const thumbUrl = imageId ? thumbnailUrl(imageId) : undefined;
+
+                  const handleOpen = () => {
+                    if (imageId) openItem(sec.key, i, imageId);
+                  };
+
+                  const handlePreload = () => {
+                    if (imageId) preloadFullImage(imageId);
+                  };
+
+                  return (
+                    <button
+                      key={`${sec.key}-${id ?? i}`}
+                      type="button"
+                      className="gallery-item"
+                      onClick={handleOpen}
+                      onMouseEnter={handlePreload}
+                      onTouchStart={handlePreload}
+                      aria-label={`Open ${sec.title} item ${i + 1}`}
+                      disabled={!hasImage}
+                    >
+                      {hasImage ? (
+                        <img
+                          src={thumbUrl}
+                          alt={imageId ?? ''}
+                          loading="lazy"
+                          decoding="async"
+                          fetchPriority="low"
+                          sizes="(max-width: 640px) 33vw, (max-width: 1024px) 20vw, 180px"
+                        />
+                      ) : null}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </section>
