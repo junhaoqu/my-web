@@ -11,6 +11,7 @@ interface ProgressBarProps {
   onJumpToStage?: (stage: number) => void;
   className?: string;
   style?: React.CSSProperties;
+  stageLabels?: string[];
 }
 
 const NAV_ITEMS = [
@@ -20,7 +21,7 @@ const NAV_ITEMS = [
   { label: "PHOTO", href: "/photo" }
 ];
 
-const STAGE_LABELS: Record<number, string> = {
+const DEFAULT_STAGE_LABELS: Record<number, string> = {
   0: "Work",
   1: "Projects",
   2: "Connect",
@@ -33,15 +34,23 @@ const ProjectProgressBar: React.FC<ProgressBarProps> = ({
   isDark = true,
   onJumpToStage,
   className = "",
-  style = {}
+  style = {},
+  stageLabels,
 }) => {
   const router = useRouter();
   const [isNavOpen, setIsNavOpen] = useState(false);
   const navRef = useRef<HTMLDivElement | null>(null);
 
-  const stageLabel = STAGE_LABELS[currentStage] ?? "";
+  const getStageLabel = (stage: number) => {
+    if (stageLabels && stageLabels[stage]) {
+      return stageLabels[stage];
+    }
+    return DEFAULT_STAGE_LABELS[stage] ?? `Stage ${stage + 1}`;
+  };
 
-  const keyStages = [0, 1, 2];
+  const stageLabel = getStageLabel(currentStage);
+
+  const keyStages = Array.from({ length: totalStages }, (_, index) => index);
 
   const handleStageClick = (stage: number) => {
     if (onJumpToStage) {
@@ -146,7 +155,7 @@ const ProjectProgressBar: React.FC<ProgressBarProps> = ({
 
             {/* 阶段标记大球 */}
           {keyStages.map((stage) => {
-            const label = STAGE_LABELS[stage] ?? `Stage ${stage + 1}`;
+            const label = getStageLabel(stage);
             return (
             <button
               key={stage}

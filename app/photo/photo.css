@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Northwell';
+  src: url('/assets/3d/font/northwell-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -48,6 +56,41 @@
   object-fit: cover;
   object-position: center center;
   will-change: transform;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  text-align: center;
+  color: #f9fafb;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.hero-overlay-title {
+  font-family: 'Northwell', cursive;
+  font-size: clamp(3rem, 10vw, 7rem);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.hero-overlay-subtitle {
+  display: flex;
+  gap: clamp(0.75rem, 4vw, 2.5rem);
+  justify-content: center;
+  font-family: 'Northwell', cursive;
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+}
+
+.hero-overlay-subtitle span {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .arrow-button {
@@ -167,12 +210,12 @@
   justify-self: end;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .feature-quote {
   max-width: 520px;
-  text-align: right;
+  text-align: left;
   font-size: 1.125rem;
   line-height: 1.7;
   color: #374151; /* gray-700 */

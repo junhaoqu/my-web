@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import ProjectProgressBar from '@/components/ProjectProgressBar';
 import './photo.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -60,6 +61,13 @@ const buildCloudinarySrcSet = (publicId: string, widths: number[], base: CldOpts
 
 type SectionKey = 'citylife' | 'landscape' | 'humanmade';
 
+const PHOTO_SECTION_ORDER: SectionKey[] = ['citylife', 'landscape', 'humanmade'];
+const PHOTO_STAGE_LABELS: Record<SectionKey, string> = {
+  citylife: 'Citylife',
+  landscape: 'Landscape',
+  humanmade: 'Human Made',
+};
+
 type SectionConfig = {
   key: SectionKey;
   title: string;
@@ -71,6 +79,15 @@ type SectionConfig = {
 type SelectedItem = { section: SectionKey; index: number; id?: string } | null;
 
 const PhotoPage = () => {
+  const [scrollProgress, setScrollProgress] = React.useState(0);
+  const [currentStage, setCurrentStage] = React.useState(0);
+  const sectionRefs = React.useRef<Record<SectionKey, HTMLElement | null>>({
+    citylife: null,
+    landscape: null,
+    humanmade: null,
+  });
+  const stageLabels = PHOTO_SECTION_ORDER.map((key) => PHOTO_STAGE_LABELS[key]);
+
   const bgImages = [
     'seacity1_ltvdkq',
     'firework1_cshymx',
@@ -149,12 +166,56 @@ const PhotoPage = () => {
           duration: 0.4,
         },
         0.6,
+      )
+      .to(
+        '.hero-overlay',
+        {
+          opacity: 0,
+          y: -120,
+          ease: 'power1.out',
+          duration: 0.4,
+        },
+        0.6,
       );
 
     return () => {
       timeline.kill();
     };
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = maxScroll > 0 ? Math.min(1, Math.max(0, scrollTop / maxScroll)) : 0;
+      setScrollProgress(progress);
+
+      let activeStage = 0;
+      const midpoint = scrollTop + window.innerHeight / 2;
+      PHOTO_SECTION_ORDER.forEach((key, index) => {
+        const sectionEl = sectionRefs.current[key];
+        if (!sectionEl) return;
+        const sectionTop = sectionEl.getBoundingClientRect().top + scrollTop;
+        if (midpoint >= sectionTop) {
+          activeStage = index;
+        }
+      });
+      setCurrentStage(activeStage);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleJumpToStage = (stage: number) => {
+    const key = PHOTO_SECTION_ORDER[stage];
+    if (!key) return;
+    const target = sectionRefs.current[key];
+    if (!target) return;
+    const top = target.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top: Math.max(0, top - 60), behavior: 'smooth' });
+  };
 
   const heroStyle = {
     backgroundImage: `url(${buildCloudinaryImageUrl(bgImages[currentBgIndex])})`,
@@ -192,7 +253,7 @@ const PhotoPage = () => {
       title: 'Citylife',
       features: CITYLIFE_FEATURES,
       gallery: CITYLIFE_GRID,
-      quote: '“We live in this moment — the city molds our stories, frame by frame.”',
+      quote: '“We see the city not only as buildings and streets, but as a living mirror of ourselves. A city nurtures culture, and culture quietly nurtures us — shaping the way we think, the way we move, the way we dream. To walk its avenues is to walk through layers of memory, belonging, and becoming.”',
     },
     {
       key: 'landscape',
@@ -339,6 +400,14 @@ const PhotoPage = () => {
         <div className="image-container">
           <img src={buildCloudinaryImageUrl('window_k8hdtc')} alt="image" className="photo-image" />
         </div>
+        <div className="hero-overlay">
+          <h1 className="hero-overlay-title">PHOTO</h1>
+          <div className="hero-overlay-subtitle">
+            <span>we see</span>
+            <span>we feel</span>
+            <span>we create</span>
+          </div>
+        </div>
 
         <button onClick={handlePrev} className="arrow-button left-arrow" aria-label="Previous">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -355,7 +424,13 @@ const PhotoPage = () => {
       {/* 白色画廊区域 */}
       <div className="gallery-container">
         {sections.map((sec) => (
-          <section key={sec.key} className={`gallery-section gallery-section-${sec.key}`}>
+          <section
+            key={sec.key}
+            ref={(el) => {
+              sectionRefs.current[sec.key] = el;
+            }}
+            className={`gallery-section gallery-section-${sec.key}`}
+          >
             <div className="section-header">
               <h2 className="section-title">{sec.title}</h2>
             </div>
@@ -483,6 +558,15 @@ const PhotoPage = () => {
           </section>
         ))}
       </div>
+
+      <ProjectProgressBar
+        scrollProgress={scrollProgress}
+        currentStage={currentStage}
+        totalStages={PHOTO_SECTION_ORDER.length}
+        isDark
+        onJumpToStage={handleJumpToStage}
+        stageLabels={stageLabels}
+      />
 
       {/* 弹层 - 居中卡片 + 右侧白色信息栏（移动端文字在下） */}
       {selected && (
