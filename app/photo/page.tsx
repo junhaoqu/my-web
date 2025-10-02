@@ -60,9 +60,12 @@ const buildCloudinarySrcSet = (publicId: string, widths: number[], base: CldOpts
     .join(', ');
 
 type SectionKey = 'citylife' | 'landscape' | 'humanmade';
+type StageKey = 'hero' | SectionKey;
 
 const PHOTO_SECTION_ORDER: SectionKey[] = ['citylife', 'landscape', 'humanmade'];
-const PHOTO_STAGE_LABELS: Record<SectionKey, string> = {
+const PHOTO_STAGE_ORDER: StageKey[] = ['hero', ...PHOTO_SECTION_ORDER];
+const PHOTO_STAGE_LABELS: Record<StageKey, string> = {
+  hero: 'Hero',
   citylife: 'Citylife',
   landscape: 'Landscape',
   humanmade: 'Human Made',
@@ -81,12 +84,13 @@ type SelectedItem = { section: SectionKey; index: number; id?: string } | null;
 const PhotoPage = () => {
   const [scrollProgress, setScrollProgress] = React.useState(0);
   const [currentStage, setCurrentStage] = React.useState(0);
-  const sectionRefs = React.useRef<Record<SectionKey, HTMLElement | null>>({
+  const stageRefs = React.useRef<Record<StageKey, HTMLElement | null>>({
+    hero: null,
     citylife: null,
     landscape: null,
     humanmade: null,
   });
-  const stageLabels = PHOTO_SECTION_ORDER.map((key) => PHOTO_STAGE_LABELS[key]);
+  const stageLabels = PHOTO_STAGE_ORDER.map((key) => PHOTO_STAGE_LABELS[key]);
 
   const bgImages = [
     'seacity1_ltvdkq',
@@ -186,21 +190,59 @@ const PhotoPage = () => {
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = maxScroll > 0 ? Math.min(1, Math.max(0, scrollTop / maxScroll)) : 0;
-      setScrollProgress(progress);
+      const doc = document.documentElement;
+      const maxScroll = Math.max(0, doc.scrollHeight - window.innerHeight);
 
-      let activeStage = 0;
+      const stagePositions = PHOTO_STAGE_ORDER.map((key) => {
+        const el = stageRefs.current[key];
+        if (!el) {
+          return key === 'hero' ? 0 : maxScroll;
+        }
+        const rect = el.getBoundingClientRect();
+        return rect.top + scrollTop;
+      });
+
       const midpoint = scrollTop + window.innerHeight / 2;
-      PHOTO_SECTION_ORDER.forEach((key, index) => {
-        const sectionEl = sectionRefs.current[key];
-        if (!sectionEl) return;
-        const sectionTop = sectionEl.getBoundingClientRect().top + scrollTop;
-        if (midpoint >= sectionTop) {
-          activeStage = index;
+      let activeStageIndex = 0;
+      stagePositions.forEach((position, index) => {
+        if (midpoint >= position) {
+          activeStageIndex = index;
         }
       });
-      setCurrentStage(activeStage);
+      setCurrentStage(activeStageIndex);
+
+      const segments = stagePositions.length - 1;
+      let progressValue = 0;
+
+      if (segments > 0) {
+        const lastAnchor = stagePositions[stagePositions.length - 1];
+        const effectiveMax = Math.max(maxScroll, lastAnchor);
+
+        if (effectiveMax <= 0) {
+          progressValue = 0;
+        } else if (scrollTop >= effectiveMax) {
+          progressValue = 1;
+        } else {
+          for (let i = 0; i < segments; i += 1) {
+            const start = stagePositions[i];
+            const end = i === segments - 1 ? effectiveMax : stagePositions[i + 1];
+            if (scrollTop >= end) {
+              if (i === segments - 1) {
+                progressValue = 1;
+              }
+              continue;
+            }
+            const span = Math.max(1, end - start);
+            const local = Math.min(1, Math.max(0, (scrollTop - start) / span));
+            progressValue = (i + local) / segments;
+            break;
+          }
+        }
+      } else {
+        progressValue = maxScroll > 0 ? scrollTop / maxScroll : 0;
+      }
+
+      setScrollProgress(Math.min(1, Math.max(0, progressValue)));
     };
 
     handleScroll();
@@ -209,9 +251,15 @@ const PhotoPage = () => {
   }, []);
 
   const handleJumpToStage = (stage: number) => {
-    const key = PHOTO_SECTION_ORDER[stage];
+    const key = PHOTO_STAGE_ORDER[stage];
     if (!key) return;
-    const target = sectionRefs.current[key];
+
+    if (key === 'hero') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    const target = stageRefs.current[key];
     if (!target) return;
     const top = target.getBoundingClientRect().top + window.scrollY;
     window.scrollTo({ top: Math.max(0, top - 60), behavior: 'smooth' });
@@ -393,7 +441,12 @@ const PhotoPage = () => {
   return (
     <>
       {/* 首屏动画块 */}
-      <div className="photo-wrapper">
+      <div
+        className="photo-wrapper"
+        ref={(el) => {
+          stageRefs.current.hero = el;
+        }}
+      >
         <div className="photo-content">
           <section className="section hero" style={heroStyle}></section>
         </div>
@@ -427,7 +480,7 @@ const PhotoPage = () => {
           <section
             key={sec.key}
             ref={(el) => {
-              sectionRefs.current[sec.key] = el;
+              stageRefs.current[sec.key] = el;
             }}
             className={`gallery-section gallery-section-${sec.key}`}
           >
@@ -562,7 +615,7 @@ const PhotoPage = () => {
       <ProjectProgressBar
         scrollProgress={scrollProgress}
         currentStage={currentStage}
-        totalStages={PHOTO_SECTION_ORDER.length}
+        totalStages={PHOTO_STAGE_ORDER.length}
         isDark
         onJumpToStage={handleJumpToStage}
         stageLabels={stageLabels}
