@@ -34,15 +34,41 @@ const buildCloudinaryImageUrl = (publicId: string, opts: CldOpts = {}) => {
   return `https://res.cloudinary.com/${cloudName}/image/upload/${t.join(',')}/${publicId}`;
 };
 
-const thumbnailUrl = (publicId: string) =>
-  buildCloudinaryImageUrl(publicId, { w: 320, h: 320, c: 'fill', g: 'auto', dpr: 'auto', q: 'auto' });
+const THUMBNAIL_TWEAKS: Record<string, CldOpts> = {
+  seacity1_ltvdkq: { g: 'center'},
+  IMG_4339_xs5mtb: { g: 'center'},
+  DSC01118_eajl0k: { g: 'center'},
+};
+
+const thumbnailUrl = (publicId: string) => {
+  const tweaks = THUMBNAIL_TWEAKS[publicId] ?? {};
+  return buildCloudinaryImageUrl(publicId, {
+    w: 320,
+    h: 320,
+    c: 'fill',
+    g: 'auto',
+    dpr: 'auto',
+    q: 'auto',
+    ...tweaks,
+  });
+};
 
 const buildCloudinarySrcSet = (publicId: string, widths: number[], base: CldOpts = {}) =>
   widths
     .map((w) => `${buildCloudinaryImageUrl(publicId, { ...base, w })} ${w}w`)
     .join(', ');
 
-type SelectedItem = { section: string; index: number; id?: string } | null;
+type SectionKey = 'citylife' | 'landscape' | 'humanmade';
+
+type SectionConfig = {
+  key: SectionKey;
+  title: string;
+  features?: string[];
+  gallery: (string | null)[];
+  quote?: string;
+};
+
+type SelectedItem = { section: SectionKey; index: number; id?: string } | null;
 
 const PhotoPage = () => {
   const bgImages = [
@@ -135,50 +161,79 @@ const PhotoPage = () => {
     transition: 'background-image 0.5s ease-in-out',
   } as React.CSSProperties;
 
-  // 画廊用的占位数据
-  const sections = [
-    { key: 'citylife', title: 'Citylife', count: 18 },
-    { key: 'landscape', title: 'Landscape / Nature', count: 18 },
-    { key: 'abstract', title: 'Abstract', count: 18 },
-  ] as const;
-
-  // Citylife 专用：两个大图
-  const CITYLIFE_FEATURES = [
-    'IMG_1396_q46dux',
-    'IMG_1401_mugp8p',
-  ];
-
-  // Citylife 小图列表（保持给定顺序，便于成组贴在一起）
+  // Citylife
+  const CITYLIFE_FEATURES = ['IMG_1396_q46dux', 'IMG_1401_mugp8p'];
   const CITYLIFE_GRID = [
-    'c16_scnqwq', 'IMG_7582_egxkef', 'IMG_6770_limvti', 'c12_acuyzr', 'c34_u4yyrn',
-    'IMG_5811_bdrkmw', 'IMG_4759_polarr_az5ppu', 'c05_orlfqw', 'c11_sdlhki', 'IMG_0132_assstw',
-    'c21_zobebt', 'c15_lv9mxl', 'c09_wyocsx', 'DSC00730_sjr7qj', 'DSC00726_swxzqu',
-    'IMG_2559_srt2ws', 'c13_hkfhle', 'IMG_4461_vlbvh7', 'c17_xwbdvv', 'IMG_6430_yxmozv',
-    'c22_f1tepf', 'IMG_9873_polarr_vsjcix', 'c10_djjbtv', 'IMG_4339_xs5mtb', 'c06_atpokc',
-    'DSC00470-dorzqu', '1_eazrdy',
+    'c05_orlfqw','c09_wyocsx','c10_djjbtv','c11_sdlhki','c12_acuyzr','c13_hkfhle','c21_zobebt','c22_f1tepf',
+    'IMG_4339_xs5mtb','c15_lv9mxl','c16_scnqwq', 'IMG_4461_vlbvh7','IMG_4759_polarr_az5ppu', 'DSC00730_sjr7qj','c17_xwbdvv','DSC00726_swxzqu',
+    'DSC00470-dorzqu', 'c34_u4yyrn','IMG_5811_bdrkmw',  'IMG_6770_limvti','IMG_0132_assstw', 'IMG_6430_yxmozv','street_small_un7xsc','c06_atpokc',
+    'IMG_9873_polarr_vsjcix', 'IMG_2559_srt2ws', 'IMG_7582_egxkef','1_eazrdy','seacity1_ltvdkq',
   ];
 
-  const CITYLIFE_ALL = [...CITYLIFE_FEATURES, ...CITYLIFE_GRID];
+  // Landscape
+  const LANDSCAPE_FEATURES = ['IMG_1400_tqcyos', 'IMG_1328_evniye'];
+  const LANDSCAPE_GRID: (string | null)[] = [
+    'IMG_7407_nkvw6d','IMG_7439_mjrj5q','DSC01037_yarpf1','DSC01070_q7frdk','DSC01118_eajl0k','IMG_2685_polarr_eedpj6' ,'IMG_9953_usoozs','IMG_9517_polarr_zkpbyw','DSC00780_jeow7u',
+  ];
+
+  // Human Made
+  const HUMAN_MADE_FEATURES = ['IMG_3984_tnhi0d', 'IMG_5860_qzo0qu'];
+  const HUMAN_MADE_GRID: (string | null)[] = ['DSC00076_eittng', 'IMG_1210_mvyd9r'];
 
   // 预留每张图的说明文本（可按 id 自定义）
-  const CITYLIFE_META: Record<string, { caption?: string; time?: string }> = {
+  const IMAGE_META: Record<string, { caption?: string; time?: string }> = {
     IMG_1396_q46dux: { caption: 'Took with camera XXX', time: 'Apr 29, 2025 • 19:30' },
     IMG_1401_mugp8p: { caption: 'Took with camera XXX', time: 'Apr 29, 2025 • 19:32' },
   };
 
-  const openItem = (sectionKey: string, index: number, id?: string) => setSelected({ section: sectionKey, index, id });
-  const closeItem = () => setSelected(null);
+  const sections: SectionConfig[] = [
+    {
+      key: 'citylife',
+      title: 'Citylife',
+      features: CITYLIFE_FEATURES,
+      gallery: CITYLIFE_GRID,
+      quote: '“We live in this moment — the city molds our stories, frame by frame.”',
+    },
+    {
+      key: 'landscape',
+      title: 'Landscape / Nature',
+      features: LANDSCAPE_FEATURES,
+      gallery: LANDSCAPE_GRID,
+      quote: '“We see the ocean, endless and untamed; we see the land, steady beneath our feet; we see the sky, vast and unbroken; and we reach toward the stars, eternal in their silence. Yet it is not enough only to see — we must feel the immensity of nature, the quiet force that humbles and strengthens us, reminding us of our smallness and our belonging.”',
+    },
+    {
+      key: 'humanmade',
+      title: 'Human Made',
+      features: HUMAN_MADE_FEATURES,
+      gallery: HUMAN_MADE_GRID,
+      quote:
+        '“We create, not merely to build, but to transcend. From stone to steel, from canvas to code, we shape visions that outlast our breath. In art we carve eternity from fleeting hours, and through creation we defy silence, giving voice to what is most human within us.”',
+    },
+  ];
 
-  const getCount = (sectionKey: string) => {
-    const sec = sections.find((s) => s.key === sectionKey);
-    if (!sec) return 0;
-    if (sectionKey === 'citylife') return CITYLIFE_ALL.length;
-    return sec.count;
+  const findSection = (sectionKey: SectionKey) => sections.find((sec) => sec.key === sectionKey);
+
+  const getSectionCombined = (sectionKey: SectionKey) => {
+    const section = findSection(sectionKey);
+    if (!section) return [] as (string | null)[];
+    return [...(section.features ?? []), ...section.gallery];
   };
 
-  const getIdByIndex = (sectionKey: string, index: number): string | undefined => {
-    if (sectionKey === 'citylife') return CITYLIFE_ALL[index];
-    return undefined;
+  const openItem = (sectionKey: SectionKey, index: number, id?: string | null) => {
+    if (!id) return; // 没有真实图片时不打开弹窗
+    setSelected({ section: sectionKey, index, id });
+  };
+  const closeItem = () => setSelected(null);
+
+  const getCount = (sectionKey: SectionKey) => {
+    const combined = getSectionCombined(sectionKey);
+    return combined.length;
+  };
+
+  const getIdByIndex = (sectionKey: SectionKey, index: number): string | undefined => {
+    const combined = getSectionCombined(sectionKey);
+    const id = combined[index];
+    return id ?? undefined;
   };
 
   const goPrev = () => {
@@ -300,46 +355,94 @@ const PhotoPage = () => {
       {/* 白色画廊区域 */}
       <div className="gallery-container">
         {sections.map((sec) => (
-          <section key={sec.key} className="gallery-section">
+          <section key={sec.key} className={`gallery-section gallery-section-${sec.key}`}>
             <div className="section-header">
               <h2 className="section-title">{sec.title}</h2>
             </div>
 
-            {sec.key === 'citylife' ? (
+            {(sec.features?.length ?? 0) > 0 ? (
               <>
                 <div className="feature-layout">
-                  {CITYLIFE_FEATURES.map((id, idx) => (
-                    <div
-                      key={id}
-                      className="feature-item"
-                      onClick={() => openItem(sec.key, idx, id)}
-                      onMouseEnter={() => preloadFullImage(id)}
-                      onTouchStart={() => preloadFullImage(id)}
-                    >
-                      <img
-                        src={buildCloudinaryImageUrl(id, { dpr: 'auto' })}
-                        alt={`Citylife feature ${idx + 1}`}
-                        loading="lazy"
-                        decoding="async"
-                        fetchPriority={idx === 0 ? 'high' : 'low'}
-                      />
-                    </div>
-                  ))}
-                  <aside className="feature-aside">
-                    <p className="feature-quote">“We live in this moment — the city molds our stories, frame by frame.”</p>
-                  </aside>
+                  {(sec.features ?? []).map((id, idx) => {
+                    const isPrimaryFeature = idx === 0;
+                    const featureItemClass = [
+                      'feature-item',
+                      isPrimaryFeature ? 'feature-item--primary' : '',
+                      isPrimaryFeature && sec.key === 'landscape' ? 'feature-item--landscape-primary' : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ');
+
+                    return (
+                      <div
+                        key={id}
+                        className={featureItemClass}
+                        onClick={() => openItem(sec.key, idx, id)}
+                        onMouseEnter={() => preloadFullImage(id)}
+                        onTouchStart={() => preloadFullImage(id)}
+                      >
+                        <img
+                          src={buildCloudinaryImageUrl(id, { dpr: 'auto' })}
+                          alt={`${sec.title} feature ${idx + 1}`}
+                          loading="lazy"
+                          decoding="async"
+                          fetchPriority={idx === 0 ? 'high' : 'low'}
+                        />
+                      </div>
+                    );
+                  })}
+                  {sec.quote ? (
+                    <aside className="feature-aside">
+                      <p className="feature-quote">{sec.quote}</p>
+                    </aside>
+                  ) : null}
                 </div>
 
                 <div className="gallery-grid">
-                  {CITYLIFE_GRID.map((id, i) => (
-                    <button
-                      key={`${sec.key}-grid-${id}`}
-                      className="gallery-item"
-                      onClick={() => openItem(sec.key, CITYLIFE_FEATURES.length + i, id)}
-                      onMouseEnter={() => preloadFullImage(id)}
-                      onTouchStart={() => preloadFullImage(id)}
-                      aria-label={`Open ${sec.title} item ${i + 1}`}
-                    >
+                  {sec.gallery.map((id, i) => {
+                    const combinedIndex = (sec.features?.length ?? 0) + i;
+                    const hasImage = Boolean(id);
+                    const thumbUrl = id ? thumbnailUrl(id) : undefined;
+                    return (
+                      <button
+                        key={`${sec.key}-grid-${id ?? i}`}
+                        type="button"
+                        className="gallery-item"
+                        onClick={() => hasImage && openItem(sec.key, combinedIndex, id)}
+                        onMouseEnter={() => hasImage && preloadFullImage(id)}
+                        onTouchStart={() => hasImage && preloadFullImage(id)}
+                        aria-label={`Open ${sec.title} item ${i + 1}`}
+                        disabled={!hasImage}
+                      >
+                        {hasImage ? (
+                          <img
+                            src={thumbUrl}
+                            alt={id ?? ''}
+                            loading="lazy"
+                            decoding="async"
+                            fetchPriority="low"
+                            sizes="(max-width: 640px) 33vw, (max-width: 1024px) 20vw, 180px"
+                          />
+                        ) : null}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            ) : (
+              <div className="gallery-grid">
+                {sec.gallery.map((id, i) => (
+                  <button
+                    key={`${sec.key}-${id ?? i}`}
+                    type="button"
+                    className="gallery-item"
+                    onClick={() => id && openItem(sec.key, i, id)}
+                    onMouseEnter={() => id && preloadFullImage(id)}
+                    onTouchStart={() => id && preloadFullImage(id)}
+                    aria-label={`Open ${sec.title} item ${i + 1}`}
+                    disabled={!id}
+                  >
+                    {id ? (
                       <img
                         src={thumbnailUrl(id)}
                         alt={id}
@@ -348,19 +451,8 @@ const PhotoPage = () => {
                         fetchPriority="low"
                         sizes="(max-width: 640px) 33vw, (max-width: 1024px) 20vw, 180px"
                       />
-                    </button>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div className="gallery-grid">
-                {Array.from({ length: sec.count }).map((_, i) => (
-                  <button
-                    key={`${sec.key}-${i}`}
-                    className="gallery-item"
-                    onClick={() => openItem(sec.key, i)}
-                    aria-label={`Open ${sec.title} item ${i + 1}`}
-                  />
+                    ) : null}
+                  </button>
                 ))}
               </div>
             )}
@@ -386,7 +478,7 @@ const PhotoPage = () => {
             style={{ transform: `translateY(${dragY}px)` }}
           >
             <div className="modal-image">
-              {selected?.section === 'citylife' && selected?.id ? (
+              {selected?.id ? (
                 <img
                   src={buildCloudinaryImageUrl(selected.id, { c: 'fit', w: 1200, dpr: 'auto', q: 'auto', fl: 'progressive:steep' })}
                   srcSet={buildCloudinarySrcSet(selected.id, [800, 1200], { c: 'fit', dpr: 'auto', q: 'auto', fl: 'progressive:steep' })}
@@ -399,10 +491,10 @@ const PhotoPage = () => {
             </div>
             <aside className="modal-aside">
               <div className="aside-inner">
-                {selected?.section === 'citylife' && selected?.id ? (
+                {selected?.id ? (
                   <>
-                    <p className="aside-meta">{CITYLIFE_META[selected.id]?.caption || 'Took with camera XXX'}</p>
-                    <p className="aside-time">{CITYLIFE_META[selected.id]?.time || '——'}</p>
+                    <p className="aside-meta">{IMAGE_META[selected.id]?.caption || 'Took with camera XXX'}</p>
+                    <p className="aside-time">{IMAGE_META[selected.id]?.time || '——'}</p>
                   </>
                 ) : (
                   <>

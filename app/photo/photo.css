@@ -108,6 +108,7 @@
 /* Citylife 专用布局：两张大图 + 右侧文案 */
 .feature-layout {
   --feature-h: clamp(340px, 52vh, 620px);
+  --feature-primary-scale: 1.34;
   display: grid;
   grid-template-columns: auto auto 360px; /* 两张图按比例自适应宽度，右侧文案固定 */
   gap: 1rem;
@@ -123,6 +124,8 @@
   overflow: hidden;
   box-shadow: 0 6px 24px rgba(0,0,0,0.08);
   cursor: pointer;
+  width: var(--feature-w, auto);
+  max-width: 100%;
 }
 
 .feature-item img {
@@ -134,9 +137,29 @@
 }
 
 /* 第一张大图可单独调高度（比例）*/
-.feature-item:first-child img {
+.feature-item--primary {
+  --feature-w: var(--feature-w-primary, auto);
+}
+
+.feature-item--primary img {
   height: var(--feature-h-1, var(--feature-h));
-  transform: scale(1.34);
+  transform: scale(var(--feature-primary-scale, 1.34));
+}
+
+.gallery-section-landscape .feature-layout {
+  --feature-h: clamp(360px, 60vh, 680px);
+}
+
+.feature-item--landscape-primary {
+  --feature-primary-scale: 1;
+  --feature-w-primary: 480px;
+}
+
+@media (max-width: 900px) {
+  .feature-item--landscape-primary {
+    --feature-primary-scale: 1.25;
+    --feature-w-primary: 100%;
+  }
 }
 
 .feature-aside {
@@ -175,11 +198,19 @@
   border: 1px solid #e5e7eb;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-  }
+}
 
 .gallery-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.gallery-item:disabled,
+.gallery-item:disabled:hover {
+  cursor: default;
+  transform: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  opacity: 0.5;
 }
 
 .gallery-item img {
