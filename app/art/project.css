@@ -1,0 +1,247 @@
+.art-project {
+  --bg: #0f0f12;
+  --panel: #14141a;
+  --card: #1b1b23;
+  --text: #f5f5f7;
+  --muted: #9aa0a6;
+  --gap: 3.5vw;
+  --ground: 6vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.art-project *,
+.art-project *::before,
+.art-project *::after {
+  box-sizing: border-box;
+}
+
+.art-project section {
+  position: relative;
+  min-height: 100vh;
+}
+
+.art-project .corridor {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+}
+
+.art-project .wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.art-project .header,
+.art-project .footer {
+  padding: 2.5vh 5vw;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+.art-project .footer {
+  padding-top: 1.25vh;
+}
+
+.art-project .view {
+  position: relative;
+  overflow: hidden;
+}
+
+.art-project .track {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  padding: 0 5vw;
+}
+
+.art-project .card {
+  flex: 0 0 auto;
+  width: min(36vw, 520px);
+  aspect-ratio: 8 / 5;
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  display: grid;
+}
+
+.art-project .media {
+  grid-area: 1 / 1;
+  position: relative;
+}
+
+.art-project .media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.art-project .ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--ground);
+  height: 2px;
+  background: rgba(255, 255, 255, 0.18);
+  z-index: 2;
+}
+
+.art-project .walker {
+  position: absolute;
+  bottom: var(--ground);
+  left: 0;
+  width: 48px;
+  height: 96px;
+  z-index: 3;
+  transform-origin: bottom center;
+}
+
+.art-project .walker div {
+  position: absolute;
+  background: var(--text);
+  border-radius: 18px;
+}
+
+.art-project .walker .head {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  left: 10px;
+  top: 0;
+}
+
+.art-project .walker .body {
+  width: 32px;
+  height: 42px;
+  left: 8px;
+  top: 26px;
+  border-radius: 14px;
+}
+
+.art-project .walker .arm {
+  width: 9px;
+  height: 36px;
+  top: 33px;
+  transform-origin: center 5px;
+}
+
+.art-project .walker .arm.left {
+  left: 2px;
+}
+
+.art-project .walker .arm.right {
+  left: 37px;
+}
+
+.art-project .walker .leg {
+  width: 10px;
+  height: 42px;
+  top: 66px;
+  transform-origin: center 6px;
+}
+
+.art-project .walker .leg.left {
+  left: 9px;
+}
+
+.art-project .walker .leg.right {
+  left: 29px;
+}
+
+.art-project .road {
+  min-height: 420vh;
+}
+
+.art-project .road .stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.art-project .road .ground {
+  z-index: 1;
+}
+
+.art-project .trap-col {
+  position: absolute;
+  left: 0;
+  width: 33.333vw;
+  bottom: var(--ground);
+  height: 380vh;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.art-project .trap-road {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.18));
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.art-project .walker-road {
+  position: absolute;
+  left: calc(33.333vw + 16.5vw - 24px);
+  width: 48px;
+  height: 96px;
+  transform-origin: bottom center;
+  z-index: 2;
+}
+
+.art-project .years {
+  position: absolute;
+  right: 3vw;
+  top: 0;
+  bottom: 0;
+  display: grid;
+  align-items: start;
+  justify-items: end;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.art-project .yr {
+  font-family: Charter, serif;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #d7d9df;
+  transform: translateY(0) scale(0.94);
+}
+
+.art-project .y2025 {
+  font-size: 10vw;
+}
+
+.art-project .y2024 {
+  font-size: 8.5vw;
+}
+
+@media (max-width: 640px) {
+  .art-project .card {
+    width: 78vw;
+  }
+
+  .art-project .walker-road {
+    left: calc(50% - 24px);
+  }
+}
