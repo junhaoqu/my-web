@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import ProjectProgressBar from '@/components/ProjectProgressBar';
+import GlassNavBar from '@/components/ui/GlassNavBar';
 import './photo.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -39,6 +39,7 @@ const THUMBNAIL_TWEAKS: Record<string, CldOpts> = {
   seacity1_ltvdkq: { g: 'center'},
   IMG_4339_xs5mtb: { g: 'center'},
   DSC01118_eajl0k: { g: 'center'},
+  DSC00076_eittng: { g: 'center'},
 };
 
 const thumbnailUrl = (publicId: string) => {
@@ -63,13 +64,6 @@ type SectionKey = 'citylife' | 'landscape' | 'humanmade';
 type StageKey = 'hero' | SectionKey;
 
 const PHOTO_SECTION_ORDER: SectionKey[] = ['citylife', 'landscape', 'humanmade'];
-const PHOTO_STAGE_ORDER: StageKey[] = ['hero', ...PHOTO_SECTION_ORDER];
-const PHOTO_STAGE_LABELS: Record<StageKey, string> = {
-  hero: 'Hero',
-  citylife: 'Citylife',
-  landscape: 'Landscape',
-  humanmade: 'Human Made',
-};
 
 type SectionConfig = {
   key: SectionKey;
@@ -82,15 +76,12 @@ type SectionConfig = {
 type SelectedItem = { section: SectionKey; index: number; id?: string } | null;
 
 const PhotoPage = () => {
-  const [scrollProgress, setScrollProgress] = React.useState(0);
-  const [currentStage, setCurrentStage] = React.useState(0);
   const stageRefs = React.useRef<Record<StageKey, HTMLElement | null>>({
     hero: null,
     citylife: null,
     landscape: null,
     humanmade: null,
   });
-  const stageLabels = PHOTO_STAGE_ORDER.map((key) => PHOTO_STAGE_LABELS[key]);
 
   const bgImages = [
     'seacity1_ltvdkq',
@@ -110,160 +101,82 @@ const PhotoPage = () => {
     setCurrentBgIndex((prevIndex) => (prevIndex + 1) % bgImages.length);
   };
 
-  // 初屏滚动动画：放大 + 上滑一屏，露出下方内容（无空白、不卡住）
+  // Initial screen scroll animation: zoom in + slide up one screen, revealing content below (no gaps, no sticking)
   useEffect(() => {
-    const timeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: '.photo-wrapper',
-        start: 'top top',
-        end: () => `+=${window.innerHeight + 3}`,
-        pin: true,
-        pinSpacing: false, // 不生成占位，直接与下方内容衔接
-        scrub: true,
-        onUpdate: (self) => {
-          const el = document.querySelector<HTMLElement>('.photo-wrapper');
-          if (!el) return;
-          // 开始上滑后放开指针事件，避免遮挡下方内容交互
-          el.style.pointerEvents = self.progress >= 0.5 ? 'none' : 'auto';
-        },
-      },
-    });
+    const heroEl = stageRefs.current.hero;
+    if (!heroEl) return;
 
-    timeline
-      // 前半段：背景/照片放大
-      .to(
-        '.photo-image',
-        {
-          scale: 3,
-          z: 400,
-          transformOrigin: 'center center',
-          ease: 'power1.inOut',
-          duration: 0.6,
+    const ctx = gsap.context(() => {
+      const timeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: heroEl,
+          start: 'top top',
+          end: () => `+=${window.innerHeight + 3}`,
+          pin: true,
+          pinSpacing: false,
+          scrub: true,
+          onUpdate: (self) => {
+            heroEl.style.pointerEvents = self.progress >= 0.5 ? 'none' : 'auto';
+          },
         },
-        0,
-      )
-      .to(
-        '.section.hero',
-        {
-          scale: 1.1,
-          transformOrigin: 'center center',
-          ease: 'power1.inOut',
-          duration: 0.6,
-        },
-        0,
-      )
-      // 后半段：向上滑动移出视口，露出下面的白色长页内容
-      .to(
-        ['.image-container', '.photo-content'],
-        {
-          y: () => -window.innerHeight,
-          ease: 'power2.inOut',
-          duration: 0.4,
-        },
-        0.6,
-      )
-      .to(
-        '.arrow-button',
-        {
-          opacity: 0,
-          ease: 'power1.out',
-          duration: 0.4,
-        },
-        0.6,
-      )
-      .to(
-        '.hero-overlay',
-        {
-          opacity: 0,
-          y: -120,
-          ease: 'power1.out',
-          duration: 0.4,
-        },
-        0.6,
-      );
+      });
+
+      timeline
+        .to(
+          '.photo-image',
+          {
+            scale: 3,
+            z: 400,
+            transformOrigin: 'center center',
+            ease: 'power1.inOut',
+            duration: 0.6,
+          },
+          0,
+        )
+        .to(
+          '.section.hero',
+          {
+            scale: 1.1,
+            transformOrigin: 'center center',
+            ease: 'power1.inOut',
+            duration: 0.6,
+          },
+          0,
+        )
+        .to(
+          ['.image-container', '.photo-content'],
+          {
+            y: () => -window.innerHeight,
+            ease: 'power2.inOut',
+            duration: 0.4,
+          },
+          0.6,
+        )
+        .to(
+          '.arrow-button',
+          {
+            opacity: 0,
+            ease: 'power1.out',
+            duration: 0.4,
+          },
+          0.6,
+        )
+        .to(
+          '.hero-overlay',
+          {
+            opacity: 0,
+            y: -120,
+            ease: 'power1.out',
+            duration: 0.4,
+          },
+          0.6,
+        );
+    }, heroEl);
 
     return () => {
-      timeline.kill();
+      ctx.revert();
     };
   }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const doc = document.documentElement;
-      const maxScroll = Math.max(0, doc.scrollHeight - window.innerHeight);
-
-      const stagePositions = PHOTO_STAGE_ORDER.map((key) => {
-        const el = stageRefs.current[key];
-        if (!el) {
-          return key === 'hero' ? 0 : maxScroll;
-        }
-        const rect = el.getBoundingClientRect();
-        return rect.top + scrollTop;
-      });
-
-      const midpoint = scrollTop + window.innerHeight / 2;
-      let activeStageIndex = 0;
-      stagePositions.forEach((position, index) => {
-        if (midpoint >= position) {
-          activeStageIndex = index;
-        }
-      });
-      setCurrentStage(activeStageIndex);
-
-      const segments = stagePositions.length - 1;
-      let progressValue = 0;
-
-      if (segments > 0) {
-        const lastAnchor = stagePositions[stagePositions.length - 1];
-        const effectiveMax = Math.max(maxScroll, lastAnchor);
-
-        if (effectiveMax <= 0) {
-          progressValue = 0;
-        } else if (scrollTop >= effectiveMax) {
-          progressValue = 1;
-        } else {
-          for (let i = 0; i < segments; i += 1) {
-            const start = stagePositions[i];
-            const end = i === segments - 1 ? effectiveMax : stagePositions[i + 1];
-            if (scrollTop >= end) {
-              if (i === segments - 1) {
-                progressValue = 1;
-              }
-              continue;
-            }
-            const span = Math.max(1, end - start);
-            const local = Math.min(1, Math.max(0, (scrollTop - start) / span));
-            progressValue = (i + local) / segments;
-            break;
-          }
-        }
-      } else {
-        progressValue = maxScroll > 0 ? scrollTop / maxScroll : 0;
-      }
-
-      setScrollProgress(Math.min(1, Math.max(0, progressValue)));
-    };
-
-    handleScroll();
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleJumpToStage = (stage: number) => {
-    const key = PHOTO_STAGE_ORDER[stage];
-    if (!key) return;
-
-    if (key === 'hero') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    const target = stageRefs.current[key];
-    if (!target) return;
-    const top = target.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({ top: Math.max(0, top - 60), behavior: 'smooth' });
-  };
 
   const heroStyle = {
     backgroundImage: `url(${buildCloudinaryImageUrl(bgImages[currentBgIndex])})`,
@@ -276,7 +189,7 @@ const PhotoPage = () => {
     'c05_orlfqw','c09_wyocsx','c10_djjbtv','c11_sdlhki','c12_acuyzr','c13_hkfhle','c21_zobebt','c22_f1tepf',
     'IMG_4339_xs5mtb','c15_lv9mxl','c16_scnqwq', 'IMG_4461_vlbvh7','IMG_4759_polarr_az5ppu', 'DSC00730_sjr7qj','c17_xwbdvv','DSC00726_swxzqu',
     'DSC00470-dorzqu', 'c34_u4yyrn','IMG_5811_bdrkmw',  'IMG_6770_limvti','IMG_0132_assstw', 'IMG_6430_yxmozv','street_small_un7xsc','c06_atpokc',
-    'IMG_9873_polarr_vsjcix', 'IMG_2559_srt2ws', 'IMG_7582_egxkef','1_eazrdy','seacity1_ltvdkq',
+    'IMG_9873_polarr_vsjcix', 'IMG_2559_srt2ws', 'IMG_7582_egxkef','1_eazrdy','seacity1_ltvdkq','golden_fydebt','glass_txtew7','stars_awdjkq','Star_trail_small_r3zut3',
   ];
 
   // Landscape
@@ -287,9 +200,13 @@ const PhotoPage = () => {
 
   // Human Made
   const HUMAN_MADE_FEATURES = ['IMG_3984_tnhi0d', 'IMG_5860_qzo0qu'];
-  const HUMAN_MADE_GRID: (string | null)[] = ['DSC00076_eittng', 'IMG_1210_mvyd9r'];
+  const HUMAN_MADE_GRID: (string | null)[] = ['IMG_6824_a0qjza','IMG_0327_bahrxy','DSC00395_govz2x','art_small_qbcxsk','IMG_8293_ae8yez','DSC00076_eittng','IMG_5875_txbq4j', 'IMG_3871_o4vuy0', 'IMG_5908_s7r40b','IMG_1210_mvyd9r',
+    'IMG_5480_havhjm', 'IMG_2092_ywn7zp', 'IMG_0674_xnl6u4',
 
-  // 预留每张图的说明文本（可按 id 自定义）
+
+  ];
+
+  // Placeholder for image descriptions (can be customized by id)
   const IMAGE_META: Record<string, { caption?: string; time?: string }> = {
     IMG_1396_q46dux: { caption: 'Took with camera XXX', time: 'Apr 29, 2025 • 19:30' },
     IMG_1401_mugp8p: { caption: 'Took with camera XXX', time: 'Apr 29, 2025 • 19:32' },
@@ -329,7 +246,7 @@ const PhotoPage = () => {
   };
 
   const openItem = (sectionKey: SectionKey, index: number, id?: string | null) => {
-    if (!id) return; // 没有真实图片时不打开弹窗
+    if (!id) return; // Do not open popup for items without a real image
     setSelected({ section: sectionKey, index, id });
   };
   const closeItem = () => setSelected(null);
@@ -365,7 +282,8 @@ const PhotoPage = () => {
     });
   };
 
-  // 弹层开启时：锁定滚动，并启用键盘左右切换/ESC关闭
+  // When modal is open: lock scroll, enable keyboard navigation (left/right/esc)
+  
   useEffect(() => {
     if (selected) {
       document.body.style.overflow = 'hidden';
@@ -390,7 +308,8 @@ const PhotoPage = () => {
     };
   }, [selected]);
 
-  // 移动端下滑关闭（轻量手势）
+
+  // Mobile swipe down to close (lightweight gesture)
   const [dragY, setDragY] = React.useState(0);
   const [overlayAlpha, setOverlayAlpha] = React.useState(0.5);
   const startXYRef = React.useRef<{ x: number; y: number } | null>(null);
@@ -417,7 +336,7 @@ const PhotoPage = () => {
     const t = e.touches[0];
     const dy = t.clientY - startXYRef.current.y;
     const dx = t.clientX - startXYRef.current.x;
-    // 主要是纵向下滑才触发拖拽
+    // Primarily trigger drag on vertical swipe down
     if (dy > 0 && Math.abs(dy) > Math.abs(dx) * 1.1) {
       setDragY(dy);
       setOverlayAlpha(Math.max(0.15, 0.5 - dy / 800));
@@ -440,7 +359,7 @@ const PhotoPage = () => {
 
   return (
     <>
-      {/* 首屏动画块 */}
+      {/* Initial screen animation block */}
       <div
         className="photo-wrapper"
         ref={(el) => {
@@ -474,7 +393,7 @@ const PhotoPage = () => {
         </button>
       </div>
 
-      {/* 白色画廊区域 */}
+      {/* White gallery area */}
       <div className="gallery-container">
         {sections.map((sec) => (
           <section
@@ -496,7 +415,7 @@ const PhotoPage = () => {
                     const featureItemClass = [
                       'feature-item',
                       isPrimaryFeature ? 'feature-item--primary' : '',
-                      isPrimaryFeature && sec.key === 'landscape' ? 'feature-item--landscape-primary' : '',
+                      isPrimaryFeature ? `feature-item--${sec.key}-primary` : '',
                     ]
                       .filter(Boolean)
                       .join(' ');
@@ -612,16 +531,9 @@ const PhotoPage = () => {
         ))}
       </div>
 
-      <ProjectProgressBar
-        scrollProgress={scrollProgress}
-        currentStage={currentStage}
-        totalStages={PHOTO_STAGE_ORDER.length}
-        isDark
-        onJumpToStage={handleJumpToStage}
-        stageLabels={stageLabels}
-      />
+      <GlassNavBar />
 
-      {/* 弹层 - 居中卡片 + 右侧白色信息栏（移动端文字在下） */}
+      {/* Modal - centered card + right white info panel (text below on mobile) */}
       {selected && (
         <div
           className="modal-overlay"

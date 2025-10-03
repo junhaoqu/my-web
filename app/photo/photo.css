@@ -204,7 +204,17 @@
     --feature-w-primary: 100%;
   }
 }
+.feature-item--humanmade-primary {
+  --feature-primary-scale: 0.9;
+  --feature-w-primary: 480px;
+}
 
+@media (max-width: 900px) {
+  .feature-item--humanmade-primary {
+    --feature-primary-scale: 1.1;
+    --feature-w-primary: 100%;
+  }
+}
 .feature-aside {
   align-self: center;
   justify-self: end;

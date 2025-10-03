@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { killAllGsap } from "@/lib/gsapUtils";
 import GlassSurface from "@/components/GlassSurface";
 
 interface ProgressBarProps {
@@ -60,6 +61,11 @@ const ProjectProgressBar: React.FC<ProgressBarProps> = ({
 
   const handleNavigate = (href: string) => {
     setIsNavOpen(false);
+    try {
+      killAllGsap();
+    } catch (e) {
+      console.error("Failed to kill GSAP animations", e);
+    }
     router.push(href);
   };
 
