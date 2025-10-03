@@ -102,9 +102,6 @@
 }
 
 .art-project .walker {
-  position: absolute;
-  bottom: var(--ground);
-  left: 0;
   width: 48px;
   height: 96px;
   z-index: 3;
@@ -200,12 +197,11 @@
 }
 
 .art-project .walker-road {
-  position: absolute;
-  left: calc(33.333vw + 16.5vw - 24px);
+  /* 移除固定定位，让JavaScript控制 */
   width: 48px;
   height: 96px;
   transform-origin: bottom center;
-  z-index: 2;
+  z-index: 9999; /* 确保在最顶层 */
 }
 
 .art-project .years {
