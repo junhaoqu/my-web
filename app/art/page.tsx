@@ -213,7 +213,16 @@ const ArtProjectPage = () => {
 
         timeline
           .to(track, { x: () => (dir === 1 ? -(track.scrollWidth - window.innerWidth) : 0), ease: 'none' }, 0)
-          .to(walker, { left: () => (endOverride ? endOverride() : defaultEnd()), ease: 'none' }, 0);
+          .to(walker, { 
+            left: () => {
+              if (endOverride) {
+                const overrideValue = endOverride();
+                return typeof overrideValue === 'number' ? `${overrideValue}px` : overrideValue;
+              }
+              return defaultEnd();
+            }, 
+            ease: 'none' 
+          }, 0);
       };
 
       // --- Road Animation Function (Stage 3) ---
