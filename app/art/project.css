@@ -161,7 +161,7 @@
 }
 
 .art-project .road {
-  min-height: 420vh;
+  min-height: 100vh;
 }
 
 .art-project .road .stage {
@@ -171,16 +171,43 @@
   overflow: hidden;
 }
 
+.art-project .stage-inner {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 6vw;
+  padding: 6vh 6vw;
+  align-items: stretch;
+}
+
+.art-project .road-column {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding-left: min(5vw, 64px);
+}
+
 .art-project .road .ground {
   z-index: 1;
+}
+
+.art-project .road-frame {
+  position: relative;
+  width: min(42vw, 560px);
+  height: 100%;
+  margin-left: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
 }
 
 .art-project .trap-col {
   position: absolute;
   left: 0;
-  width: 33.333vw;
+  width: 100%;
   bottom: var(--ground);
-  height: 380vh;
+  height: 680vh;
   pointer-events: none;
   z-index: 0;
 }
@@ -206,30 +233,191 @@
 
 .art-project .years {
   position: absolute;
-  right: 3vw;
-  top: 0;
-  bottom: 0;
-  display: grid;
-  align-items: start;
-  justify-items: end;
+  right: clamp(12px, 3vw, 42px);
+  top: 12vh;
+  bottom: 12vh;
+  width: clamp(160px, 18vw, 240px);
+  display: flex;
+  justify-content: flex-end;
+  align-items: stretch;
+  overflow: hidden;
   pointer-events: none;
   z-index: 3;
 }
 
+.art-project .years-track {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: clamp(3vh, 5vh, 6vh);
+  padding-right: clamp(0.4vw, 1vw, 12px);
+}
+
 .art-project .yr {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.8vh;
   font-family: Charter, serif;
   font-weight: 800;
   letter-spacing: 0.02em;
   color: #d7d9df;
   transform: translateY(0) scale(0.94);
+  text-align: right;
 }
 
-.art-project .y2025 {
-  font-size: 10vw;
+.art-project .yr-value {
+  line-height: 1;
+  text-shadow: 0 18px 32px rgba(0, 0, 0, 0.45);
 }
 
-.art-project .y2024 {
-  font-size: 8.5vw;
+.art-project .yr-stage {
+  font-size: clamp(10px, 1.4vw, 18px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(215, 217, 223, 0.6);
+}
+
+.art-project .years-track .yr:nth-child(1) .yr-value { font-size: 10.5vw; }
+.art-project .years-track .yr:nth-child(2) .yr-value { font-size: 9.2vw; }
+.art-project .years-track .yr:nth-child(3) .yr-value { font-size: 8vw; }
+.art-project .years-track .yr:nth-child(4) .yr-value { font-size: 6.8vw; }
+.art-project .years-track .yr:nth-child(5) .yr-value { font-size: 5.7vw; }
+.art-project .years-track .yr:nth-child(6) .yr-value { font-size: 4.8vw; }
+
+.art-project .story-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4vh;
+}
+
+.art-project .story-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4vh;
+}
+
+.art-project .story-tag {
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(229, 230, 235, 0.65);
+}
+
+.art-project .story-heading p {
+  margin: 0;
+  font-size: clamp(1rem, 1.1vw + 0.35rem, 1.35rem);
+  line-height: 1.6;
+  color: rgba(245, 245, 247, 0.92);
+}
+
+.art-project .gallery-stack {
+  position: relative;
+  flex: 1;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(150deg, rgba(20, 20, 26, 0.76), rgba(20, 20, 26, 0.28));
+  box-shadow: inset 0 24px 48px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+}
+
+.art-project .gallery-track {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+
+.art-project .gallery-slide {
+  height: 100%;
+  padding: clamp(28px, 6vh, 52px) clamp(32px, 4vw, 56px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(24px, 4vh, 40px);
+  opacity: 0.3;
+  transition: opacity 0.4s ease;
+}
+
+.art-project .gallery-slide-meta {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.6vh, 20px);
+}
+
+.art-project .gallery-slide-label {
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(220, 223, 228, 0.7);
+}
+
+.art-project .gallery-slide-meta h3 {
+  margin: 0;
+  font-size: clamp(1.35rem, 1.8vw + 0.6rem, 2.2rem);
+  font-weight: 700;
+}
+
+.art-project .gallery-slide-meta p {
+  margin: 0;
+  font-size: clamp(0.95rem, 1vw + 0.4rem, 1.2rem);
+  line-height: 1.7;
+  color: rgba(235, 238, 244, 0.78);
+  max-width: 34ch;
+}
+
+.art-project .gallery-slide-scroller {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: clamp(12px, 1.5vh, 18px);
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.art-project .gallery-slide-scroller::-webkit-scrollbar {
+  height: 10px;
+}
+
+.art-project .gallery-slide-scroller::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
+
+.art-project .gallery-slide-scroller::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.32);
+  border-radius: 999px;
+}
+
+.art-project .gallery-slide-row {
+  display: flex;
+  gap: clamp(20px, 3vw, 36px);
+  min-height: clamp(220px, 30vh, 320px);
+}
+
+.art-project .gallery-tile {
+  flex: 0 0 clamp(240px, 28vw, 360px);
+  scroll-snap-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.art-project .gallery-tile-media {
+  position: relative;
+  padding-top: 70%;
+  border-radius: 22px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.38);
+}
+
+.art-project .gallery-tile h4 {
+  margin: 0;
+  font-size: clamp(1rem, 1.1vw + 0.45rem, 1.35rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
 }
 
 @media (max-width: 640px) {
@@ -239,5 +427,45 @@
 
   .art-project .walker-road {
     left: calc(50% - 24px);
+  }
+
+  .art-project .stage-inner {
+    grid-template-columns: 1fr;
+    gap: 10vw;
+    padding: 8vh 8vw;
+  }
+
+  .art-project .years {
+    right: 6vw;
+    top: 10vh;
+    bottom: 10vh;
+  }
+
+  .art-project .years-track {
+    gap: 3vh;
+  }
+
+  .art-project .road-column {
+    padding-left: 0;
+  }
+
+  .art-project .road-frame {
+    width: 100%;
+  }
+
+  .art-project .gallery-stack {
+    border-radius: 22px;
+  }
+
+  .art-project .gallery-slide {
+    padding: 4vh 8vw;
+  }
+
+  .art-project .gallery-slide-row {
+    min-height: auto;
+  }
+
+  .art-project .gallery-tile {
+    flex: 0 0 72vw;
   }
 }
