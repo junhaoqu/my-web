@@ -3,6 +3,11 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 import './project.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -42,7 +47,7 @@ const ROAD_PHASES: RoadPhase[] = [
     year: '2025',
     stage: 'Phase III',
     heading: 'Gallery Assembly',
-    summary: '通过玻璃与金属的重构，让入口段重新焕发光线秩序。',
+    summary: '入口的第一段聚焦在结构与光影的重排，形成新的时间起点。',
     tiles: [
       { id: '2025-a', title: 'Skylight Array', image: 'https://picsum.photos/seed/road-2025-a/1400/900' },
       { id: '2025-b', title: 'Framework Echo', image: 'https://picsum.photos/seed/road-2025-b/1400/900' },
@@ -54,7 +59,7 @@ const ROAD_PHASES: RoadPhase[] = [
     year: '2024',
     stage: 'Phase IV',
     heading: 'Reverse Corridor',
-    summary: '反向开启的通道将观者引向更深的影像段落。',
+    summary: '反向开启的通道引导观者折返，缓慢进入影像的下一重。',
     tiles: [
       { id: '2024-a', title: 'Evergreen Drift', image: 'https://picsum.photos/seed/road-2024-a/1400/900' },
       { id: '2024-b', title: 'Resonant Steps', image: 'https://picsum.photos/seed/road-2024-b/1400/900' },
@@ -66,7 +71,7 @@ const ROAD_PHASES: RoadPhase[] = [
     year: '2023',
     stage: 'Phase V',
     heading: 'Continuous Road',
-    summary: '走廊的节奏在此保持连续，连接起遥远的场景。',
+    summary: '第三段保持均速的节奏，将远处片段连缀成完整旅程。',
     tiles: [
       { id: '2023-a', title: 'Tidal Memory', image: 'https://picsum.photos/seed/road-2023-a/1400/900' },
       { id: '2023-b', title: 'Horizon Fold', image: 'https://picsum.photos/seed/road-2023-b/1400/900' },
@@ -78,7 +83,7 @@ const ROAD_PHASES: RoadPhase[] = [
     year: '2022',
     stage: 'Phase VI',
     heading: 'Descending Years',
-    summary: '年份向下沉降，时间开始在台阶之间折叠。',
+    summary: '年份开始下沉，时间在层层叠落的斜面中重新排布。',
     tiles: [
       { id: '2022-a', title: 'Cascade Ridge', image: 'https://picsum.photos/seed/road-2022-a/1400/900' },
       { id: '2022-b', title: 'Echo Shelter', image: 'https://picsum.photos/seed/road-2022-b/1400/900' },
@@ -90,7 +95,7 @@ const ROAD_PHASES: RoadPhase[] = [
     year: '2021',
     stage: 'Phase VII',
     heading: 'Delta Resonance',
-    summary: '折返的节点中，画面与声音形成新的节拍。',
+    summary: '折返节点的缝隙里，画面与声响形成新的节拍。',
     tiles: [
       { id: '2021-a', title: 'Signal Bloom', image: 'https://picsum.photos/seed/road-2021-a/1400/900' },
       { id: '2021-b', title: 'Rhythm Cloud', image: 'https://picsum.photos/seed/road-2021-b/1400/900' },
@@ -102,7 +107,7 @@ const ROAD_PHASES: RoadPhase[] = [
     year: '2020',
     stage: 'Phase VIII',
     heading: 'Temporal Echo',
-    summary: '在终点回望，记忆的回声再次回到脚下。',
+    summary: '终点回望，记忆的回声再次抵达脚下，完成整个循环。',
     tiles: [
       { id: '2020-a', title: 'Origin Veil', image: 'https://picsum.photos/seed/road-2020-a/1400/900' },
       { id: '2020-b', title: 'Lantern Shore', image: 'https://picsum.photos/seed/road-2020-b/1400/900' },
@@ -264,7 +269,7 @@ const ArtProjectPage = () => {
         });
 
         const gallerySlides = storyTrack
-          ? Array.from(storyTrack.querySelectorAll<HTMLElement>('.gallery-slide'))
+          ? Array.from(storyTrack.querySelectorAll<HTMLElement>('.year-block'))
           : [];
 
         const segments = Math.max(yearElements.length - 1, 1);
@@ -480,7 +485,10 @@ const ArtProjectPage = () => {
       });
 
     });
-    return () => ctx.revert();
+
+    return () => {
+      ctx.revert();
+    };
   }, []);
 
   const renderCard = (src: string, index: number) => (
@@ -553,24 +561,69 @@ const ArtProjectPage = () => {
               <div className="gallery-stack">
                 <div className="gallery-track" ref={storyTrackRef}>
                   {ROAD_PHASES.map((phase) => (
-                    <section className="gallery-slide" key={phase.id}>
-                      <div className="gallery-slide-meta">
-                        <span className="gallery-slide-label">{`${phase.year} · ${phase.stage}`}</span>
-                        <h3>{phase.heading}</h3>
-                        <p>{phase.summary}</p>
-                      </div>
-                      <div className="gallery-slide-scroller">
-                        <div className="gallery-slide-row">
-                          {phase.tiles.map((tile) => (
-                            <article className="gallery-tile" key={tile.id}>
-                              <div
-                                className="gallery-tile-media"
-                                style={{ backgroundImage: `url(${tile.image})` }}
-                                aria-hidden="true"
-                              />
-                              <h4>{tile.title}</h4>
-                            </article>
+                    <section className="year-block" key={phase.id}>
+                      <header className="year-block-meta">
+                        <span className="year-block-label">{phase.stage}</span>
+                        <h3>{phase.year}</h3>
+                        <p>{phase.heading}</p>
+                        <p className="year-block-summary">{phase.summary}</p>
+                      </header>
+                      <div className="year-block-carousel">
+                                                <Swiper
+                          modules={[Navigation, Pagination]}
+                          spaceBetween={40}
+                          slidesPerView="auto"
+                          centeredSlides={false}
+                          navigation={{
+                            prevEl: `.year-${phase.year}-prev`,
+                            nextEl: `.year-${phase.year}-next`,
+                          }}
+                          pagination={{
+                            el: `.year-${phase.year}-pagination`,
+                            clickable: true,
+                            type: 'bullets',
+                          }}
+                          grabCursor={true}
+                          speed={700}
+                          resistanceRatio={0.15}
+                          watchOverflow={true}
+                          preventClicks={false}
+                          preventClicksPropagation={false}
+                          className="swiper-container"
+                        >
+                          {phase.tiles.map((tile, tileIndex) => (
+                            <SwiperSlide key={tile.id} className="swiper-slide">
+                              <article className={`art-frame ${tileIndex === 0 ? 'primary' : 'secondary'}`}>
+                                <div
+                                  className="art-frame-media"
+                                  style={{ backgroundImage: `url(${tile.image})` }}
+                                  aria-hidden="true"
+                                />
+                                <span className="art-frame-keel" aria-hidden="true" />
+                                <span className="art-frame-shadow" aria-hidden="true" />
+                                <h4>{tile.title}</h4>
+                              </article>
+                            </SwiperSlide>
                           ))}
+                        </Swiper>
+                        <div className="swiper-navigation-container">
+                          <div className="swiper-navigation-wrapper">
+                            <div className={`swiper-prev year-${phase.year}-prev`}>
+                              <svg aria-hidden="true" focusable="false" viewBox="0 0 40 40">
+                                <path fill="currentColor" d="m27.042 4.792 1.333 1.25-13.917 13.917 13.917 13.833-1.333 1.333-15.167-15.166L27.042 4.792z"></path>
+                              </svg>
+                            </div>
+                            <div className={`swiper-next year-${phase.year}-next`}>
+                              <svg aria-hidden="true" focusable="false" viewBox="0 0 40 40">
+                                <path fill="currentColor" d="m13.208 35.125-1.333-1.25 13.917-13.917L11.875 6.125l1.333-1.333 15.167 15.166Z"></path>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="swiper-pagination-container">
+                          <div className="swiper-pagination-wrapper">
+                            <div className={`swiper-pagination year-${phase.year}-pagination`}></div>
+                          </div>
                         </div>
                       </div>
                     </section>
