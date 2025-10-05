@@ -328,8 +328,8 @@
 .art-project .year-block {
   width: 100%;
   display: grid;
-  grid-template-columns: minmax(0, clamp(160px, 16vw, 200px)) minmax(0, 1fr);
-  gap: clamp(36px, 4vw, 56px);
+  grid-template-columns: minmax(0, clamp(180px, 18vw, 220px)) minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 40px);
   align-items: start;
 }
 
@@ -337,7 +337,7 @@
   display: flex;
   flex-direction: column;
   gap: clamp(12px, 2vh, 20px);
-  padding-left: clamp(12px, 2vw, 32px);
+  padding-left: clamp(8px, 1.5vw, 20px);
 }
 
 .art-project .year-block-label {
@@ -395,8 +395,7 @@
 .art-project .year-block-carousel .swiper-wrapper {
   align-items: flex-end;
   padding-left: 0;
-  padding-right: clamp(20px, 3vw, 40px);
-  display: flex;
+  padding-right: clamp(40px, 4vw, 60px);
 }
 
 /* Swiper Navigation Styles - 参考 1.css 的导航样式 */

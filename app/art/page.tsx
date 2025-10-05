@@ -265,7 +265,7 @@ const ArtProjectPage = () => {
             start: 'top top',
             end: '+=660%',
             pin: true,
-            scrub: 1.2,
+            scrub: 0.8,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
               roadWalkUpdate(self.progress * 80);
@@ -366,58 +366,67 @@ const ArtProjectPage = () => {
 
         gallerySlides.forEach((slide, index) => {
           gsap.set(slide, {
-            opacity: index === 0 ? 1 : 0.28,
+            opacity: 1,
           });
         });
 
         yearElements.forEach((yearEl, index) => {
           const stageLabel = `stage-${index}`;
           const lastIndex = yearElements.length - 1;
+          
+          // 为每个阶段分配固定的时间段，避免重叠
+          const segmentDuration = 100; // 每个年份段占用100%的时间
+          const stageStart = index * segmentDuration;
+          
+          timeline.addLabel(stageLabel, `${stageStart}%`);
 
-          timeline.addLabel(stageLabel, index === 0 ? 0 : '>');
-
+          // 年份出现动画
           timeline.fromTo(
             yearEl,
             { autoAlpha: 0, yPercent: 40, filter: 'blur(14px)' },
-            { autoAlpha: 1, yPercent: 0, filter: 'blur(0px)', duration: 0.6, ease: 'power3.out' },
+            { autoAlpha: 1, yPercent: 0, filter: 'blur(0px)', duration: 15, ease: 'power3.out' },
             stageLabel,
           );
 
+          // 小人动画 - 每个阶段有足够的时间
           timeline.to(
             walker,
             {
               top: () => getWalkerTopForStage(index, lastIndex),
               scale: () => getScaleForStage(index),
-              duration: index === 0 || index === lastIndex ? 1.15 : 0.9,
+              duration: 60, // 更长的持续时间让用户有时间查看
               ease: 'power2.inOut',
             },
             stageLabel,
           );
 
+          // 年份轨道滚动
           if (yearsColumn && yearsContainer) {
             timeline.to(
               yearsColumn,
               {
                 y: () => -yearStep * Math.min(index, segments),
-                duration: index === 0 ? 0.85 : 1,
+                duration: 50,
                 ease: 'power1.inOut',
               },
               stageLabel,
             );
           }
 
+          // 故事轨道滚动
           if (storyTrack && gallerySlides.length > 0 && storyContainer) {
             timeline.to(
               storyTrack,
               {
                 y: () => -storyStep * Math.min(index, segments),
-                duration: 1,
+                duration: 60,
                 ease: 'power1.inOut',
               },
               stageLabel,
             );
           }
 
+          // 画廊幻灯片过渡
           if (storyTrack && gallerySlides.length > 0) {
             const activeSlide = gallerySlides[index];
             const previousSlide = gallerySlides[index - 1];
@@ -425,7 +434,7 @@ const ArtProjectPage = () => {
             if (activeSlide) {
               timeline.to(
                 activeSlide,
-                { opacity: 1, ease: 'power2.out', duration: 0.6 },
+                { opacity: 1, ease: 'power2.out', duration: 20 },
                 stageLabel,
               );
             }
@@ -433,17 +442,24 @@ const ArtProjectPage = () => {
             if (previousSlide) {
               timeline.to(
                 previousSlide,
-                { opacity: 0.3, ease: 'power1.in', duration: 0.5 },
+                { opacity: 1, ease: 'power1.in', duration: 15 },
                 stageLabel,
               );
             }
           }
 
+          // 年份消失动画 - 除了最后一个，在当前段的75%处开始
           if (index !== lastIndex) {
             timeline.to(
               yearEl,
-              { autoAlpha: 0, yPercent: -32, filter: 'blur(16px)', duration: 0.6, ease: 'power3.in' },
-              `${stageLabel}+=0.82`,
+              { 
+                autoAlpha: 0, 
+                yPercent: -32, 
+                filter: 'blur(16px)', 
+                duration: 25, 
+                ease: 'power3.in' 
+              },
+              `${stageStart + 75}%`,
             );
           }
         });
@@ -578,11 +594,13 @@ const ArtProjectPage = () => {
                         <p className="year-block-summary">{phase.summary}</p>
                       </header>
                       <div className="year-block-carousel">
-                                                <Swiper
+                                                                        <Swiper
                           modules={[Navigation, Pagination]}
-                          spaceBetween={40}
+                          spaceBetween={80}
                           slidesPerView="auto"
-                          centeredSlides={false}
+                          centeredSlides={true}
+                          slidesOffsetBefore={200}
+                          slidesOffsetAfter={100}
                           navigation={{
                             prevEl: `.year-${phase.year}-prev`,
                             nextEl: `.year-${phase.year}-next`,
@@ -594,10 +612,8 @@ const ArtProjectPage = () => {
                           }}
                           grabCursor={true}
                           speed={700}
-                          resistanceRatio={0.15}
+                          resistanceRatio={0.85}
                           watchOverflow={true}
-                          preventClicks={false}
-                          preventClicksPropagation={false}
                           className="swiper-container"
                         >
                           {phase.tiles.map((tile, tileIndex) => (
