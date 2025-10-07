@@ -106,64 +106,166 @@
   z-index: 2;
 }
 
-.art-project .walker {
-  width: 48px;
-  height: 96px;
+/* SVG Walker 样式 */
+/* 小人样式 - 严格按照参考代码 */
+.art-project .character {
+  position: fixed;
+  bottom: 100px;
+  left: 0;
+  z-index: 10;
+  width: 250px;
+  height: 250px;
+  transition: transform 0.1s linear;
+  transform-origin: bottom center;
+  will-change: transform;
+}
+
+.art-project .walker-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* 设置腿部动画的正确变换原点 - 基于您提供的参考代码 */
+.art-project .leg-animator {
+  transform-origin: 1568.5px 1440.7px;
+  transition: transform 0.05s ease-out;
+}
+
+/* 身体倾斜效果 */
+.art-project .walker-body {
+  transition: transform 0.3s ease-out;
+}
+
+/* 电梯样式 */
+/* 木质升降平台系统 */
+.art-project .elevator {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
   z-index: 3;
   transform-origin: bottom center;
+  position: relative;
+  --platform-width: min(240px, calc(100% - 32px));
+  --board-height: 28px;
+  --passenger-height: 250px;
+  --passenger-width: var(--passenger-height);
+  --passenger-shift: calc(var(--platform-width) * 0.18);
+  --board-gap: calc(var(--passenger-height) * 0.5);
+  --upper-platform-top: 90px;
+  --lower-platform-top: calc(var(--upper-platform-top) + var(--board-height) + var(--board-gap));
+  --triangle-height: calc(var(--platform-width) * 112 / 148);
+  --rope-thickness: 4px;
+  --rope-color: #704620;
+  --elevator-height: calc(var(--lower-platform-top) + var(--board-height) + 220px);
+  min-height: var(--elevator-height);
 }
 
-.art-project .walker div {
+.art-project .elevator-rope-frame {
   position: absolute;
-  background: var(--text);
-  border-radius: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--platform-width);
+  aspect-ratio: 148 / 112;
+  pointer-events: none;
+  z-index: 1;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
 }
 
-.art-project .walker .head {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  left: 10px;
-  top: 0;
+.art-project .elevator-rope-frame--top {
+  top: calc(var(--upper-platform-top) -20px);
+  left: 85%;
+  transform: translateX(-50%);
+  transform-origin: 50% 6%;
 }
 
-.art-project .walker .body {
-  width: 32px;
-  height: 42px;
-  left: 8px;
-  top: 26px;
-  border-radius: 14px;
+.art-project .elevator-rope-frame--bottom {
+  top: calc(var(--lower-platform-top) + var(--board-height) - 4px);
+  left: 82%;
+  transform: translateX(-50%);
+  transform-origin: 50% 94%;
 }
 
-.art-project .walker .arm {
-  width: 9px;
-  height: 36px;
-  top: 33px;
-  transform-origin: center 5px;
+.art-project .elevator-rope-frame line,
+.art-project .elevator-rope-frame polygon {
+  fill: none;
+  stroke: var(--rope-color);
+  stroke-width: var(--rope-thickness);
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: 3px 6px;
+  vector-effect: non-scaling-stroke;
 }
 
-.art-project .walker .arm.left {
-  left: 2px;
+/* 上面的木板（显示年份） */
+.art-project .elevator-top-platform {
+  position: absolute;
+  left: 50%;
+  top: var(--upper-platform-top);
+  transform: translateX(-50%);
+  width: var(--platform-width);
+  height: var(--board-height);
+  background: linear-gradient(180deg, #debc86 0%, #c59654 90%);
+  border: 2px solid #5b3615;
+  border-radius: 8px;
+  box-shadow:
+    0 6px 10px rgba(0, 0, 0, 0.35),
+    inset 0 4px 6px rgba(255, 235, 205, 0.45),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  z-index: 3;
 }
 
-.art-project .walker .arm.right {
-  left: 37px;
+/* 年份文字 */
+.art-project .elevator-floor-display {
+  font-size: 16px;
+  font-weight: 700;
+  color: #4a2d12;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255, 246, 227, 0.8);
+  font-family: 'Charter', serif;
 }
 
-.art-project .walker .leg {
-  width: 10px;
-  height: 42px;
-  top: 66px;
-  transform-origin: center 6px;
+/* 下面的木板（人物站立） */
+.art-project .elevator-bottom-platform {
+  position: absolute;
+  left: 50%;
+  top: var(--lower-platform-top);
+  bottom: auto;
+  transform: translateX(-50%);
+  width: var(--platform-width);
+  height: var(--board-height);
+  background: linear-gradient(180deg, #dfbd88 0%, #be8c4a 92%);
+  border: 3px solid #5a3414;
+  border-radius: 12px;
+  box-shadow:
+    0 10px 18px rgba(0, 0, 0, 0.45),
+    inset 0 5px 8px rgba(255, 235, 205, 0.45),
+    inset 0 -6px 10px rgba(0, 0, 0, 0.28);
+  z-index: 3;
 }
 
-.art-project .walker .leg.left {
-  left: 9px;
+/* 升降平台内的乘客 */
+.art-project .elevator-passenger {
+  position: absolute;
+  left: 70%;
+  top: calc(var(--lower-platform-top) - var(--passenger-height) + 90px);
+  width: var(--passenger-width);
+  height: var(--passenger-height);
+  transform: translateX(-50%);
+  z-index: 4;
 }
 
-.art-project .walker .leg.right {
-  left: 29px;
+.art-project .elevator-passenger .walker-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.35));
 }
+
+
 
 .art-project .road {
   min-height: 100vh;
@@ -220,13 +322,43 @@
 
 .art-project .trap-road {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
+  left: 0;
+  transform: none;
+  width: 160px;
   height: 100%;
-  clip-path: polygon(18% 0%, 82% 0%, 100% 100%, 0% 100%);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.18));
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: none;
+  border: none;
+  pointer-events: none;
+}
+
+/* 木质支柱 */
+.art-project .trap-road::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 18px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #9b6632 0%, #c8904c 60%, #8a5a2a 100%);
+  border-radius: 9px;
+  box-shadow:
+    inset 0 0 12px rgba(0, 0, 0, 0.25),
+    0 0 18px rgba(0, 0, 0, 0.35);
+}
+
+/* 支柱高光 */
+.art-project .trap-road::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 4px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, rgba(255, 236, 205, 0.7), rgba(255, 236, 205, 0.1));
+  border-radius: 2px;
+  opacity: 0.6;
 }
 
 .art-project .walker-road {
@@ -634,4 +766,3 @@
     right: clamp(12px, 4vw, 24px);
   }
 }
-

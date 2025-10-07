@@ -122,20 +122,78 @@ const ROAD_YEARS = ROAD_PHASES.map((phase) => ({
   stage: phase.stage,
 }));
 
-const Walker = React.forwardRef<HTMLDivElement, { className?: string }>(
+const SvgWalker = React.forwardRef<HTMLDivElement, { className?: string }>(
   ({ className }, ref) => (
-    <div className={['walker', className].filter(Boolean).join(' ')} ref={ref}>
-      <div className="head" />
-      <div className="body" />
-      <div className="arm left" />
-      <div className="arm right" />
-      <div className="leg left" />
-      <div className="leg right" />
+    <div className={['character', className].filter(Boolean).join(' ')} ref={ref}>
+      <svg className="walker-svg" viewBox="0 0 3508 2481" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <g id="body-parts">
+          <circle cx="1594.5" cy="872.633" r="110.745" style={{ fill: 'white' }} />
+          <g transform="matrix(1.05853,0.0452793,-0.0417497,0.976014,257.18,-106.467)">
+            <path d="M1298.8,942.507L1596.36,1524.83L1001.24,1524.83L1298.8,942.507Z" style={{ fill: 'white' }} />
+          </g>
+          <g id="right-leg-animator" className="leg-animator">
+            <g transform="matrix(-0.972762,-0.231806,0.220972,-0.927299,2178.36,3344.56)">
+              <path d="M1081.76,1440.15C1081.76,1440.15 1133.28,1709.38 1133.28,1824.77C1133.28,1854.59 1110.2,1878.81 1081.76,1878.81C1053.33,1878.81 1030.24,1854.59 1030.24,1824.77C1030.24,1709.38 1081.76,1440.15 1081.76,1440.15Z" style={{ fill: 'white' }} />
+            </g>
+          </g>
+          <g id="left-leg-animator" className="leg-animator">
+            <g transform="matrix(-0.816164,0.240071,-0.280551,-0.953782,2989.69,2875.58)">
+              <path d="M1081.76,1440.15C1081.76,1440.15 1133.28,1716.35 1133.28,1834.73C1133.28,1859.06 1110.2,1878.81 1081.76,1878.81C1053.33,1878.81 1030.24,1859.06 1030.24,1834.73C1030.24,1716.35 1081.76,1440.15 1081.76,1440.15Z" style={{ fill: 'white' }} />
+            </g>
+          </g>
+        </g>
+      </svg>
     </div>
   ),
 );
 
-Walker.displayName = 'Walker';
+SvgWalker.displayName = 'SvgWalker';
+
+const Elevator = React.forwardRef<HTMLDivElement, { className?: string; currentFloor?: string }>(
+  ({ className, currentFloor }, ref) => (
+    <div className={['elevator', className].filter(Boolean).join(' ')} ref={ref}>
+      {/* 上方绳索与年份牌 */}
+      <svg className="elevator-rope-frame elevator-rope-frame--top" viewBox="0 0 148 112" aria-hidden="true">
+        <line x1="0" y1="112" x2="74" y2="0" />
+        <line x1="148" y1="112" x2="74" y2="0" />
+      </svg>
+      <div className="elevator-top-platform">
+        <div className="elevator-floor-display">{currentFloor || '2025'}</div>
+      </div>
+
+      {/* 乘客 */}
+      <div className="elevator-passenger">
+        <svg className="walker-svg" viewBox="0 0 3508 2481" version="1.1" xmlns="http://www.w3.org/2000/svg">
+          <g id="body-parts">
+            <circle cx="1594.5" cy="872.633" r="110.745" style={{ fill: 'white' }} />
+            <g transform="matrix(1.05853,0.0452793,-0.0417497,0.976014,257.18,-106.467)">
+              <path d="M1298.8,942.507L1596.36,1524.83L1001.24,1524.83L1298.8,942.507Z" style={{ fill: 'white' }} />
+            </g>
+            <g id="right-leg-animator" className="leg-animator">
+              <g transform="matrix(-0.972762,-0.231806,0.220972,-0.927299,2178.36,3344.56)">
+                <path d="M1081.76,1440.15C1081.76,1440.15 1133.28,1709.38 1133.28,1824.77C1133.28,1854.59 1110.2,1878.81 1081.76,1878.81C1053.33,1878.81 1030.24,1854.59 1030.24,1824.77C1030.24,1709.38 1081.76,1440.15 1081.76,1440.15Z" style={{ fill: 'white' }} />
+              </g>
+            </g>
+            <g id="left-leg-animator" className="leg-animator">
+              <g transform="matrix(-0.816164,0.240071,-0.280551,-0.953782,2989.69,2875.58)">
+                <path d="M1081.76,1440.15C1081.76,1440.15 1133.28,1716.35 1133.28,1834.73C1133.28,1859.06 1110.2,1878.81 1081.76,1878.81C1053.33,1878.81 1030.24,1859.06 1030.24,1834.73C1030.24,1716.35 1081.76,1440.15 1081.76,1440.15Z" style={{ fill: 'white' }} />
+              </g>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      {/* 下方绳索与站台 */}
+      <div className="elevator-bottom-platform" />
+      <svg className="elevator-rope-frame elevator-rope-frame--bottom" viewBox="0 0 148 112" aria-hidden="true">
+        <line x1="0" y1="0" x2="74" y2="112" />
+        <line x1="148" y1="0" x2="74" y2="112" />
+      </svg>
+    </div>
+  ),
+);
+
+Elevator.displayName = 'Elevator';
 
 const ArtProjectPage = () => {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -146,6 +204,7 @@ const ArtProjectPage = () => {
   const walker1Ref = useRef<HTMLDivElement>(null);
   const walker2Ref = useRef<HTMLDivElement>(null);
   const walkerRoadRef = useRef<HTMLDivElement>(null);
+  const elevatorRef = useRef<HTMLDivElement>(null);
   const roadRef = useRef<HTMLElement>(null);
   const yearRefs = useRef<Array<HTMLDivElement | null>>([]);
   const storyTrackRef = useRef<HTMLDivElement>(null);
@@ -153,6 +212,8 @@ const ArtProjectPage = () => {
   const roadFrameRef = useRef<HTMLDivElement>(null);
   const yearsColumnRef = useRef<HTMLDivElement>(null);
   const yearsWrapperRef = useRef<HTMLDivElement>(null);
+  
+  const [currentFloor, setCurrentFloor] = React.useState('25');
 
   const registerYearRef = (index: number) => (el: HTMLDivElement | null) => {
     yearRefs.current[index] = el;
@@ -162,13 +223,41 @@ const ArtProjectPage = () => {
     const ctx = gsap.context(() => {
       const makeWalkCycle = (walker: Element | null) => {
         if (!walker) return () => {};
-        const armL = walker.querySelector('.arm.left');
-        const armR = walker.querySelector('.arm.right');
-        const legL = walker.querySelector('.leg.left');
-        const legR = walker.querySelector('.leg.right');
-        const tl = gsap.timeline({ paused: true, defaults: { duration: 0.28, ease: 'sine.inOut' } });
-        tl.to([armL, legR], { rotation: 26 }, 0).to([armR, legL], { rotation: -26 }, 0);
-        return (progress: number) => tl.progress((progress || 0) % 1);
+        
+        // 查找新的SVG小人的腿部元素 - 使用正确的ID
+        const leftLeg = walker.querySelector('#left-leg-animator');
+        const rightLeg = walker.querySelector('#right-leg-animator');
+        
+        if (!leftLeg || !rightLeg) return () => {};
+        
+        const rotationAngle = 45; // 增大旋转角度，让动作更明显
+        
+        return (progress: number) => {
+          // 基于进度值计算步伐周期，让动画更流畅
+          const walkCycle = (progress * 8) % 1; // 增加频率，让动作更明显
+          const stepPhase = Math.sin(walkCycle * Math.PI * 2);
+          
+          // 计算每条腿的旋转角度
+          const rightLegAngle = stepPhase * rotationAngle;
+          const leftLegAngle = -stepPhase * rotationAngle; // 相反方向
+          
+          // 应用变换
+          (rightLeg as HTMLElement).style.transform = `rotate(${rightLegAngle}deg)`;
+          (leftLeg as HTMLElement).style.transform = `rotate(${leftLegAngle}deg)`;
+        };
+      };
+
+      const makeElevatorIdle = (elevator: Element | null) => {
+        if (!elevator) return () => {};
+        const passenger = elevator.querySelector('.elevator-passenger');
+        
+        return (progress: number) => {
+          // 电梯内的小人保持静止，只有轻微的呼吸效果
+          if (passenger) {
+            const breathe = Math.sin(progress * Math.PI * 0.5) * 0.5; // 轻微呼吸
+            gsap.set(passenger, { scaleY: 1 + breathe * 0.02, transformOrigin: 'center bottom' });
+          }
+        };
       };
 
       // --- Corridor Animation Function (Stages 1 & 2) ---
@@ -199,17 +288,28 @@ const ArtProjectPage = () => {
             scrub: true,
             pin: true,
             invalidateOnRefresh: true,
-            onUpdate: (self) => walkUpdate(self.progress * 40),
+            onUpdate: (self) => walkUpdate(self.progress * 60),
             onEnter: onEnter,
             onLeaveBack: onLeaveBack,
           },
         });
 
         const walkerWidth = () => walker.offsetWidth || 0;
-        const startX = () => (dir === 1 ? '5vw' : `calc(95vw - ${walkerWidth()}px)`);
+        const startX = () => {
+          if (dir === 1) {
+            return '5vw';
+          } else {
+            // 第二阶段：从屏幕右外侧开始
+            return `calc(100vw + 50px)`;
+          }
+        };
         const defaultEnd = () => (dir === 1 ? `calc(95vw - ${walkerWidth()}px)` : '5vw');
 
-        gsap.set(walker, { position: 'fixed', bottom: '6vh', left: startX(), zIndex: 3 });
+        gsap.set(walker, { position: 'fixed', bottom: '2vh', left: startX(), zIndex: 3 });
+
+        if (dir === -1) {
+          gsap.set(track, { x: () => -(track.scrollWidth - window.innerWidth) });
+        }
 
         timeline
           .to(track, { x: () => (dir === 1 ? -(track.scrollWidth - window.innerWidth) : 0), ease: 'none' }, 0)
@@ -228,7 +328,7 @@ const ArtProjectPage = () => {
       // --- Road Animation Function (Stage 3) ---
       const createRoadAnimation = ({
         section,
-        walker,
+        elevator,
         walker2,
         years,
         storyTrack,
@@ -238,7 +338,7 @@ const ArtProjectPage = () => {
         yearsWrapper,
       }: {
         section: HTMLElement | null;
-        walker: HTMLElement | null;
+        elevator: HTMLElement | null;
         walker2: HTMLElement | null;
         years: Array<HTMLElement | null>;
         storyTrack: HTMLElement | null;
@@ -247,17 +347,24 @@ const ArtProjectPage = () => {
         yearsColumn: HTMLElement | null;
         yearsWrapper: HTMLElement | null;
       }) => {
-        if (!section || !walker || !walker2 || !frame) return;
+        if (!section || !elevator || !walker2 || !frame) return;
 
         const yearElements = years.filter(Boolean) as HTMLElement[];
         if (yearElements.length === 0) return;
 
-        const roadWalkUpdate = makeWalkCycle(walker);
+        const elevatorIdleUpdate = makeElevatorIdle(elevator);
+        const ropeFrames = Array.from(
+          elevator.querySelectorAll<SVGElement>('.elevator-rope-frame'),
+        );
 
-        gsap.set(walker, { position: 'absolute', opacity: 0, zIndex: 5 });
+        gsap.set(elevator, { position: 'absolute', opacity: 0, zIndex: 5 });
+        if (ropeFrames.length) {
+          gsap.set(ropeFrames, { rotation: 0 });
+        }
 
         const storyContainer = storyTrack?.parentElement as HTMLElement | null;
         const yearsContainer = yearsWrapper;
+        const trapColumn = trap?.querySelector<HTMLElement>('.trap-road') || null;
 
         const timeline = gsap.timeline({
           scrollTrigger: {
@@ -268,10 +375,19 @@ const ArtProjectPage = () => {
             scrub: 0.8,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
-              roadWalkUpdate(self.progress * 80);
+              // 根据滚动进度更新楼层显示
+              const progress = self.progress;
+              const totalFloors = ROAD_PHASES.length;
+              const currentFloorIndex = Math.floor(progress * totalFloors);
+              const clampedIndex = Math.min(currentFloorIndex, totalFloors - 1);
+              const currentYear = ROAD_PHASES[clampedIndex]?.year || '25';
+              setCurrentFloor(currentYear);
+              
+              // 更新电梯内小人的呼吸动画
+              elevatorIdleUpdate(progress * 20);
             },
             onToggle: (self) => {
-              gsap.set(walker, { opacity: self.isActive ? 1 : 0 });
+              gsap.set(elevator, { opacity: self.isActive ? 1 : 0 });
               gsap.set(walker2, { opacity: self.isActive ? 0 : 1 });
             },
           },
@@ -313,42 +429,65 @@ const ArtProjectPage = () => {
 
         const yearStep = rawYearStep || frame.offsetHeight * 0.14;
 
-        const walkerHeight = () => walker.offsetHeight || 1;
-        const walkerWidth = () => walker.offsetWidth || 1;
+        const elevatorHeight = () => elevator.offsetHeight || 1;
+        const elevatorWidth = () => elevator.offsetWidth || 1;
 
         const viewportHeight = () => window.innerHeight || frame.offsetHeight || 1;
 
         const startTop = () => viewportHeight() * 0.16;
-        const middleTop = () => viewportHeight() * 0.5 - walkerHeight() * 0.5;
+        const middleTop = () => viewportHeight() * 0.5 - elevatorHeight() * 0.5;
         const bottomPadding = () => viewportHeight() * 0.08;
-        const endTop = () => viewportHeight() - walkerHeight() - bottomPadding();
+        const endTop = () => viewportHeight() - elevatorHeight() - bottomPadding();
 
-        const computeWalkerLeft = () => {
+        const computeElevatorLeft = () => {
+          if (trapColumn) {
+            const frameRect = frame.getBoundingClientRect();
+            const columnRect = trapColumn.getBoundingClientRect();
+            return columnRect.left - frameRect.left;
+          }
           if (trap) {
-            const offsetWithinFrame = trap.offsetLeft + trap.offsetWidth * 0.42 - walkerWidth() * 0.5;
-            return Math.max(offsetWithinFrame, 0);
+            return trap.offsetLeft;
           }
           return frame.offsetWidth * 0.18;
         };
 
-        const getWalkerTopForStage = (index: number, lastIndex: number) => {
+        const computeElevatorWidth = () => {
+          if (trapColumn) {
+            return trapColumn.offsetWidth || frame.offsetWidth * 0.22;
+          }
+          if (trap) {
+            return trap.offsetWidth || frame.offsetWidth * 0.22;
+          }
+          return frame.offsetWidth * 0.22;
+        };
+
+        const getElevatorTopForStage = (index: number, lastIndex: number) => {
           if (index === 0) return middleTop();
           if (index === lastIndex) return endTop();
           return middleTop();
         };
 
         const baseScale = 1;
-        const maxScale = 1.28;
-        const scaleStep = (maxScale - baseScale) / segments;
-        const getScaleForStage = (index: number) => baseScale + scaleStep * index;
+        const maxScale = 1; // 移除缩放效果，保持电梯大小一致
+        const scaleStep = 0; // 不再有缩放变化
+        const getScaleForStage = () => baseScale; // 始终返回基础缩放值
 
-        gsap.set(walker, {
-          left: () => computeWalkerLeft(),
+        gsap.set(elevator, {
+          left: () => computeElevatorLeft(),
           top: () => startTop(),
           scale: baseScale,
-          rotateY: 180,
+          rotateY: 0,
           transformOrigin: 'bottom center',
+          width: () => computeElevatorWidth(),
         });
+
+        // 设置木质支柱的动态位置，与电梯对齐
+        if (trapColumn) {
+          gsap.set(trapColumn, {
+            left: () => computeElevatorLeft(),
+            width: () => computeElevatorWidth(),
+          });
+        }
 
         gsap.set(yearElements, {
           autoAlpha: 0,
@@ -388,17 +527,32 @@ const ArtProjectPage = () => {
             stageLabel,
           );
 
-          // 小人动画 - 每个阶段有足够的时间
+          // 电梯动画 - 每个阶段有足够的时间
           timeline.to(
-            walker,
+            elevator,
             {
-              top: () => getWalkerTopForStage(index, lastIndex),
-              scale: () => getScaleForStage(index),
+              top: () => getElevatorTopForStage(index, lastIndex),
+              // 移除缩放效果，保持电梯大小一致
               duration: 60, // 更长的持续时间让用户有时间查看
               ease: 'power2.inOut',
             },
             stageLabel,
           );
+
+          if (ropeFrames.length) {
+            const swayAngle = (index % 2 === 0 ? 1 : -1) * 3.2;
+            timeline.to(
+              ropeFrames,
+              {
+                rotation: swayAngle,
+                duration: 36,
+                ease: 'sine.inOut',
+                yoyo: true,
+                repeat: 1,
+              },
+              stageLabel,
+            );
+          }
 
           // 年份轨道滚动
           if (yearsColumn && yearsContainer) {
@@ -475,6 +629,10 @@ const ArtProjectPage = () => {
         track: track1Ref.current,
         walker: walker1Ref.current,
         dir: 1,
+        endOverride: () => {
+          // 第一阶段：让人物走出屏幕右边
+          return window.innerWidth + 50;
+        },
       });
 
       createCorridorAnimation({
@@ -499,7 +657,7 @@ const ArtProjectPage = () => {
 
       createRoadAnimation({
         section: roadRef.current,
-        walker: walkerRoadRef.current,
+        elevator: elevatorRef.current,
         walker2: walker2Ref.current,
         years: yearRefs.current,
         storyTrack: storyTrackRef.current,
@@ -534,7 +692,7 @@ const ArtProjectPage = () => {
               {ROW1_IMAGES.map((src, index) => renderCard(src, index))}
             </div>
             <div className="ground" />
-            <Walker ref={walker1Ref} />
+            <SvgWalker ref={walker1Ref} />
           </div>
           <div className="footer">Scroll to walk through the first gallery.</div>
         </div>
@@ -548,7 +706,7 @@ const ArtProjectPage = () => {
               {ROW2_IMAGES.map((src, index) => renderCard(src, index))}
             </div>
             <div className="ground" />
-            <Walker ref={walker2Ref} />
+            <SvgWalker ref={walker2Ref} />
           </div>
           <div className="footer">Keep scrolling — the corridor inverts.</div>
         </div>
@@ -563,7 +721,7 @@ const ArtProjectPage = () => {
                 <div className="trap-col" ref={trapColRef}>
                   <div className="trap-road" />
                 </div>
-                <Walker ref={walkerRoadRef} className="road-walker facing-forward" />
+                <Elevator ref={elevatorRef} className="road-elevator" currentFloor={currentFloor} />
                 <div className="years" ref={yearsWrapperRef}>
                   <div className="years-track" ref={yearsColumnRef}>
                     {ROAD_YEARS.map((item, index) => (
