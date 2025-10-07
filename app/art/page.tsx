@@ -12,18 +12,44 @@ import './project.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+type CldOpts = {
+  w?: number;
+  h?: number;
+  c?: string; // crop mode: fill, fit, crop, scale, etc.
+  g?: string; // gravity: auto, face, etc.
+  dpr?: 'auto' | number;
+  q?: 'auto' | number;
+  fl?: string; // flags, e.g. progressive:steep
+};
+
+const buildCloudinaryImageUrl = (publicId: string, opts: CldOpts = {}) => {
+  if (!cloudName) return "";
+  const t: string[] = [];
+  t.push('f_auto');
+  t.push(`q_${opts.q ?? 'auto'}`);
+  if (opts.w) t.push(`w_${opts.w}`);
+  if (opts.h) t.push(`h_${opts.h}`);
+  if (opts.c) t.push(`c_${opts.c}`);
+  if (opts.g) t.push(`g_${opts.g}`);
+  if (opts.dpr) t.push(`dpr_${opts.dpr}`);
+  if (opts.fl) t.push(`fl_${opts.fl}`);
+  return `https://res.cloudinary.com/${cloudName}/image/upload/${t.join(',')}/${publicId}`;
+};
+
 const ROW1_IMAGES = [
-  'https://picsum.photos/seed/a1/1200/800',
-  'https://picsum.photos/seed/a2/1200/800',
-  'https://picsum.photos/seed/a3/1200/800',
-  'https://picsum.photos/seed/a4/1200/800',
+  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
 ];
 
 const ROW2_IMAGES = [
-  'https://picsum.photos/seed/b1/1200/800',
-  'https://picsum.photos/seed/b2/1200/800',
-  'https://picsum.photos/seed/b3/1200/800',
-  'https://picsum.photos/seed/b4/1200/800',
+  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
 ];
 
 type RoadPhaseTile = {
@@ -49,9 +75,9 @@ const ROAD_PHASES: RoadPhase[] = [
     heading: 'Gallery Assembly',
     summary: '入口的第一段聚焦在结构与光影的重排，形成新的时间起点。',
     tiles: [
-      { id: '2025-a', title: 'Skylight Array', image: 'https://picsum.photos/seed/road-2025-a/1400/900' },
-      { id: '2025-b', title: 'Framework Echo', image: 'https://picsum.photos/seed/road-2025-b/1400/900' },
-      { id: '2025-c', title: 'Midnight Panel', image: 'https://picsum.photos/seed/road-2025-c/1400/900' },
+      { id: '2025-a', title: 'Skylight Array', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'fill', g: 'auto' }) },
+      { id: '2025-b', title: 'Framework Echo', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'fill', g: 'north' }) },
+      { id: '2025-c', title: 'Midnight Panel', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'fill', g: 'south' }) },
     ],
   },
   {
@@ -61,9 +87,9 @@ const ROAD_PHASES: RoadPhase[] = [
     heading: 'Reverse Corridor',
     summary: '反向开启的通道引导观者折返，缓慢进入影像的下一重。',
     tiles: [
-      { id: '2024-a', title: 'Evergreen Drift', image: 'https://picsum.photos/seed/road-2024-a/1400/900' },
-      { id: '2024-b', title: 'Resonant Steps', image: 'https://picsum.photos/seed/road-2024-b/1400/900' },
-      { id: '2024-c', title: 'Bloom Passage', image: 'https://picsum.photos/seed/road-2024-c/1400/900' },
+      { id: '2024-a', title: 'Evergreen Drift', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'fill', g: 'west' }) },
+      { id: '2024-b', title: 'Resonant Steps', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'fill', g: 'east' }) },
+      { id: '2024-c', title: 'Bloom Passage', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'fill', g: 'center' }) },
     ],
   },
   {
@@ -73,9 +99,9 @@ const ROAD_PHASES: RoadPhase[] = [
     heading: 'Continuous Road',
     summary: '第三段保持均速的节奏，将远处片段连缀成完整旅程。',
     tiles: [
-      { id: '2023-a', title: 'Tidal Memory', image: 'https://picsum.photos/seed/road-2023-a/1400/900' },
-      { id: '2023-b', title: 'Horizon Fold', image: 'https://picsum.photos/seed/road-2023-b/1400/900' },
-      { id: '2023-c', title: 'Amber Dusk', image: 'https://picsum.photos/seed/road-2023-c/1400/900' },
+      { id: '2023-a', title: 'Tidal Memory', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'crop', g: 'auto' }) },
+      { id: '2023-b', title: 'Horizon Fold', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'crop', g: 'face' }) },
+      { id: '2023-c', title: 'Amber Dusk', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'crop', g: 'north_east' }) },
     ],
   },
   {
@@ -85,9 +111,9 @@ const ROAD_PHASES: RoadPhase[] = [
     heading: 'Descending Years',
     summary: '年份开始下沉，时间在层层叠落的斜面中重新排布。',
     tiles: [
-      { id: '2022-a', title: 'Cascade Ridge', image: 'https://picsum.photos/seed/road-2022-a/1400/900' },
-      { id: '2022-b', title: 'Echo Shelter', image: 'https://picsum.photos/seed/road-2022-b/1400/900' },
-      { id: '2022-c', title: 'Frostline Noon', image: 'https://picsum.photos/seed/road-2022-c/1400/900' },
+      { id: '2022-a', title: 'Cascade Ridge', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'thumb', g: 'auto' }) },
+      { id: '2022-b', title: 'Echo Shelter', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'thumb', g: 'north_west' }) },
+      { id: '2022-c', title: 'Frostline Noon', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'thumb', g: 'south_east' }) },
     ],
   },
   {
@@ -97,9 +123,9 @@ const ROAD_PHASES: RoadPhase[] = [
     heading: 'Delta Resonance',
     summary: '折返节点的缝隙里，画面与声响形成新的节拍。',
     tiles: [
-      { id: '2021-a', title: 'Signal Bloom', image: 'https://picsum.photos/seed/road-2021-a/1400/900' },
-      { id: '2021-b', title: 'Rhythm Cloud', image: 'https://picsum.photos/seed/road-2021-b/1400/900' },
-      { id: '2021-c', title: 'Violet Pulse', image: 'https://picsum.photos/seed/road-2021-c/1400/900' },
+      { id: '2021-a', title: 'Signal Bloom', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'fill', g: 'auto' }) },
+      { id: '2021-b', title: 'Rhythm Cloud', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'scale' }) },
+      { id: '2021-c', title: 'Violet Pulse', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'fit' }) },
     ],
   },
   {
@@ -109,9 +135,9 @@ const ROAD_PHASES: RoadPhase[] = [
     heading: 'Temporal Echo',
     summary: '终点回望，记忆的回声再次抵达脚下，完成整个循环。',
     tiles: [
-      { id: '2020-a', title: 'Origin Veil', image: 'https://picsum.photos/seed/road-2020-a/1400/900' },
-      { id: '2020-b', title: 'Lantern Shore', image: 'https://picsum.photos/seed/road-2020-b/1400/900' },
-      { id: '2020-c', title: 'Quiet Current', image: 'https://picsum.photos/seed/road-2020-c/1400/900' },
+      { id: '2020-a', title: 'Origin Veil', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'limit' }) },
+      { id: '2020-b', title: 'Lantern Shore', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'pad' }) },
+      { id: '2020-c', title: 'Quiet Current', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'lpad' }) },
     ],
   },
 ];
@@ -675,11 +701,7 @@ const ArtProjectPage = () => {
   }, []);
 
   const renderCard = (src: string, index: number) => (
-    <div className="card" key={index}>
-      <div className="media">
-        <img src={src} alt={`Gallery image ${index + 1}`} loading="lazy" />
-      </div>
-    </div>
+    <img key={index} src={src} alt={`Gallery image ${index + 1}`} loading="lazy" className="corridor-image" />
   );
 
   return (
