@@ -4,7 +4,7 @@
   --card: #1b1b23;
   --text: #f5f5f7;
   --muted: #9aa0a6;
-  --gap: 3.5vw;
+  --gap: 6vw; /* 增加间距，从3.5vw增加到6vw */
   --ground: 6vh;
   --gallery-dark: hsl(334.29deg 32.03% 30%);
   --gallery-dark-deep: hsl(334.29deg 32.03% 20%);
@@ -33,6 +33,7 @@
   display: grid;
   place-items: center;
   height: 100vh;
+  overflow-x: visible; /* 允许水平内容溢出 */
 }
 
 .art-project .wrap {
@@ -58,7 +59,7 @@
 
 .art-project .view {
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* 允许内容溢出，确保标签可见 */
 }
 
 .art-project .track {
@@ -68,8 +69,24 @@
   height: 100%;
   display: flex;
   align-items: center;
-  gap: var(--gap);
+  gap: 0; /* 移除默认间距，用margin控制 */
   padding: 0 5vw;
+  padding-left: 12vw; /* 整体向右移动，留出左侧空间 */
+  padding-right: 15vw; /* 增加右侧padding，为最后的标签留出空间 */
+}
+
+/* 第二行特殊网格布局 - 水平滚动 */
+.art-project .track-grid {
+  display: flex;
+  align-items: flex-start;
+  gap: 3vw; /* 设置合适的间距，避免重叠 */
+  width: max-content; /* 宽度自适应内容，允许水平滚动 */
+  min-width: 200vw; /* 增加宽度容纳布局 */
+  height: 100%;
+  padding: 0 10vw; /* 添加左右padding */
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .art-project .card {
@@ -813,14 +830,249 @@
     left: clamp(12px, 4vw, 24px);
     right: clamp(12px, 4vw, 24px);
   }
+
+  /* 移动端网格布局调整 */
+  .art-project .track-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 1vw;
+    padding: 5vh 2vw;
+  }
+
+  /* 移动端重新排列网格 */
+  .art-project .grid-image-1 {
+    grid-column: 3 / 4;
+    grid-row: 1 / 3;
+  }
+  
+  .art-project .grid-image-2 {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+  }
+  
+  .art-project .grid-image-3 {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+  }
+  
+  .art-project .grid-image-4 {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+  
+  .art-project .grid-image-5 {
+    grid-column: 1 / 3;
+    grid-row: 3 / 4;
+  }
+  
+  .art-project .grid-image-6 {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+  }
+  
+  .art-project .grid-image-7 {
+    grid-column: 3 / 4;
+    grid-row: 3 / 4;
+  }
 }
 
 /* Styling for corridor images to show original ratio */
 .art-project .track .corridor-image {
-  height: 70vh;
+  height: 52.5vh; /* 原来70vh的0.75倍 */
   width: auto;
   max-width: none;
   display: block;
   object-fit: contain; /* 确保完整显示图片，保持原始比例 */
   object-position: center;
+}
+
+/* 第二行网格布局 */
+.art-project .grid-image {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 0;
+  flex-shrink: 0; /* 防止压缩 */
+}
+
+.art-project .grid-image .corridor-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* 保持原始比例，完整显示图片 */
+  object-position: center;
+  display: block;
+}
+
+/* 对于竖向图片，让宽度自适应 */
+.art-project .grid-image-2 .corridor-image,
+.art-project .grid-image-3 .corridor-image,
+.art-project .grid-image-4 .corridor-image {
+  width: auto;
+  height: 100%;
+}
+
+/* 按照Figma设计创建三列布局，避免重叠 */
+/* 第一列：图片6和7垂直排列 */
+.art-project .grid-column-1 {
+  display: flex;
+  flex-direction: column;
+  gap: 6vh;
+  align-items: flex-start;
+  margin-right: 3vw;
+}
+
+.art-project .grid-image-6 {
+  position: relative;
+  height: 35vh; /* 接近第一阶段的52.5vh */
+  width: auto; /* 保持原图比例 */
+}
+
+.art-project .grid-image-7 {
+  position: relative;
+  height: 35vh;
+  width: auto; /* 保持原图比例 */
+}
+
+/* 第二列：图片5和4同一水平线 */
+.art-project .grid-column-2 {
+  display: flex;
+  flex-direction: row;
+  gap: 3vw;
+  align-items: center;
+  margin-top: 5vh; /* 调整垂直位置 */
+  margin-right: 3vw;
+}
+
+.art-project .grid-image-5 {
+  position: relative;
+  height: 60vh; /* 较大的图片 */
+  width: auto; /* 保持原图比例 */
+}
+
+.art-project .grid-image-4 {
+  position: relative;
+  height: 60vh;
+  width: auto; /* 保持原图比例 */
+}
+
+/* 第三列：图片2和3垂直排列 */
+.art-project .grid-column-3 {
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
+  align-items: flex-start;
+  margin-top: 2vh; /* 调整垂直位置 */
+  margin-right: 3vw;
+}
+
+.art-project .grid-image-2 {
+  position: relative;
+  height: 35vh; /* 接近第一阶段尺寸 */
+  width: auto; /* 保持原图比例 */
+}
+
+.art-project .grid-image-3 {
+  position: relative;
+  height: 35vh;
+  width: auto; /* 保持原图比例 */
+}
+
+/* 第四列：图片1大图 */
+.art-project .grid-image-1 {
+  position: relative;
+  height: 55vh; /* 最大的图片，比第一阶段还大 */
+  width: auto; /* 保持原图比例 */
+  margin-top: 10vh; /* 稍微调整位置 */
+  margin-bottom: 80px; /* 为标签留出足够空间 */
+}
+
+/* 图片容器间距控制 */
+.art-project .image-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* 移除padding-right，让标签紧贴图片 */
+}
+
+/* 第一张图 - 与第二张图大间距 */
+.art-project .first-image {
+  margin-right: 8vw; /* 恢复大间距 */
+}
+
+/* 第二张图 - 与后面组图的中等间距 */
+.art-project .second-image {
+  margin-right: 1.5vw; /* 减少与组图的间距 */
+}
+
+/* 组图（第三、四张） - 小间距 */
+.art-project .group-image {
+  margin-right: 1.5vw; /* 组图内部保持小间距 */
+}
+
+.art-project .group-image:last-child {
+  margin-right: 0;
+}
+
+/* 图片标签样式 - 艺术馆展览效果（第一排） */
+.art-project .track .image-label {
+  position: absolute;
+  top: 70%;
+  left: 100%; /* 紧贴图片右边缘 */
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(220, 220, 220, 0.8);
+  border-radius: 0px;
+  padding: 8px 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  min-width: 10px;
+  margin-left: 20px; /* 与图片的小间距 */
+}
+
+/* 第二排的标签样式 - 显示在图片下方 */
+.art-project .track-grid .image-label {
+  position: absolute;
+  bottom: -80px; /* 显示在图片下方 */
+  left: 50%; /* 水平居中 */
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(220, 220, 220, 0.8);
+  border-radius: 0px;
+  padding: 12px 20px; /* 增加左右padding */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  min-width: 10px;
+  white-space: nowrap; /* 防止文字换行 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px; /* 两行文字之间的间距 */
+}
+
+/* 第二排标签的第一行文字 - 较大 */
+.art-project .track-grid .label-text-primary {
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
+  line-height: 1.2;
+}
+
+/* 第二排标签的第二行文字 - 较小 */
+.art-project .track-grid .label-text-secondary {
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+  line-height: 1.3;
+}
+
+.art-project .label-text {
+  font-size: 12px;
+  font-weight: 400;
+  color: #2c2c2c;
+  letter-spacing: 0.3px;
+  text-transform: none;
+  font-family: 'Times New Roman', serif; /* 艺术馆常用字体 */
+  line-height: 1.3;
 }

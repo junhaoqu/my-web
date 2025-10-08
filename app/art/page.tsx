@@ -40,16 +40,20 @@ const buildCloudinaryImageUrl = (publicId: string, opts: CldOpts = {}) => {
 
 const ROW1_IMAGES = [
   buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
-  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
-  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
-  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('雪国1_vjlpu2', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('雪国_2_f9nppy', { w: 2000, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('雪国_3_sjoa8x', { w: 1200, c: 'fit', q: 'auto' }),
 ];
 
 const ROW2_IMAGES = [
-  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
-  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
-  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
-  buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('IMG_6546_akbexm', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('4_zmvgeb', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('3_bgeti2', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('Violin_g1emwi', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('Wind_dtzebp', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('2_varvfh', { w: 1200, c: 'fit', q: 'auto' }),
+  buildCloudinaryImageUrl('piano_oc2vyd', { w: 1200, c: 'fit', q: 'auto' }),
+
 ];
 
 type RoadPhaseTile = {
@@ -700,9 +704,48 @@ const ArtProjectPage = () => {
     };
   }, []);
 
-  const renderCard = (src: string, index: number) => (
-    <img key={index} src={src} alt={`Gallery image ${index + 1}`} loading="lazy" className="corridor-image" />
-  );
+  const renderCard = (src: string, index: number, isRow2 = false) => {
+    if (isRow2) {
+      // 第二行使用特殊的列布局避免重叠
+      const imageNumber = index + 1;
+      
+      // 根据Figma设计创建特殊的列布局
+      if (imageNumber === 6 || imageNumber === 7) {
+        // 第一列：图片6和7
+        return null; // 这些将在专门的列容器中渲染
+      } else if (imageNumber === 5 || imageNumber === 4) {
+        // 第二列：图片5和4
+        return null; // 这些将在专门的列容器中渲染
+      } else if (imageNumber === 2 || imageNumber === 3) {
+        // 第三列：图片2和3
+        return null; // 这些将在专门的列容器中渲染
+      } else {
+        // 图片1单独渲染
+        return (
+          <div key={index} className={`grid-image grid-image-${imageNumber}`}>
+            <img src={src} alt={`Gallery image ${imageNumber}`} loading="lazy" className="corridor-image" />
+          </div>
+        );
+      }
+    }
+    
+    // 第一行保持原有布局
+    return (
+      <div key={index} className={`image-container ${index === 0 ? 'first-image' : index === 1 ? 'second-image' : 'group-image'}`}>
+        <img src={src} alt={`Gallery image ${index + 1}`} loading="lazy" className="corridor-image" />
+        {index === 0 && (
+          <div className="image-label">
+            <span className="label-text">Moon Night</span>
+          </div>
+        )}
+        {index === 3 && (
+          <div className="image-label">
+            <span className="label-text">Snow Country</span>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="art-project" ref={rootRef}>
@@ -724,8 +767,45 @@ const ArtProjectPage = () => {
         <div className="wrap">
           <div className="header">Page 2 · Gallery R→L</div>
           <div className="view">
-            <div className="track" ref={track2Ref}>
-              {ROW2_IMAGES.map((src, index) => renderCard(src, index))}
+            <div className="track track-grid" ref={track2Ref}>
+              {/* 第一列：图片6和7垂直排列 */}
+              <div className="grid-column-1">
+                <div className="grid-image grid-image-6">
+                  <img src={ROW2_IMAGES[5]} alt="Gallery image 6" loading="lazy" className="corridor-image" />
+                </div>
+                <div className="grid-image grid-image-7">
+                  <img src={ROW2_IMAGES[6]} alt="Gallery image 7" loading="lazy" className="corridor-image" />
+                </div>
+              </div>
+              
+              {/* 第二列：图片5和4同一水平线 */}
+              <div className="grid-column-2">
+                <div className="grid-image grid-image-5">
+                  <img src={ROW2_IMAGES[4]} alt="Gallery image 5" loading="lazy" className="corridor-image" />
+                </div>
+                <div className="grid-image grid-image-4">
+                  <img src={ROW2_IMAGES[3]} alt="Gallery image 4" loading="lazy" className="corridor-image" />
+                </div>
+              </div>
+              
+              {/* 第三列：图片2和3垂直排列 */}
+              <div className="grid-column-3">
+                <div className="grid-image grid-image-2">
+                  <img src={ROW2_IMAGES[1]} alt="Gallery image 2" loading="lazy" className="corridor-image" />
+                </div>
+                <div className="grid-image grid-image-3">
+                  <img src={ROW2_IMAGES[2]} alt="Gallery image 3" loading="lazy" className="corridor-image" />
+                </div>
+              </div>
+              
+              {/* 第四列：图片1大图 */}
+              <div className="grid-image grid-image-1">
+                <img src={ROW2_IMAGES[0]} alt="Gallery image 1" loading="lazy" className="corridor-image" />
+                <div className="image-label">
+                  <span className="label-text-primary">Living in Harmony</span>
+                  <span className="label-text-secondary">The world has kissed my soul with its pain, asking for its return in songs</span>
+                </div>
+              </div>
             </div>
             <div className="ground" />
             <SvgWalker ref={walker2Ref} />
