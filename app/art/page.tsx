@@ -9,10 +9,13 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import './project.css';
+import { Cinzel } from 'next/font/google';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+const cinzel = Cinzel({ weight: ['400', '600'], subsets: ['latin'] });
 
 type CldOpts = {
   w?: number;
@@ -754,6 +757,7 @@ const ArtProjectPage = () => {
           <div className="header">Page 1 · Gallery L→R</div>
           <div className="view">
             <div className="track" ref={track1Ref}>
+              <div className={[cinzel.className, 'corridor-inscription'].join(' ')}>art</div>
               {ROW1_IMAGES.map((src, index) => renderCard(src, index))}
             </div>
             <div className="ground" />
