@@ -806,7 +806,7 @@ const ArtProjectPage = () => {
               <div className="grid-image grid-image-1">
                 <img src={ROW2_IMAGES[0]} alt="Gallery image 1" loading="lazy" className="corridor-image" />
                 <div className="image-label">
-                  <span className="label-text-primary">Living in Harmony</span>
+                  <span className="label-text-primary">Living in Chord</span>
                   <span className="label-text-secondary">The world has kissed my soul with its pain, asking for its return in songs</span>
                 </div>
               </div>
