@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import type { Swiper as SwiperClass } from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -82,9 +83,15 @@ const ROAD_PHASES: RoadPhase[] = [
     heading: 'Gallery Assembly',
     summary: '入口的第一段聚焦在结构与光影的重排，形成新的时间起点。',
     tiles: [
-      { id: '2025-a', title: 'Skylight Array', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'fill', g: 'auto' }) },
-      { id: '2025-b', title: 'Framework Echo', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'fill', g: 'north' }) },
-      { id: '2025-c', title: 'Midnight Panel', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'fill', g: 'south' }) },
+      { id: '2025-a', title: 'Autumn Reflection', image: buildCloudinaryImageUrl('IMG_6667_zxdfar', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-b', title: 'Sky Canvas', image: buildCloudinaryImageUrl('sky_ct3nxk', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-c', title: 'Ocean Vista', image: buildCloudinaryImageUrl('sea_nxh93b', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-d', title: 'Starry Night', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-e', title: 'Ultramarine', image: buildCloudinaryImageUrl('Ultramarine_hpnprl', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-f', title: 'Snow Country I', image: buildCloudinaryImageUrl('雪国1_vjlpu2', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-g', title: 'Snow Country II', image: buildCloudinaryImageUrl('雪国_2_f9nppy', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-h', title: 'Snow Country III', image: buildCloudinaryImageUrl('雪国_3_sjoa8x', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-i', title: 'Eva', image: buildCloudinaryImageUrl('eva_scuwn0', { w: 1200, c: 'fit', q: 'auto' }) },
     ],
   },
   {
@@ -245,12 +252,76 @@ const ArtProjectPage = () => {
   const roadFrameRef = useRef<HTMLDivElement>(null);
   const yearsColumnRef = useRef<HTMLDivElement>(null);
   const yearsWrapperRef = useRef<HTMLDivElement>(null);
+  const swiperRefs = useRef<SwiperClass[]>([]);
   
   const [currentFloor, setCurrentFloor] = React.useState('25');
+  const [lightboxImage, setLightboxImage] = React.useState<{ src: string; title: string } | null>(null);
+  const [carouselGap, setCarouselGap] = React.useState(0);
+
+  const openLightbox = (src: string, title: string) => {
+    setLightboxImage({ src, title });
+  };
+
+  const closeLightbox = () => {
+    setLightboxImage(null);
+  };
 
   const registerYearRef = (index: number) => (el: HTMLDivElement | null) => {
     yearRefs.current[index] = el;
   };
+
+  const registerSwiperInstance = (index: number) => (instance: SwiperClass) => {
+    swiperRefs.current[index] = instance;
+  };
+
+  // Handle keyboard events for lightbox
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && lightboxImage) {
+        closeLightbox();
+      }
+    };
+
+    if (lightboxImage) {
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden'; // Prevent background scroll
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [lightboxImage]);
+
+  useEffect(() => {
+    const updateGap = () => {
+      if (!rootRef.current) return;
+      const styles = window.getComputedStyle(rootRef.current);
+      const gapValue = parseFloat(styles.getPropertyValue('--carousel-gap')) || 0;
+      setCarouselGap(gapValue);
+    };
+
+    updateGap();
+    window.addEventListener('resize', updateGap);
+
+    return () => {
+      window.removeEventListener('resize', updateGap);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (carouselGap <= 0) return;
+
+    swiperRefs.current.forEach((instance) => {
+      if (!instance || instance.destroyed) return;
+      instance.params.slidesOffsetBefore = Math.max(0, 200 - carouselGap);
+      instance.params.slidesOffsetAfter = Math.max(0, 200 - carouselGap);
+      instance.update();
+      instance.slideTo(instance.activeIndex, 0);
+    });
+  }, [carouselGap]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -849,7 +920,7 @@ const ArtProjectPage = () => {
               </div>
               <div className="gallery-stack">
                 <div className="gallery-track" ref={storyTrackRef}>
-                  {ROAD_PHASES.map((phase) => (
+                  {ROAD_PHASES.map((phase, phaseIndex) => (
                     <section className="year-block" key={phase.id}>
                       <header className="year-block-meta">
                         <span className="year-block-label">{phase.stage}</span>
@@ -860,11 +931,12 @@ const ArtProjectPage = () => {
                       <div className="year-block-carousel">
                                                                         <Swiper
                           modules={[Navigation, Pagination]}
-                          spaceBetween={80}
+                          spaceBetween={0}
                           slidesPerView="auto"
                           centeredSlides={true}
-                          slidesOffsetBefore={200}
-                          slidesOffsetAfter={100}
+                          slidesOffsetBefore={Math.max(0, 200 - carouselGap)}
+                          slidesOffsetAfter={Math.max(0, 200 - carouselGap)}
+                          onSwiper={registerSwiperInstance(phaseIndex)}
                           navigation={{
                             prevEl: `.year-${phase.year}-prev`,
                             nextEl: `.year-${phase.year}-next`,
@@ -883,11 +955,22 @@ const ArtProjectPage = () => {
                           {phase.tiles.map((tile, tileIndex) => (
                             <SwiperSlide key={tile.id} className="swiper-slide">
                               <article className={`art-frame ${tileIndex === 0 ? 'primary' : 'secondary'}`}>
-                                <div
+                                <div 
                                   className="art-frame-media"
-                                  style={{ backgroundImage: `url(${tile.image})` }}
-                                  aria-hidden="true"
-                                />
+                                  onClick={() => openLightbox(tile.image, tile.title)}
+                                >
+                                  <img 
+                                    src={tile.image} 
+                                    alt={tile.title}
+                                    style={{ 
+                                      width: '100%', 
+                                      height: '100%',
+                                      objectFit: 'cover',
+                                      objectPosition: 'center',
+                                      display: 'block'
+                                    }}
+                                  />
+                                </div>
                                 <span className="art-frame-keel" aria-hidden="true" />
                                 <span className="art-frame-shadow" aria-hidden="true" />
                                 <h4>{tile.title}</h4>
@@ -923,6 +1006,78 @@ const ArtProjectPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Lightbox Modal */}
+      {lightboxImage && (
+        <div 
+          className="lightbox-overlay"
+          onClick={closeLightbox}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            cursor: 'pointer'
+          }}
+        >
+          <div 
+            style={{
+              position: 'relative',
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={lightboxImage.src}
+              alt={lightboxImage.title}
+              style={{
+                maxWidth: '100%',
+                maxHeight: '85vh',
+                objectFit: 'contain',
+                objectPosition: 'center'
+              }}
+            />
+            <h3 
+              style={{
+                color: 'white',
+                marginTop: '1rem',
+                textAlign: 'center',
+                fontSize: '1.2rem',
+                fontWeight: '600'
+              }}
+            >
+              {lightboxImage.title}
+            </h3>
+            <button
+              onClick={closeLightbox}
+              style={{
+                position: 'absolute',
+                top: '-40px',
+                right: '0',
+                background: 'none',
+                border: 'none',
+                color: 'white',
+                fontSize: '2rem',
+                cursor: 'pointer',
+                lineHeight: '1',
+                padding: '0.5rem'
+              }}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
