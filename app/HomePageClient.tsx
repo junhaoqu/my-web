@@ -18,6 +18,7 @@ import SocialLinks from "@/components/MacScreen/SocialLinks";
 import TechStack from "@/components/MacScreen/TechStack";
 import WorkExperience from "@/components/MacScreen/WorkExperience";
 import ProgressBar from "@/components/ProgressBar";
+import { Metadata } from "next";
 
 
 const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
@@ -112,6 +113,10 @@ const buildCloudinaryVideoUrl = (publicId: string) => {
   return `https://res.cloudinary.com/${cloudName}/video/upload/f_auto,q_auto/${publicId}.mp4`;
 };
 
+export const metadata: Metadata = {
+  title: "About",
+  description: "About Junhao",
+};
 
 export default function Home() {
 
