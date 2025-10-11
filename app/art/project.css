@@ -12,6 +12,8 @@
   --gallery-dark-soft: hsl(334.29deg 32.03% 40%);
   --gallery-light: hsl(19.2deg 30.86% 84.12%);
   --spacing: 1.5rem;
+  --year-frame-width: clamp(320px, min(42vw, 68vh), 1100px);
+  --year-frame-height: clamp(260px, min(34vw, 60vh), 720px);
   background: var(--bg);
   color: var(--text);
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -232,47 +234,8 @@
   --board-gap: calc(var(--passenger-height) * 0.5);
   --upper-platform-top: 90px;
   --lower-platform-top: calc(var(--upper-platform-top) + var(--board-height) + var(--board-gap));
-  --triangle-height: calc(var(--platform-width) * 112 / 148);
-  --rope-thickness: 4px;
-  --rope-color: #704620;
   --elevator-height: calc(var(--lower-platform-top) + var(--board-height) + 220px);
   min-height: var(--elevator-height);
-}
-
-.art-project .elevator-rope-frame {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: var(--platform-width);
-  aspect-ratio: 148 / 112;
-  pointer-events: none;
-  z-index: 1;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
-}
-
-.art-project .elevator-rope-frame--top {
-  top: calc(var(--upper-platform-top) -20px);
-  left: 62%;
-  transform: translateX(-50%);
-  transform-origin: 50% 6%;
-}
-
-.art-project .elevator-rope-frame--bottom {
-  top: calc(var(--lower-platform-top) + var(--board-height) - 4px);
-  left: 56%;
-  transform: translateX(-50%);
-  transform-origin: 50% 90%;
-}
-
-.art-project .elevator-rope-frame line,
-.art-project .elevator-rope-frame polygon {
-  fill: none;
-  stroke: var(--rope-color);
-  stroke-width: var(--rope-thickness);
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  stroke-dasharray: 3px 6px;
-  vector-effect: non-scaling-stroke;
 }
 
 /* 上面的木板（显示年份） */
@@ -366,8 +329,8 @@
   height: 100%;
   display: grid;
   grid-template-columns: 0.5fr 3fr;
-  gap: 4vw;
-  padding: 0 4vw;
+  gap: clamp(28px, 4vw, 56px);
+  padding: 0 clamp(24px, 3.2vw, 72px);
   align-items: stretch;
 }
 
@@ -553,7 +516,7 @@
   display: flex;
   flex-direction: column;
   gap: clamp(12px, 2vh, 20px);
-  padding-left: clamp(8px, 1.5vw, 20px);
+  padding-left: clamp(12px, 1.8vw, 36px);
 }
 
 .art-project .year-block-label {
@@ -771,14 +734,14 @@
 
 .art-project .art-frame.primary,
 .art-project .art-frame.secondary {
-  width: clamp(400px, 40vw, 500px);
+  width: var(--year-frame-width);
   transform: none;
 }
 
 .art-project .art-frame-media {
   position: relative;
   width: 100%;
-  height: 280px;
+  height: var(--year-frame-height);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -798,7 +761,7 @@
 
 .art-project .year-block-carousel--vertical .art-frame.primary,
 .art-project .year-block-carousel--vertical .art-frame.secondary {
-  width: clamp(240px, 26vw, 320px);
+  width: clamp(260px, min(28vw, 52vh), 620px);
 }
 
 .art-project .year-block-carousel--vertical .art-frame-media {
@@ -827,6 +790,8 @@
 @media (max-width: 640px) {
   .art-project {
     --carousel-gap: clamp(16px, 6vw, 22px);
+    --year-frame-width: clamp(220px, 88vw, 420px);
+    --year-frame-height: clamp(220px, 82vw, 520px);
   }
 
   .art-project .card {
@@ -946,7 +911,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 0;
   flex-shrink: 0; /* 防止压缩 */
 }
@@ -1054,7 +1019,33 @@
   display: flex;
   flex-direction: column;
   /* 移除padding-right，让标签紧贴图片 */
+  gap: clamp(6px, 1vh, 12px);
 }
+
+.art-project .image-container::before,
+.art-project .grid-image::before {
+  content: '';
+  position: absolute;
+  inset: clamp(-6px, -1vw, -10px);
+  box-shadow:
+    0 0 32px rgba(196, 191, 191, 0.18),
+    0 24px 60px rgba(53, 50, 50, 0.35);
+  background: #5b4d42;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.art-project .image-container img,
+.art-project .grid-image .corridor-image {
+  position: relative;
+  z-index: 1;
+  box-shadow:
+    0 0 0 2px rgba(65, 51, 33, 0.9),
+    0 18px 42px rgba(0, 0, 0, 0.38);
+  border-radius: 0;
+  background: rgba(12, 12, 12, 0.4);
+}
+
 
 /* 第一张图 - 与第二张图大间距 */
 .art-project .first-image {

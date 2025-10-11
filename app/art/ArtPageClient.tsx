@@ -215,10 +215,6 @@ const Elevator = React.forwardRef<HTMLDivElement, { className?: string; currentF
   ({ className, currentFloor }, ref) => (
     <div className={['elevator', className].filter(Boolean).join(' ')} ref={ref}>
       {/* 上方绳索与年份牌 */}
-      <svg className="elevator-rope-frame elevator-rope-frame--top" viewBox="0 0 148 112" aria-hidden="true">
-        <line x1="0" y1="112" x2="74" y2="0" />
-        <line x1="148" y1="112" x2="74" y2="0" />
-      </svg>
       <div className="elevator-top-platform">
         <div className="elevator-floor-display">{currentFloor || '2025'}</div>
       </div>
@@ -247,10 +243,6 @@ const Elevator = React.forwardRef<HTMLDivElement, { className?: string; currentF
 
       {/* 下方绳索与站台 */}
       <div className="elevator-bottom-platform" />
-      <svg className="elevator-rope-frame elevator-rope-frame--bottom" viewBox="0 0 148 112" aria-hidden="true">
-        <line x1="0" y1="0" x2="74" y2="112" />
-        <line x1="148" y1="0" x2="74" y2="112" />
-      </svg>
     </div>
   ),
 );
@@ -479,14 +471,8 @@ const ArtPageClient = () => {
         if (yearElements.length === 0) return;
 
         const elevatorIdleUpdate = makeElevatorIdle(elevator);
-        const ropeFrames = Array.from(
-          elevator.querySelectorAll<SVGElement>('.elevator-rope-frame'),
-        );
 
         gsap.set(elevator, { position: 'absolute', opacity: 0, zIndex: 5 });
-        if (ropeFrames.length) {
-          gsap.set(ropeFrames, { rotation: 0 });
-        }
 
         const storyContainer = storyTrack?.parentElement as HTMLElement | null;
         const yearsContainer = yearsWrapper;
@@ -500,6 +486,7 @@ const ArtPageClient = () => {
             pin: true,
             scrub: 0.8,
             invalidateOnRefresh: true,
+            onRefresh: () => applyElevatorMetrics(),
             onUpdate: (self) => {
               // 根据滚动进度更新楼层显示
               const progress = self.progress;
@@ -556,7 +543,6 @@ const ArtPageClient = () => {
         const yearStep = rawYearStep || frame.offsetHeight * 0.14;
 
         const elevatorHeight = () => elevator.offsetHeight || 1;
-        const elevatorWidth = () => elevator.offsetWidth || 1;
 
         const viewportHeight = () => window.innerHeight || frame.offsetHeight || 1;
 
@@ -565,27 +551,12 @@ const ArtPageClient = () => {
         const bottomPadding = () => viewportHeight() * 0.08;
         const endTop = () => viewportHeight() - elevatorHeight() - bottomPadding();
 
-        const computeElevatorLeft = () => {
-          if (trapColumn) {
-            const frameRect = frame.getBoundingClientRect();
-            const columnRect = trapColumn.getBoundingClientRect();
-            return columnRect.left - frameRect.left;
-          }
-          if (trap) {
-            return trap.offsetLeft;
-          }
-          return frame.offsetWidth * 0.18;
-        };
-
-        const computeElevatorWidth = () => {
-          if (trapColumn) {
-            return trapColumn.offsetWidth || frame.offsetWidth * 0.22;
-          }
-          if (trap) {
-            return trap.offsetWidth || frame.offsetWidth * 0.22;
-          }
-          return frame.offsetWidth * 0.22;
-        };
+        function computeElevatorMetrics() {
+          const frameWidth = frame.offsetWidth || window.innerWidth || 0;
+          const baseWidth = Math.max(frameWidth * 0.22, 160);
+          const left = (frameWidth - baseWidth) / 2;
+          return { width: baseWidth, left };
+        }
 
         const getElevatorTopForStage = (index: number, lastIndex: number) => {
           if (index === 0) return middleTop();
@@ -594,26 +565,24 @@ const ArtPageClient = () => {
         };
 
         const baseScale = 1;
-        const maxScale = 1; // 移除缩放效果，保持电梯大小一致
-        const scaleStep = 0; // 不再有缩放变化
-        const getScaleForStage = () => baseScale; // 始终返回基础缩放值
+
+        function applyElevatorMetrics() {
+          const { width, left } = computeElevatorMetrics();
+          gsap.set(elevator, { width, left });
+          if (trapColumn) {
+            gsap.set(trapColumn, { width, left });
+          }
+        }
 
         gsap.set(elevator, {
-          left: () => computeElevatorLeft(),
           top: () => startTop(),
           scale: baseScale,
           rotateY: 0,
           transformOrigin: 'bottom center',
-          width: () => computeElevatorWidth(),
         });
 
-        // 设置木质支柱的动态位置，与电梯对齐
-        if (trapColumn) {
-          gsap.set(trapColumn, {
-            left: () => computeElevatorLeft(),
-            width: () => computeElevatorWidth(),
-          });
-        }
+        applyElevatorMetrics();
+        requestAnimationFrame(applyElevatorMetrics);
 
         gsap.set(yearElements, {
           autoAlpha: 0,
@@ -664,21 +633,6 @@ const ArtPageClient = () => {
             },
             stageLabel,
           );
-
-          if (ropeFrames.length) {
-            const swayAngle = (index % 2 === 0 ? 1 : -1) * 3.2;
-            timeline.to(
-              ropeFrames,
-              {
-                rotation: swayAngle,
-                duration: 36,
-                ease: 'sine.inOut',
-                yoyo: true,
-                repeat: 1,
-              },
-              stageLabel,
-            );
-          }
 
           // 年份轨道滚动
           if (yearsColumn && yearsContainer) {
