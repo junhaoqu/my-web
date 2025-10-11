@@ -796,6 +796,21 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
+.art-project .year-block-carousel--vertical .art-frame.primary,
+.art-project .year-block-carousel--vertical .art-frame.secondary {
+  width: clamp(240px, 26vw, 320px);
+}
+
+.art-project .year-block-carousel--vertical .art-frame-media {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 210 / 297;
+}
+
+.art-project .year-block-carousel--vertical .swiper-container {
+  padding-bottom: clamp(20px, 4vh, 36px);
+}
+
 .art-project .art-frame-keel,
 .art-project .art-frame-shadow {
   display: none;
@@ -816,6 +831,11 @@
 
   .art-project .card {
     width: 78vw;
+  }
+
+  .art-project .year-block-carousel--vertical .art-frame.primary,
+  .art-project .year-block-carousel--vertical .art-frame.secondary {
+    width: clamp(200px, 68vw, 280px);
   }
 
   .art-project .walker-road {

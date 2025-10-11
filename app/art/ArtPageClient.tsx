@@ -64,6 +64,8 @@ type RoadPhaseTile = {
   id: string;
   title: string;
   image: string;
+  objectPosition?: string;
+
 };
 
 type RoadPhase = {
@@ -83,15 +85,15 @@ const ROAD_PHASES: RoadPhase[] = [
     heading: 'Gallery Assembly',
     summary: '入口的第一段聚焦在结构与光影的重排，形成新的时间起点。',
     tiles: [
-      { id: '2025-a', title: 'Autumn Reflection', image: buildCloudinaryImageUrl('IMG_6667_zxdfar', { w: 1200, c: 'fit', q: 'auto' }) },
-      { id: '2025-b', title: 'Sky Canvas', image: buildCloudinaryImageUrl('sky_ct3nxk', { w: 1200, c: 'fit', q: 'auto' }) },
-      { id: '2025-c', title: 'Ocean Vista', image: buildCloudinaryImageUrl('sea_nxh93b', { w: 1200, c: 'fit', q: 'auto' }) },
-      { id: '2025-d', title: 'Starry Night', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-a', title: 'Grand Escape', image: buildCloudinaryImageUrl('IMG_6667_zxdfar', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-b', title: 'Above the cloud', image: buildCloudinaryImageUrl('sky_ct3nxk', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-c', title: 'Not Lonely', image: buildCloudinaryImageUrl('sea_nxh93b', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-d', title: 'Moon Night', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }) },
       { id: '2025-e', title: 'Ultramarine', image: buildCloudinaryImageUrl('Ultramarine_hpnprl', { w: 1200, c: 'fit', q: 'auto' }) },
       { id: '2025-f', title: 'Snow Country I', image: buildCloudinaryImageUrl('雪国1_vjlpu2', { w: 1200, c: 'fit', q: 'auto' }) },
       { id: '2025-g', title: 'Snow Country II', image: buildCloudinaryImageUrl('雪国_2_f9nppy', { w: 1200, c: 'fit', q: 'auto' }) },
       { id: '2025-h', title: 'Snow Country III', image: buildCloudinaryImageUrl('雪国_3_sjoa8x', { w: 1200, c: 'fit', q: 'auto' }) },
-      { id: '2025-i', title: 'Eva', image: buildCloudinaryImageUrl('eva_scuwn0', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-i', title: 'Rei Ayanami', image: buildCloudinaryImageUrl('eva_scuwn0', { w: 1200, c: 'fit', q: 'auto' }) },
     ],
   },
   {
@@ -101,9 +103,22 @@ const ROAD_PHASES: RoadPhase[] = [
     heading: 'Reverse Corridor',
     summary: '反向开启的通道引导观者折返，缓慢进入影像的下一重。',
     tiles: [
-      { id: '2024-a', title: 'Evergreen Drift', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'fill', g: 'west' }) },
-      { id: '2024-b', title: 'Resonant Steps', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'fill', g: 'east' }) },
-      { id: '2024-c', title: 'Bloom Passage', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'fill', g: 'center' }) },
+       { id: '2024-a', title: 'Tears or Joy', image: buildCloudinaryImageUrl('未命名作品_9_xlytvt', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2024-b', title: 'Karina I', image: buildCloudinaryImageUrl('柳智敏_bpnvix', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2024-c', title: 'Karina II', image: buildCloudinaryImageUrl('IMG_6587_w5cfg6', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2024-d', title: 'Jenny', image: buildCloudinaryImageUrl('IMG_6588_ahicil', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2024-e', title: 'Suzuki', image: buildCloudinaryImageUrl('IMG_6586_uvahtx', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2024-f', title: 'Music Dream', image: buildCloudinaryImageUrl('未命名作品_7_bnspyh', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2024-g', title: 'Wind', image: buildCloudinaryImageUrl('Wind_x5zno3', { w: 1200, c: 'fit', q: 'auto' }) },
+      {
+        id: '2024-h',
+        title: 'Where to go',
+        image: buildCloudinaryImageUrl('IMG_6546_2_vb9q1v', { w: 1200, c: 'fit', q: 'auto' }),
+        objectPosition: '20% center',
+      },
+      { id: '2024-i', title: 'Leon', image: buildCloudinaryImageUrl('这个杀手不太冷_j32foz', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2024-j', title: 'The Moon Black', image: buildCloudinaryImageUrl('未命名作品_8_k4e6mt', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2024-k', title: 'Green shot', image: buildCloudinaryImageUrl('未命名作品_6_ynfwwg', { w: 1200, c: 'fit', q: 'auto' }) },
     ],
   },
   {
@@ -113,9 +128,16 @@ const ROAD_PHASES: RoadPhase[] = [
     heading: 'Continuous Road',
     summary: '第三段保持均速的节奏，将远处片段连缀成完整旅程。',
     tiles: [
-      { id: '2023-a', title: 'Tidal Memory', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'crop', g: 'auto' }) },
-      { id: '2023-b', title: 'Horizon Fold', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'crop', g: 'face' }) },
-      { id: '2023-c', title: 'Amber Dusk', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'crop', g: 'north_east' }) },
+       { id: '2023-a', title: 'Howl\'s Moving Castle', image: buildCloudinaryImageUrl('哈尔的移动城堡_r5ye27', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2023-b', title: 'Every Step Blooms', image: buildCloudinaryImageUrl('IMG_8612_polarr_vvggls', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2023-c', title: 'Ballet on the Piano', image: buildCloudinaryImageUrl('钢琴上的芭蕾_n10ihb', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2023-d', title: 'Staring', image: buildCloudinaryImageUrl('凝视_ytuokw', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2023-e', title: 'D Major', image: buildCloudinaryImageUrl('D_major_2_vpfahx', { w: 1200, c: 'fit', q: 'auto', }), objectPosition: 'center 20%', },
+      { id: '2023-f', title: 'Daisy', image: buildCloudinaryImageUrl('未命名作品_2_tf8exl', { w: 1200, c: 'fit', q: 'auto' }) , objectPosition: 'center 20%', },
+      { id: '2023-g', title: 'Kirby', image: buildCloudinaryImageUrl('IMG_0452_polarr_nzefjc', { w: 1200, c: 'fit', q: 'auto' }), objectPosition: 'center 20%', },
+      { id: '2023-h', title: 'Summer Train I', image: buildCloudinaryImageUrl('IMG_8209_polarr_uzsdnf', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2023-i', title: 'Summer Train II', image: buildCloudinaryImageUrl('1_oamhg5', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2023-j', title: 'Sky is the Ocean', image: buildCloudinaryImageUrl('未命名作品_3_govxex', { w: 1200, c: 'fit', q: 'auto' }),objectPosition: 'center 10%', },
     ],
   },
   {
@@ -928,8 +950,15 @@ const ArtPageClient = () => {
                         <p>{phase.heading}</p>
                         <p className="year-block-summary">{phase.summary}</p>
                       </header>
-                      <div className="year-block-carousel">
-                                                                        <Swiper
+                      <div
+                        className={[
+                          'year-block-carousel',
+                          phase.year === '2024' ? 'year-block-carousel--vertical' : '',
+                        ]
+                          .filter(Boolean)
+                          .join(' ')}
+                      >
+                        <Swiper
                           modules={[Navigation, Pagination]}
                           spaceBetween={0}
                           slidesPerView="auto"
@@ -950,7 +979,12 @@ const ArtPageClient = () => {
                           speed={700}
                           resistanceRatio={0.85}
                           watchOverflow={true}
-                          className="swiper-container"
+                          className={[
+                            'swiper-container',
+                            phase.year === '2024' ? 'swiper-container--vertical' : '',
+                          ]
+                            .filter(Boolean)
+                            .join(' ')}
                         >
                           {phase.tiles.map((tile, tileIndex) => (
                             <SwiperSlide key={tile.id} className="swiper-slide">
@@ -966,7 +1000,7 @@ const ArtPageClient = () => {
                                       width: '100%', 
                                       height: '100%',
                                       objectFit: 'cover',
-                                      objectPosition: 'center',
+                                      objectPosition: tile.objectPosition ?? 'center',
                                       display: 'block'
                                     }}
                                   />
