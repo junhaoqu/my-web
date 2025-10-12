@@ -12,6 +12,13 @@
   --gallery-dark-soft: hsl(334.29deg 32.03% 40%);
   --gallery-light: hsl(19.2deg 30.86% 84.12%);
   --spacing: 1.5rem;
+  --year-strip-height: clamp(280px, min(48vh, 42vw), 480px);
+  --year-strip-gap: clamp(8px, 1.1vw, 18px);
+  --year-strip-gutter-left: clamp(32px, 5vw, 96px);
+  --year-strip-width: clamp(60px, 6vw, 120px);
+  --year-strip-expanded-width: clamp(280px, 36vw, 500px);
+  --year-strip-spillover: calc(var(--year-strip-expanded-width) - var(--year-strip-width));
+  --year-strip-gutter-right: calc(var(--year-strip-gap) + var(--year-strip-spillover) + clamp(16px, 4vw, 48px));
   --year-frame-width: clamp(320px, min(42vw, 68vh), 1100px);
   --year-frame-height: clamp(260px, min(34vw, 60vh), 720px);
   background: var(--bg);
@@ -552,6 +559,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .art-project .year-block-carousel .swiper-container {
@@ -559,25 +567,27 @@
   height: auto;
   padding-bottom: clamp(14px, 1.8vh, 20px);
   padding-top: clamp(12px, 1.5vh, 18px);
-  overflow: hidden; /* 严格限制内容不能超出边界 */
+  padding-left: var(--year-strip-gutter-left);
+  padding-right: var(--year-strip-gutter-right);
+  overflow: hidden;
 }
 
 .art-project .year-block-carousel .swiper-slide {
   width: auto !important;
   height: auto;
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
   flex-shrink: 0;
   box-sizing: border-box;
-  padding: 0 var(--carousel-gap);
-  margin-left: 0 !important;
-  margin-right: 0 !important;
+  padding: 0;
+  margin: 0 !important;
 }
 
 .art-project .year-block-carousel .swiper-wrapper {
-  align-items: flex-end;
+  align-items: stretch;
   padding-left: 0;
-  padding-right: clamp(40px, 4vw, 60px);
+  padding-right: var(--year-strip-gap);
+  gap: var(--year-strip-gap);
 }
 
 /* Swiper Navigation Styles - 参考 1.css 的导航样式 */
@@ -724,6 +734,101 @@
   opacity: 1;
 }
 
+.art-project .art-strip {
+  position: relative;
+  width: var(--year-strip-width);
+  height: var(--year-strip-height);
+  background: rgba(20, 20, 24, 0.78);
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  transition: width 0.45s ease, box-shadow 0.45s ease, filter 0.45s ease;
+  cursor: pointer;
+}
+
+.art-project .art-strip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.art-project .art-strip:last-child {
+}
+
+.art-project .art-strip--expanded {
+  width: var(--year-strip-expanded-width);
+  box-shadow:
+    0 22px 48px rgba(0, 0, 0, 0.55),
+    0 0 18px rgba(198, 150, 84, 0.28);
+}
+
+.art-project .art-strip-media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  outline: none;
+}
+
+.art-project .art-strip-media:focus-visible {
+  outline: 2px solid rgba(198, 150, 84, 0.85);
+  outline-offset: 4px;
+}
+
+.art-project .art-strip-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.art-project .art-strip--expanded .art-strip-media img {
+  transform: scale(1.02);
+}
+
+.art-project .art-strip-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.55) 100%);
+  mix-blend-mode: multiply;
+  opacity: 0.6;
+  transition: opacity 0.35s ease;
+}
+
+.art-project .art-strip--expanded .art-strip-overlay {
+  opacity: 0.25;
+}
+
+.art-project .art-strip-caption {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: clamp(10px, 1.6vw, 18px);
+  color: var(--gallery-light);
+  text-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  transform: translateY(110%);
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.art-project .art-strip--expanded .art-strip-caption {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.art-project .art-strip-caption h4 {
+  margin: 0;
+  font-size: clamp(1.1rem, 1.2vw + 0.5rem, 1.6rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
 .art-project .art-frame {
   position: relative;
   display: flex;
@@ -759,21 +864,6 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
-.art-project .year-block-carousel--vertical .art-frame.primary,
-.art-project .year-block-carousel--vertical .art-frame.secondary {
-  width: clamp(260px, min(28vw, 52vh), 620px);
-}
-
-.art-project .year-block-carousel--vertical .art-frame-media {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 210 / 297;
-}
-
-.art-project .year-block-carousel--vertical .swiper-container {
-  padding-bottom: clamp(20px, 4vh, 36px);
-}
-
 .art-project .art-frame-keel,
 .art-project .art-frame-shadow {
   display: none;
@@ -790,6 +880,11 @@
 @media (max-width: 640px) {
   .art-project {
     --carousel-gap: clamp(16px, 6vw, 22px);
+    --year-strip-gap: clamp(6px, 2.2vw, 14px);
+    --year-strip-gutter-left: clamp(16px, 8vw, 28px);
+    --year-strip-width: clamp(48px, 16vw, 78px);
+    --year-strip-expanded-width: clamp(220px, 74vw, 340px);
+    --year-strip-gutter-right: calc(var(--year-strip-gap) + (var(--year-strip-expanded-width) - var(--year-strip-width)) + clamp(12px, 6vw, 24px));
     --year-frame-width: clamp(220px, 88vw, 420px);
     --year-frame-height: clamp(220px, 82vw, 520px);
   }

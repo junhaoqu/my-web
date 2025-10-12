@@ -65,7 +65,8 @@ type RoadPhaseTile = {
   title: string;
   image: string;
   objectPosition?: string;
-
+  objectPositionCollapsed?: string;
+  objectPositionExpanded?: string;
 };
 
 type RoadPhase = {
@@ -87,12 +88,21 @@ const ROAD_PHASES: RoadPhase[] = [
     tiles: [
       { id: '2025-a', title: 'Grand Escape', image: buildCloudinaryImageUrl('IMG_6667_zxdfar', { w: 1200, c: 'fit', q: 'auto' }) },
       { id: '2025-b', title: 'Above the cloud', image: buildCloudinaryImageUrl('sky_ct3nxk', { w: 1200, c: 'fit', q: 'auto' }) },
-      { id: '2025-c', title: 'Not Lonely', image: buildCloudinaryImageUrl('sea_nxh93b', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-c', title: 'Not Lonely',
+        image: buildCloudinaryImageUrl('sea_nxh93b', { w: 1200, c: 'fit', q: 'auto' }),
+        objectPositionCollapsed: '40% center',  // thumbnail focus
+        objectPositionExpanded: 'center center' // optional override when expanded
+      },
       { id: '2025-d', title: 'Moon Night', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1200, c: 'fit', q: 'auto' }) },
       { id: '2025-e', title: 'Ultramarine', image: buildCloudinaryImageUrl('Ultramarine_hpnprl', { w: 1200, c: 'fit', q: 'auto' }) },
-      { id: '2025-f', title: 'Snow Country I', image: buildCloudinaryImageUrl('雪国1_vjlpu2', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-f', title: 'Snow Country I', image: buildCloudinaryImageUrl('雪国1_vjlpu2', { w: 1200, c: 'fit', q: 'auto' }),
+        objectPositionCollapsed: '28% center',  // thumbnail focus
+        objectPositionExpanded: 'center center' },
       { id: '2025-g', title: 'Snow Country II', image: buildCloudinaryImageUrl('雪国_2_f9nppy', { w: 1200, c: 'fit', q: 'auto' }) },
-      { id: '2025-h', title: 'Snow Country III', image: buildCloudinaryImageUrl('雪国_3_sjoa8x', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2025-h', title: 'Snow Country III', image: buildCloudinaryImageUrl('雪国_3_sjoa8x', { w: 1200, c: 'fit', q: 'auto' }),
+        objectPositionCollapsed: '32% center',
+        objectPositionExpanded: 'center center'
+      },
       { id: '2025-i', title: 'Rei Ayanami', image: buildCloudinaryImageUrl('eva_scuwn0', { w: 1200, c: 'fit', q: 'auto' }) },
     ],
   },
@@ -107,9 +117,9 @@ const ROAD_PHASES: RoadPhase[] = [
       { id: '2024-b', title: 'Karina I', image: buildCloudinaryImageUrl('柳智敏_bpnvix', { w: 1200, c: 'fit', q: 'auto' }) },
       { id: '2024-c', title: 'Karina II', image: buildCloudinaryImageUrl('IMG_6587_w5cfg6', { w: 1200, c: 'fit', q: 'auto' }) },
       { id: '2024-d', title: 'Jenny', image: buildCloudinaryImageUrl('IMG_6588_ahicil', { w: 1200, c: 'fit', q: 'auto' }) },
-      { id: '2024-e', title: 'Suzuki', image: buildCloudinaryImageUrl('IMG_6586_uvahtx', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2024-e', title: 'Suzuki', image: buildCloudinaryImageUrl('IMG_6586_uvahtx', { w: 1200, c: 'fit', q: 'auto' }), objectPositionExpanded: 'center 28%' },
       { id: '2024-f', title: 'Music Dream', image: buildCloudinaryImageUrl('未命名作品_7_bnspyh', { w: 1200, c: 'fit', q: 'auto' }) },
-      { id: '2024-g', title: 'Wind', image: buildCloudinaryImageUrl('Wind_x5zno3', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2024-g', title: 'Wind', image: buildCloudinaryImageUrl('Wind_x5zno3', { w: 1200, c: 'fit', q: 'auto' }), objectPositionExpanded: 'center 20%', },
       {
         id: '2024-h',
         title: 'Where to go',
@@ -128,7 +138,9 @@ const ROAD_PHASES: RoadPhase[] = [
     heading: 'Continuous Road',
     summary: '第三段保持均速的节奏，将远处片段连缀成完整旅程。',
     tiles: [
-       { id: '2023-a', title: 'Howl\'s Moving Castle', image: buildCloudinaryImageUrl('哈尔的移动城堡_r5ye27', { w: 1200, c: 'fit', q: 'auto' }) },
+       { id: '2023-a', title: 'Howl\'s Moving Castle', image: buildCloudinaryImageUrl('哈尔的移动城堡_r5ye27', { w: 1200, c: 'fit', q: 'auto' }), 
+        objectPositionCollapsed: '75% center',  // thumbnail focus
+        objectPositionExpanded: 'center center' },
       { id: '2023-b', title: 'Every Step Blooms', image: buildCloudinaryImageUrl('IMG_8612_polarr_vvggls', { w: 1200, c: 'fit', q: 'auto' }) },
       { id: '2023-c', title: 'Ballet on the Piano', image: buildCloudinaryImageUrl('钢琴上的芭蕾_n10ihb', { w: 1200, c: 'fit', q: 'auto' }) },
       { id: '2023-d', title: 'Staring', image: buildCloudinaryImageUrl('凝视_ytuokw', { w: 1200, c: 'fit', q: 'auto' }) },
@@ -270,7 +282,8 @@ const ArtPageClient = () => {
   
   const [currentFloor, setCurrentFloor] = React.useState('25');
   const [lightboxImage, setLightboxImage] = React.useState<{ src: string; title: string } | null>(null);
-  const [carouselGap, setCarouselGap] = React.useState(0);
+  const [carouselOffsets, setCarouselOffsets] = React.useState({ before: 0, after: 0 });
+  const [expandedTiles, setExpandedTiles] = React.useState<Record<string, string>>({});
 
   const openLightbox = (src: string, title: string) => {
     setLightboxImage({ src, title });
@@ -287,6 +300,24 @@ const ArtPageClient = () => {
   const registerSwiperInstance = (index: number) => (instance: SwiperClass) => {
     swiperRefs.current[index] = instance;
   };
+
+  const handleYearBlockBackgroundClick =
+    (phaseId: string) => (event: React.MouseEvent<HTMLDivElement>) => {
+      const target = event.target as HTMLElement;
+      if (
+        target.closest(
+          '.art-strip, .swiper-prev, .swiper-next, .swiper-navigation-container, .swiper-pagination-container, .swiper-pagination-bullet',
+        )
+      ) {
+        return;
+      }
+      setExpandedTiles((prev) => {
+        if (!prev[phaseId]) return prev;
+        const next = { ...prev };
+        delete next[phaseId];
+        return next;
+      });
+    };
 
   // Handle keyboard events for lightbox
   useEffect(() => {
@@ -310,32 +341,31 @@ const ArtPageClient = () => {
   }, [lightboxImage]);
 
   useEffect(() => {
-    const updateGap = () => {
+    const updateOffsets = () => {
       if (!rootRef.current) return;
       const styles = window.getComputedStyle(rootRef.current);
-      const gapValue = parseFloat(styles.getPropertyValue('--carousel-gap')) || 0;
-      setCarouselGap(gapValue);
+      const before = parseFloat(styles.getPropertyValue('--year-strip-gutter-left')) || 0;
+      const after = parseFloat(styles.getPropertyValue('--year-strip-gutter-right')) || 0;
+      setCarouselOffsets({ before, after });
     };
 
-    updateGap();
-    window.addEventListener('resize', updateGap);
+    updateOffsets();
+    window.addEventListener('resize', updateOffsets);
 
     return () => {
-      window.removeEventListener('resize', updateGap);
+      window.removeEventListener('resize', updateOffsets);
     };
   }, []);
 
   useEffect(() => {
-    if (carouselGap <= 0) return;
-
     swiperRefs.current.forEach((instance) => {
       if (!instance || instance.destroyed) return;
-      instance.params.slidesOffsetBefore = Math.max(0, 200 - carouselGap);
-      instance.params.slidesOffsetAfter = Math.max(0, 200 - carouselGap);
+      instance.params.slidesOffsetBefore = carouselOffsets.before;
+      instance.params.slidesOffsetAfter = carouselOffsets.after;
       instance.update();
       instance.slideTo(instance.activeIndex, 0);
     });
-  }, [carouselGap]);
+  }, [carouselOffsets]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -477,6 +507,7 @@ const ArtPageClient = () => {
         const storyContainer = storyTrack?.parentElement as HTMLElement | null;
         const yearsContainer = yearsWrapper;
         const trapColumn = trap?.querySelector<HTMLElement>('.trap-road') || null;
+        const frameEl = frame;
 
         const timeline = gsap.timeline({
           scrollTrigger: {
@@ -522,10 +553,10 @@ const ArtPageClient = () => {
               if (gallerySlides.length > 1) {
                 return gallerySlides[1].offsetTop - gallerySlides[0].offsetTop;
               }
-              return gallerySlides[0]?.offsetHeight || frame.offsetHeight * 0.22;
+              return gallerySlides[0]?.offsetHeight || frameEl.offsetHeight * 0.22;
             })();
 
-        const storyStep = rawStoryStep || frame.offsetHeight * 0.2;
+        const storyStep = rawStoryStep || frameEl.offsetHeight * 0.2;
 
         const maxYearShift = yearsColumn && yearsContainer
           ? Math.max(yearsColumn.scrollHeight - yearsContainer.clientHeight, 0)
@@ -537,14 +568,14 @@ const ArtPageClient = () => {
               if (yearElements.length > 1) {
                 return yearElements[1].offsetTop - yearElements[0].offsetTop;
               }
-              return yearElements[0]?.offsetHeight || frame.offsetHeight * 0.16;
+              return yearElements[0]?.offsetHeight || frameEl.offsetHeight * 0.16;
             })();
 
-        const yearStep = rawYearStep || frame.offsetHeight * 0.14;
+        const yearStep = rawYearStep || frameEl.offsetHeight * 0.14;
 
         const elevatorHeight = () => elevator.offsetHeight || 1;
 
-        const viewportHeight = () => window.innerHeight || frame.offsetHeight || 1;
+        const viewportHeight = () => window.innerHeight || frameEl.offsetHeight || 1;
 
         const startTop = () => viewportHeight() * 0.16;
         const middleTop = () => viewportHeight() * 0.5 - elevatorHeight() * 0.5;
@@ -552,7 +583,7 @@ const ArtPageClient = () => {
         const endTop = () => viewportHeight() - elevatorHeight() - bottomPadding();
 
         function computeElevatorMetrics() {
-          const frameWidth = frame.offsetWidth || window.innerWidth || 0;
+          const frameWidth = frameEl.offsetWidth || window.innerWidth || 0;
           const baseWidth = Math.max(frameWidth * 0.22, 160);
           const left = (frameWidth - baseWidth) / 2;
           return { width: baseWidth, left };
@@ -897,28 +928,25 @@ const ArtPageClient = () => {
               <div className="gallery-stack">
                 <div className="gallery-track" ref={storyTrackRef}>
                   {ROAD_PHASES.map((phase, phaseIndex) => (
-                    <section className="year-block" key={phase.id}>
+                    <section
+                      className="year-block"
+                      key={phase.id}
+                      onClickCapture={handleYearBlockBackgroundClick(phase.id)}
+                    >
                       <header className="year-block-meta">
                         <span className="year-block-label">{phase.stage}</span>
                         <h3>{phase.year}</h3>
                         <p>{phase.heading}</p>
                         <p className="year-block-summary">{phase.summary}</p>
                       </header>
-                      <div
-                        className={[
-                          'year-block-carousel',
-                          phase.year === '2024' ? 'year-block-carousel--vertical' : '',
-                        ]
-                          .filter(Boolean)
-                          .join(' ')}
-                      >
+                      <div className="year-block-carousel">
                         <Swiper
                           modules={[Navigation, Pagination]}
                           spaceBetween={0}
                           slidesPerView="auto"
-                          centeredSlides={true}
-                          slidesOffsetBefore={Math.max(0, 200 - carouselGap)}
-                          slidesOffsetAfter={Math.max(0, 200 - carouselGap)}
+                          centeredSlides={false}
+                          slidesOffsetBefore={carouselOffsets.before}
+                          slidesOffsetAfter={carouselOffsets.after}
                           onSwiper={registerSwiperInstance(phaseIndex)}
                           navigation={{
                             prevEl: `.year-${phase.year}-prev`,
@@ -935,36 +963,78 @@ const ArtPageClient = () => {
                           watchOverflow={true}
                           className={[
                             'swiper-container',
-                            phase.year === '2024' ? 'swiper-container--vertical' : '',
                           ]
                             .filter(Boolean)
                             .join(' ')}
                         >
-                          {phase.tiles.map((tile, tileIndex) => (
-                            <SwiperSlide key={tile.id} className="swiper-slide">
-                              <article className={`art-frame ${tileIndex === 0 ? 'primary' : 'secondary'}`}>
-                                <div 
-                                  className="art-frame-media"
-                                  onClick={() => openLightbox(tile.image, tile.title)}
+                          {phase.tiles.map((tile) => {
+                            const expandedId = expandedTiles[phase.id];
+                            const isExpanded = expandedId === tile.id;
+
+                            const collapsedObjectPosition =
+                              tile.objectPositionCollapsed ??
+                              tile.objectPosition ??
+                              'center';
+                            const expandedObjectPosition =
+                              tile.objectPositionExpanded ??
+                              collapsedObjectPosition;
+
+                            const handleTileInteraction = () => {
+                              if (isExpanded) {
+                                openLightbox(tile.image, tile.title);
+                                return;
+                              }
+
+                              setExpandedTiles((prev) => ({
+                                ...prev,
+                                [phase.id]: tile.id,
+                              }));
+                            };
+
+                            return (
+                              <SwiperSlide key={tile.id} className="swiper-slide art-strip-slide">
+                                <article
+                                  className={[
+                                    'art-strip',
+                                    isExpanded ? 'art-strip--expanded' : '',
+                                  ]
+                                    .filter(Boolean)
+                                    .join(' ')}
                                 >
-                                  <img 
-                                    src={tile.image} 
-                                    alt={tile.title}
-                                    style={{ 
-                                      width: '100%', 
-                                      height: '100%',
-                                      objectFit: 'cover',
-                                      objectPosition: tile.objectPosition ?? 'center',
-                                      display: 'block'
+                                  <div
+                                    role="button"
+                                    tabIndex={0}
+                                    className="art-strip-media"
+                                    onClick={handleTileInteraction}
+                                    onKeyDown={(event) => {
+                                      if (event.key === 'Enter' || event.key === ' ') {
+                                        event.preventDefault();
+                                        handleTileInteraction();
+                                      }
                                     }}
-                                  />
-                                </div>
-                                <span className="art-frame-keel" aria-hidden="true" />
-                                <span className="art-frame-shadow" aria-hidden="true" />
-                                <h4>{tile.title}</h4>
-                              </article>
-                            </SwiperSlide>
-                          ))}
+                                  >
+                                    <img
+                                      src={tile.image}
+                                      alt={tile.title}
+                                      style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover',
+                                        objectPosition: isExpanded
+                                          ? expandedObjectPosition
+                                          : collapsedObjectPosition,
+                                        display: 'block',
+                                      }}
+                                    />
+                                    <div className="art-strip-overlay" aria-hidden="true" />
+                                    <div className="art-strip-caption">
+                                      <h4>{tile.title}</h4>
+                                    </div>
+                                  </div>
+                                </article>
+                              </SwiperSlide>
+                            );
+                          })}
                         </Swiper>
                         <div className="swiper-navigation-container">
                           <div className="swiper-navigation-wrapper">
