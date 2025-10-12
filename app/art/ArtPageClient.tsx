@@ -116,7 +116,7 @@ const ROAD_PHASES: RoadPhase[] = [
        { id: '2024-a', title: 'Tears or Joy', image: buildCloudinaryImageUrl('未命名作品_9_xlytvt', { w: 1200, c: 'fit', q: 'auto' }) },
       { id: '2024-b', title: 'Karina I', image: buildCloudinaryImageUrl('柳智敏_bpnvix', { w: 1200, c: 'fit', q: 'auto' }) },
       { id: '2024-c', title: 'Karina II', image: buildCloudinaryImageUrl('IMG_6587_w5cfg6', { w: 1200, c: 'fit', q: 'auto' }) },
-      { id: '2024-d', title: 'Jenny', image: buildCloudinaryImageUrl('IMG_6588_ahicil', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2024-d', title: 'Jenny', image: buildCloudinaryImageUrl('未命名作品_1_hj1wlu', { w: 1200, c: 'fit', q: 'auto' }) },
       { id: '2024-e', title: 'Suzuki', image: buildCloudinaryImageUrl('IMG_6586_uvahtx', { w: 1200, c: 'fit', q: 'auto' }), objectPositionExpanded: 'center 28%' },
       { id: '2024-f', title: 'Music Dream', image: buildCloudinaryImageUrl('未命名作品_7_bnspyh', { w: 1200, c: 'fit', q: 'auto' }) },
       { id: '2024-g', title: 'Wind', image: buildCloudinaryImageUrl('Wind_x5zno3', { w: 1200, c: 'fit', q: 'auto' }), objectPositionExpanded: 'center 20%', },
@@ -158,10 +158,31 @@ const ROAD_PHASES: RoadPhase[] = [
     stage: 'Phase VI',
     heading: 'Descending Years',
     summary: '年份开始下沉，时间在层层叠落的斜面中重新排布。',
-    tiles: [
-      { id: '2022-a', title: 'Cascade Ridge', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'thumb', g: 'auto' }) },
-      { id: '2022-b', title: 'Echo Shelter', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'thumb', g: 'north_west' }) },
-      { id: '2022-c', title: 'Frostline Noon', image: buildCloudinaryImageUrl('Starry_eoj8qu', { w: 1400, h: 900, c: 'thumb', g: 'south_east' }) },
+       tiles: [
+       { id: '2022-a', title: 'Howl\'s Moving Castle', image: buildCloudinaryImageUrl('未命名作品_6_fspzoj', { w: 1200, c: 'fit', q: 'auto' }), 
+        objectPositionCollapsed: '30% center',  // thumbnail focus
+        objectPositionExpanded: 'center center' },
+      { id: '2022-b', title: 'Every Step Blooms', image: buildCloudinaryImageUrl('未命名作品_12_o4kzsi', { w: 1200, c: 'fit', q: 'auto' }),},
+      { id: '2022-c', title: 'Ballet on the Piano', image: buildCloudinaryImageUrl('IMG_6325_v4wobl', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2022-d', title: 'Staring', image: buildCloudinaryImageUrl('IMG_6328_svqy8l', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2022-e', title: 'D Major', image: buildCloudinaryImageUrl('未命名作品_1_qtfmsa', { w: 1200, c: 'fit', q: 'auto', }), objectPosition: 'center 20%', },
+      { id: '2022-f', title: 'Daisy', image: buildCloudinaryImageUrl('IMG_5407_polarr_e40i2m', { w: 1200, c: 'fit', q: 'auto' }) , objectPosition: 'center 20%', },
+      { id: '2022-g', title: 'Kirby', image: buildCloudinaryImageUrl('IMG_0452_polarr_nzefjc', { w: 1200, c: 'fit', q: 'auto' }), objectPosition: 'center 20%', },
+      { id: '2022-h', title: 'Summer Train I', image: buildCloudinaryImageUrl('未命名作品_8_nc486e', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2022-i', title: 'Summer Train II', image: buildCloudinaryImageUrl('未命名作品_3_kvhmag', { w: 1200, c: 'fit', q: 'auto' }) },
+      { id: '2022-j', title: 'Sky is the Ocean', image: buildCloudinaryImageUrl('未命名作品_10_xpufo2', { w: 1200, c: 'fit', q: 'auto' }),objectPosition: 'center 10%', },
+      { id: '2022-k', title: 'Sky is the Ocean', image: buildCloudinaryImageUrl('未命名作品_9_m1rwbo', { w: 1200, c: 'fit', q: 'auto' }),objectPosition: 'center 10%', },
+      { id: '2022-l', title: 'Sky is the Ocean', image: buildCloudinaryImageUrl('未命名作品_5_vavsq2', { w: 1200, c: 'fit', q: 'auto' }),objectPosition: 'center 10%', },
+      { id: '2022-m', title: 'Sky is the Ocean', image: buildCloudinaryImageUrl('IMG_6196_h7nn8p', { w: 1200, c: 'fit', q: 'auto' }),objectPosition: 'center 10%', },
+      { id: '2022-n', title: 'Sky is the Ocean', image: buildCloudinaryImageUrl('未命名作品_7_ahmgra', { w: 1200, c: 'fit', q: 'auto' }),objectPosition: 'center 10%', },
+      { id: '2022-o', title: 'Sky is the Ocean', image: buildCloudinaryImageUrl('未命名作品_11_rbsiem', { w: 1200, c: 'fit', q: 'auto' }),objectPosition: 'center 10%', },
+      { id: '2022-p', title: 'Sky is the Ocean', image: buildCloudinaryImageUrl('未命名作品_4_efzkcf', { w: 1200, c: 'fit', q: 'auto' }),objectPosition: 'center 10%', },
+      { id: '2022-q', title: 'Sky is the Ocean', image: buildCloudinaryImageUrl('beauty_1648197988703_n9wo0t', { w: 1200, c: 'fit', q: 'auto' }),objectPosition: 'center 10%', },
+      { id: '2022-r', title: 'Sky is the Ocean', image: buildCloudinaryImageUrl('未命名作品_2_vsxumg', { w: 1200, c: 'fit', q: 'auto' }),objectPosition: 'center 10%', },
+      { id: '2022-s', title: 'Sky is the Ocean', image: buildCloudinaryImageUrl('起航_heklcp', { w: 1200, c: 'fit', q: 'auto' }),objectPosition: 'center 10%', },
+      { id: '2022-t', title: 'Sky is the Ocean', image: buildCloudinaryImageUrl('IMG_9097_polarr_oia3hb', { w: 1200, c: 'fit', q: 'auto' }),objectPosition: 'center 10%', },
+      { id: '2022-u', title: 'Sky is the Ocean', image: buildCloudinaryImageUrl('未命名作品_sxhjie', { w: 1200, c: 'fit', q: 'auto' }),objectPosition: 'center 10%', },
+
     ],
   },
   {
@@ -282,8 +303,22 @@ const ArtPageClient = () => {
   
   const [currentFloor, setCurrentFloor] = React.useState('25');
   const [lightboxImage, setLightboxImage] = React.useState<{ src: string; title: string } | null>(null);
-  const [carouselOffsets, setCarouselOffsets] = React.useState({ before: 0, after: 0 });
+  
+  // 计算单个图片+gap的精确宽度
+  const calculateTileWidth = React.useCallback(() => {
+    if (!rootRef.current) return { tileWidth: 120, gapWidth: 18 };
+    
+    const styles = window.getComputedStyle(rootRef.current);
+    const stripWidth = parseFloat(styles.getPropertyValue('--year-strip-width')) || 120;
+    const stripGap = parseFloat(styles.getPropertyValue('--year-strip-gap')) || 18;
+    
+    return { tileWidth: stripWidth, gapWidth: stripGap };
+  }, []);
+  
+  const [tileWidths, setTileWidths] = React.useState(() => calculateTileWidth());
   const [expandedTiles, setExpandedTiles] = React.useState<Record<string, string>>({});
+  const [activeTileIndices, setActiveTileIndices] = React.useState<Record<string, number>>({});
+  const activeTileIndicesRef = React.useRef<Record<string, number>>({});
 
   const openLightbox = (src: string, title: string) => {
     setLightboxImage({ src, title });
@@ -299,6 +334,40 @@ const ArtPageClient = () => {
 
   const registerSwiperInstance = (index: number) => (instance: SwiperClass) => {
     swiperRefs.current[index] = instance;
+    
+    // 延迟强制更新，确保DOM完全渲染后再更新pagination
+    setTimeout(() => {
+      if (!instance.destroyed) {
+        // 强制更新以确保所有slides都被正确识别
+        instance.update();
+        
+        // 临时debug: 检查slides和pagination状态
+        const phase = ROAD_PHASES[index];
+        const paginationEl = document.querySelector(`.year-${phase.year}-pagination`);
+        console.log(`Swiper ${phase.year}:`, {
+          tilesInData: phase.tiles.length,
+          slidesInDOM: instance.slides.length,
+          paginationBullets: paginationEl?.querySelectorAll('.swiper-pagination-bullet').length || 0,
+        });
+      }
+    }, 200);
+  };
+
+  // 自定义导航处理函数，确保每次精确移动一个slide
+  const handlePrevSlide = (phaseYear: string) => {
+    const phaseIndex = ROAD_PHASES.findIndex(phase => phase.year === phaseYear);
+    const swiper = swiperRefs.current[phaseIndex];
+    if (swiper && !swiper.destroyed) {
+      swiper.slidePrev();
+    }
+  };
+
+  const handleNextSlide = (phaseYear: string) => {
+    const phaseIndex = ROAD_PHASES.findIndex(phase => phase.year === phaseYear);
+    const swiper = swiperRefs.current[phaseIndex];
+    if (swiper && !swiper.destroyed) {
+      swiper.slideNext();
+    }
   };
 
   const handleYearBlockBackgroundClick =
@@ -317,6 +386,25 @@ const ArtPageClient = () => {
         delete next[phaseId];
         return next;
       });
+      
+      // 同时清除激活的 bullet 索引
+      setActiveTileIndices((prev) => {
+        if (prev[phaseId] === undefined) return prev;
+        const next = { ...prev };
+        delete next[phaseId];
+        activeTileIndicesRef.current = next;
+        return next;
+      });
+      
+      // 强制更新对应 phase 的 pagination
+      const phaseIndex = ROAD_PHASES.findIndex(p => p.id === phaseId);
+      if (phaseIndex !== -1) {
+        const swiper = swiperRefs.current[phaseIndex];
+        if (swiper && !swiper.destroyed && swiper.pagination) {
+          swiper.pagination.render();
+          swiper.pagination.update();
+        }
+      }
     };
 
   // Handle keyboard events for lightbox
@@ -341,31 +429,34 @@ const ArtPageClient = () => {
   }, [lightboxImage]);
 
   useEffect(() => {
-    const updateOffsets = () => {
+    const updateTileWidths = () => {
       if (!rootRef.current) return;
-      const styles = window.getComputedStyle(rootRef.current);
-      const before = parseFloat(styles.getPropertyValue('--year-strip-gutter-left')) || 0;
-      const after = parseFloat(styles.getPropertyValue('--year-strip-gutter-right')) || 0;
-      setCarouselOffsets({ before, after });
+      
+      // 更新tile宽度
+      const newTileWidths = calculateTileWidth();
+      setTileWidths(newTileWidths);
     };
 
-    updateOffsets();
-    window.addEventListener('resize', updateOffsets);
+    updateTileWidths();
+    window.addEventListener('resize', updateTileWidths);
 
     return () => {
-      window.removeEventListener('resize', updateOffsets);
+      window.removeEventListener('resize', updateTileWidths);
     };
-  }, []);
+  }, [calculateTileWidth]);
 
   useEffect(() => {
     swiperRefs.current.forEach((instance) => {
       if (!instance || instance.destroyed) return;
-      instance.params.slidesOffsetBefore = carouselOffsets.before;
-      instance.params.slidesOffsetAfter = carouselOffsets.after;
       instance.update();
+      // 强制更新pagination
+      if (instance.pagination && instance.pagination.render) {
+        instance.pagination.render();
+        instance.pagination.update();
+      }
       instance.slideTo(instance.activeIndex, 0);
     });
-  }, [carouselOffsets]);
+  }, [tileWidths]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -942,32 +1033,63 @@ const ArtPageClient = () => {
                       <div className="year-block-carousel">
                         <Swiper
                           modules={[Navigation, Pagination]}
-                          spaceBetween={0}
+                          spaceBetween={tileWidths.gapWidth}
                           slidesPerView="auto"
+                          slidesPerGroup={1}
                           centeredSlides={false}
-                          slidesOffsetBefore={carouselOffsets.before}
-                          slidesOffsetAfter={carouselOffsets.after}
+                          watchSlidesProgress={true}
                           onSwiper={registerSwiperInstance(phaseIndex)}
-                          navigation={{
-                            prevEl: `.year-${phase.year}-prev`,
-                            nextEl: `.year-${phase.year}-next`,
+                          onSlideChange={(swiper) => {
+                            // Debug pagination状态
+                            if (process.env.NODE_ENV === 'development') {
+                              console.log(`Swiper ${phase.year} slide changed:`, {
+                                activeIndex: swiper.activeIndex,
+                                realIndex: swiper.realIndex,
+                                totalSlides: swiper.slides.length,
+                                paginationBullets: swiper.pagination?.bullets?.length || 0
+                              });
+                            }
                           }}
+                          navigation={false}
                           pagination={{
                             el: `.year-${phase.year}-pagination`,
-                            clickable: true,
-                            type: 'bullets',
+                            clickable: false,
+                            type: 'custom',
+                            renderCustom: function (swiper, current, total) {
+                              // 使用实际的 slides 数量生成 bullets
+                              const actualTotal = phase.tiles.length;
+                              let bullets = '';
+                              
+                              // 只有当有图片展开时，才高亮对应的 bullet
+                              // 否则所有 bullets 都不高亮
+                              const activeBulletIndex = activeTileIndicesRef.current[phase.id];
+                              
+                              console.log(`renderCustom for ${phase.year}:`, {
+                                activeBulletIndex,
+                                hasActiveTile: activeBulletIndex !== undefined,
+                              });
+                              
+                              for (let i = 0; i < actualTotal; i++) {
+                                // 只有当 activeBulletIndex 存在且等于当前索引时才高亮
+                                const isActive = (activeBulletIndex !== undefined && i === activeBulletIndex) 
+                                  ? 'swiper-pagination-bullet-active' 
+                                  : '';
+                                bullets += `<span class="swiper-pagination-bullet ${isActive}"></span>`;
+                              }
+                              return bullets;
+                            },
                           }}
                           grabCursor={true}
                           speed={700}
                           resistanceRatio={0.85}
-                          watchOverflow={true}
+                          watchOverflow={false}
                           className={[
                             'swiper-container',
                           ]
                             .filter(Boolean)
                             .join(' ')}
                         >
-                          {phase.tiles.map((tile) => {
+                          {phase.tiles.map((tile, tileIndex) => {
                             const expandedId = expandedTiles[phase.id];
                             const isExpanded = expandedId === tile.id;
 
@@ -980,11 +1102,43 @@ const ArtPageClient = () => {
                               collapsedObjectPosition;
 
                             const handleTileInteraction = () => {
+                              // Debug: 查看点击的图片信息
+                              console.log(`Clicked tile:`, {
+                                phaseId: phase.id,
+                                year: phase.year,
+                                tileId: tile.id,
+                                tileIndex: tileIndex,
+                                tileTitle: tile.title,
+                                isExpanded: isExpanded,
+                              });
+
+                              // 首先，无论如何都更新激活的索引（立即高亮对应的 bullet）
+                              setActiveTileIndices((prev) => {
+                                const newIndices = {
+                                  ...prev,
+                                  [phase.id]: tileIndex,
+                                };
+                                console.log(`Updated activeTileIndices:`, newIndices);
+                                // 同时更新 ref，这样 renderCustom 才能立即访问到最新值
+                                activeTileIndicesRef.current = newIndices;
+                                return newIndices;
+                              });
+                              
+                              // 强制 Swiper 更新 pagination
+                              const swiper = swiperRefs.current[phaseIndex];
+                              if (swiper && !swiper.destroyed && swiper.pagination) {
+                                swiper.pagination.render();
+                                swiper.pagination.update();
+                              }
+
+                              // 然后处理展开/lightbox 逻辑
                               if (isExpanded) {
+                                // 如果已经展开，打开 lightbox
                                 openLightbox(tile.image, tile.title);
                                 return;
                               }
 
+                              // 如果未展开，展开这张图片
                               setExpandedTiles((prev) => ({
                                 ...prev,
                                 [phase.id]: tile.id,
@@ -1038,21 +1192,27 @@ const ArtPageClient = () => {
                         </Swiper>
                         <div className="swiper-navigation-container">
                           <div className="swiper-navigation-wrapper">
-                            <div className={`swiper-prev year-${phase.year}-prev`}>
+                            <div 
+                              className={`swiper-prev year-${phase.year}-prev`}
+                              onClick={() => handlePrevSlide(phase.year)}
+                            >
                               <svg aria-hidden="true" focusable="false" viewBox="0 0 40 40">
                                 <path fill="currentColor" d="m27.042 4.792 1.333 1.25-13.917 13.917 13.917 13.833-1.333 1.333-15.167-15.166L27.042 4.792z"></path>
                               </svg>
                             </div>
-                            <div className={`swiper-next year-${phase.year}-next`}>
+                            <div 
+                              className={`swiper-next year-${phase.year}-next`}
+                              onClick={() => handleNextSlide(phase.year)}
+                            >
                               <svg aria-hidden="true" focusable="false" viewBox="0 0 40 40">
                                 <path fill="currentColor" d="m13.208 35.125-1.333-1.25 13.917-13.917L11.875 6.125l1.333-1.333 15.167 15.166Z"></path>
                               </svg>
                             </div>
                           </div>
                         </div>
-                        <div className="swiper-pagination-container">
-                          <div className="swiper-pagination-wrapper">
-                            <div className={`swiper-pagination year-${phase.year}-pagination`}></div>
+                        <div className="swiper-pagination-container" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>
+                          <div className="swiper-pagination-wrapper" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>
+                            <div className={`swiper-pagination year-${phase.year}-pagination`} style={{ userSelect: 'none', WebkitUserSelect: 'none' }}></div>
                           </div>
                         </div>
                       </div>
