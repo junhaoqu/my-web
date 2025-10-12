@@ -52,7 +52,9 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
 
   const handleNavigate = (href: string) => {
     setIsNavOpen(false);
-    router.push(href);
+    // 使用原生的 window.location 进行页面刷新导航
+    // 这样可以确保页面完全重新加载，避免状态残留
+    window.location.href = href;
   };
 
   useEffect(() => {
