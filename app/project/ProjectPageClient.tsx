@@ -30,6 +30,15 @@ interface CardData {
 
 const projects = [
     {
+        title: "AI tab Organizer",
+        date: "Oct 2025 - Oct 2025",
+        description: "AI Tab Organizer: Stop letting browser clutter build your anxiety. Our one-click solution intelligently manages tab overload, instantly sorting your session. Reclaim your focus, reduce stress, and get back to what matters.",
+        tags: ["AI", "JavaScript", "Chrome Extension", "Chrome built-in AI API", "Gemini API"],
+        websiteUrl: "#", // Replace with actual URL
+        imageUrl: "/images/icon/what.png"
+      
+    },
+    {
         title: "Fast UI",
         date: "Sep 2025 - Present",
         description: "Inspired by amazing open-source libraries like Aceternity UI, I'm developing an open-source UI library. It will feature a collection of meticulously designed components to help developers build their dream websites. Custom UI services will also be offered in the future.",

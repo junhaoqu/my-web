@@ -13,10 +13,10 @@
   --gallery-light: hsl(19.2deg 30.86% 84.12%);
   --spacing: 1.5rem;
   --year-strip-height: clamp(280px, min(48vh, 42vw), 480px);
-  --year-strip-gap: clamp(8px, 1.1vw, 18px);
+  --year-strip-gap: clamp(8px, 1.5vw, 18px);
   --year-strip-gutter-left: clamp(32px, 5vw, 96px);
   --year-strip-width: clamp(60px, 6vw, 120px);
-  --year-strip-expanded-width: clamp(280px, 36vw, 500px);
+  --year-strip-expanded-width: clamp(280px, min(42vw, 560px), 560px);
   --year-strip-spillover: calc(var(--year-strip-expanded-width) - var(--year-strip-width));
   --year-strip-gutter-right: calc(var(--year-strip-gap) + var(--year-strip-spillover) + clamp(16px, 4vw, 48px));
   --year-frame-width: clamp(320px, min(42vw, 68vh), 1100px);
@@ -586,8 +586,7 @@
 .art-project .year-block-carousel .swiper-wrapper {
   align-items: stretch;
   padding-left: 0;
-  padding-right: var(--year-strip-gap);
-  gap: var(--year-strip-gap);
+  padding-right: 0; /* 移除原来的gap，现在由spaceBetween控制 */
 }
 
 /* Swiper Navigation Styles - 参考 1.css 的导航样式 */
@@ -676,6 +675,10 @@
   margin-top: var(--spacing, 1.5rem);
   pointer-events: none;
   position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .art-project .swiper-pagination-wrapper {
@@ -685,11 +688,19 @@
   justify-content: center;
   pointer-events: none;
   position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .art-project .swiper-pagination {
   pointer-events: auto;
   position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .art-project .swiper-pagination .swiper-pagination-bullet {
@@ -700,8 +711,12 @@
   position: relative;
   border-radius: 50%;
   margin: 0 0.5rem;
-  cursor: pointer;
+  cursor: default;
   transition: background-color 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .art-project .swiper-pagination .swiper-pagination-bullet:after {
@@ -723,7 +738,7 @@
 /* 隐藏默认的导航和分页，当触摸或鼠标悬停时显示 */
 .art-project .year-block-carousel .swiper-navigation-container,
 .art-project .year-block-carousel .swiper-pagination-container {
-  opacity: 0;
+  opacity: 1; /* 暂时设为1以便调试pagination问题 */
   transition: opacity 0.25s ease;
 }
 
@@ -883,7 +898,7 @@
     --year-strip-gap: clamp(6px, 2.2vw, 14px);
     --year-strip-gutter-left: clamp(16px, 8vw, 28px);
     --year-strip-width: clamp(48px, 16vw, 78px);
-    --year-strip-expanded-width: clamp(220px, 74vw, 340px);
+    --year-strip-expanded-width: clamp(220px, min(78vw, 360px), 360px);
     --year-strip-gutter-right: calc(var(--year-strip-gap) + (var(--year-strip-expanded-width) - var(--year-strip-width)) + clamp(12px, 6vw, 24px));
     --year-frame-width: clamp(220px, 88vw, 420px);
     --year-frame-height: clamp(220px, 82vw, 520px);
